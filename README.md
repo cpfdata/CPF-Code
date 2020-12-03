@@ -10,10 +10,10 @@ The Comparative Panel File (CPF) is an open science project to harmonise the wor
 
 Project's website: www.cpfdata.com
 
-Forum: cpfdata.com/forum
+Forum: www.cpfdata.com/forum
 
-GitHub: github.com/cpfdata
+GitHub: www.github.com/cpfdata
 
-OSF: osf.io/h3yxq
+OSF: www.osf.io/h3yxq
 
 CPF is managed by Konrad Turek and Matthijs Kalmijn at the Netherlands Interdisciplinary Demographic Institute (NIDI-KNAW) and Thomas Leopold at the University of Cologne. The CPF's code and online platform were designed and developed by Konrad Turek.
