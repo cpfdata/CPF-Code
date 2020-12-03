@@ -5,7 +5,7 @@ Info at www.cpfdata.com.
 
 Unpack the entire folder structure to “11_CPF_in_syntax”.
 
----
+
 ## About CPF
 
 The Comparative Panel File (CPF) is an open science project to harmonise the world’s major and longest-running household panel surveys from seven countries: Australia (HILDA), Germany (SOEP), Great Britain (BHPS and UKHLS), Korea (KLIPS), Russia (RLMS), Switzerland (SHP), and the United States (PSID). The project aims to support the social science community in the analysis of comparative life course data. The project is designed as an open-science platform for cooperation in the development of the code. The code integrates individual and household panel data from all seven surveys into a harmonised dataset.
