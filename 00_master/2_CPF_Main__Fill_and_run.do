@@ -64,7 +64,7 @@ Before running this code, extract the original survey data files into specific f
 // Note, also other surveys not listed here might require updating with subsequent editions. 
 
 * RLMS
-	global rlms_dataIND "USER_RLMS-HSE_IND_1994_2018_v2_eng_STATA.dta"
+	global rlms_dataIND 	"USER_RLMS-HSE_IND_1994_2018_v2_eng_STATA.dta"
 	global rlms_dataHH 	"USER_RLMS-HSE_HH_1994_2018_eng.dta"
 	
 * UKHLS
@@ -91,7 +91,9 @@ Before running this code, extract the original survey data files into specific f
 **--------------------------------------
 ** 5. Create directories and define global macros  
 **--------------------------------------
-// Additionally, the code downloads the CPF documentation and sutaxes 
+// First, please create the directory "11_CPF_in_syntax\00_master\" within the CPF folder ("${your_dir}).
+// Second, copy there the "_10_Directories_global.do". 
+// Additionally, the code downloads the CPF documentation and sytaxes 
 do "${your_dir}\11_CPF_in_syntax\00_master\_10_Directories_global.do" 		
 
 
