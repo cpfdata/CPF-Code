@@ -86,8 +86,8 @@ capture mkdir 	"${Gdr_out}\\`surv'_cpf\temp"  	//working files
 *
 *** Additional survey-specific folders 
 * PSID
-capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017" 			
-capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017\pack" 
+capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017" 	// update name (year) with new waves		
+capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017\pack" 	// update name (year) with new waves
 capture mkdir  	"${Gdr_in}\\${psid}\data\Family and Ind Files (zip)"
 capture mkdir  	"${Gdr_in}\\${psid}\data\PSIDtools_files"	
 * SHP
