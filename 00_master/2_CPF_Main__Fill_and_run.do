@@ -71,7 +71,7 @@ Before running this code, extract the original survey data files into specific f
 	global ukhls_data 	"UKDA-6614-stata\stata\stata11_se" 
 
 * PSID
-	global psid_ind_er 	"${psid_in}\pack\IND2017ER.txt" 
+	global psid_ind_er_dir	"pack\IND2017ER.txt" 	// PSID "Cross-year Individual 1968-XXXX" file
 
 
 **==============================================================================
