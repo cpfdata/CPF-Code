@@ -3071,6 +3071,7 @@ label variable  ER34649      "WHY NONRESPONSE                       17" ;
 label variable  ER34650      "CORE/IMM INDIVIDUAL LONGITUDINAL WT   17" ;        
 label variable  ER34651      "CORE/IMM INDIVIDUAL CROSS-SECTION WT  17" ;        
 
+#delimit cr
 
 *############################
 *#							#
