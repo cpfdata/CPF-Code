@@ -71,7 +71,7 @@ Before running this code, extract the original survey data files into specific f
 	global ukhls_data 	"UKDA-6614-stata\stata\stata11_se" 
 
 * PSID
-	global psid_ind_er_dir	"pack\IND2017ER.txt" 	// PSID "Cross-year Individual 1968-XXXX" file
+	global psid_ind_er_name	"IND2017ER.txt" 	// PSID "Cross-year Individual 1968-XXXX" file
 
 
 **==============================================================================
@@ -91,8 +91,7 @@ Before running this code, extract the original survey data files into specific f
 **--------------------------------------
 ** 5. Create directories and define global macros  
 **--------------------------------------
-// First, please create the directory "11_CPF_in_syntax\00_master\" within the CPF folder ("${your_dir}).
-// Second, copy there the "_10_Directories_global.do". 
+// Directory "11_CPF_in_syntax\00_master\" was created in syntax 1_Folder_setup.do. Copy there the "_10_Directories_global.do". 
 // Additionally, the code downloads the CPF documentation and sytaxes 
 do "${your_dir}\11_CPF_in_syntax\00_master\_10_Directories_global.do" 		
 
