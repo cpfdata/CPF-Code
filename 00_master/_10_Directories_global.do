@@ -84,7 +84,7 @@ global psid_downl   "${Gdr_in}\\${psid}\data\Family and Ind Files (zip)"
 global psidtools_in	"${Gdr_in}\\${psid}\data\PSIDtools_files"
 global psid_org "${psid_in}\psid_crossy_ind.dta"
 global psid_syntax "${Grd_syntax}\\${psid}\"		//PSID syntax
-global psid_ind_er "${psid_in}\\${psid_ind_er_dir}" 	// PSID "Cross-year Individual 1968-XXXX" file
+global psid_ind_er "${psid_in}\pack\${psid_ind_er_name}" 	// PSID "Cross-year Individual 1968-XXXX" file
 
 * RLMS
 global rlms_in "${Gdr_in}\\${rlms}\data" 		 
