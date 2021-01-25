@@ -386,10 +386,10 @@ recode e11104 (-2=-3) (2=0), gen(work_d)
 clonevar isco88_4 = e11105
 recode isco88_4 (0 -2=.)  
 
-lab copy e11105 isco88_4
-lab def isco88_4 -1 "[-1] MV general"					///
+capture lab copy e11105 isco88_4
+capture lab def isco88_4 -1 "[-1] MV general"					///
 				-3 "[-3] Does not apply"	 , modify
-lab val isco88_4 isco88_4
+capture lab val isco88_4 isco88_4
 
 *** Recode isco88 into 08 (4 digits) 
 iscogen isco08_4= isco08(isco88_4) ,  from(isco88)
