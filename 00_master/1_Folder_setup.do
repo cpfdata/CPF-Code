@@ -13,8 +13,9 @@ B. Run the rest of the code unchanged
 	- Additional settings (#5)
 C. Additionally, you can:
 	- Download CPF documentation (#6)
-D. Then, you can copy the original input datafiles to specific folders (#7). 
+D. Copy the original input datafiles to specific folders (#7). 
    You must do it manually according to the instructions in the Manual
+E. Remember to copy all CPF-do-files to "11_CPF_in_syntax"
 */
 
 **------------------------------------------------------------------------------
