@@ -90,7 +90,12 @@ recode ivfio (1=1) (2 3=2), gen(respstat)
 sort pid wave
 
 * age
-recode age_dv (-9=-1), gen(age)
+//recode age_dv (-9=-1), gen(age)
+
+capture gen age=age_dv
+replace age=age_dv 
+replace age=-1 if age_dv==-9  
+
 	lab var age "Age" 
 
 * Birth year
