@@ -6,8 +6,8 @@
 **|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
 **|=========================================================================|
 /* INSTRUCTION:
-A. Insert your directory in #1 - this is all you have to do to run the code in the default settings 
-B. Run the rest of the code unchanged (ctrl+A -> ctrl+D)  
+A. Insert your directory in #1 
+B. Run the rest of the code unchanged  
 	- Codes #2-#3 create the folder structure
 	- Install Stata ados required for the CPF syntax (#4)
 	- Additional settings (#5)
@@ -132,8 +132,8 @@ set more off
 
 // Copy the latest files from the CPF online platform 
 
-copy "https://github.com/cpfdata/Documentation/blob/main/CPF_Manual%20v1.0.pdf" "${your_dir}\\${Fdocs}\CPF_Manual_v1.1.pdf"
-copy "https://github.com/cpfdata/documentation/blob/main/CPF_Codebook%20v1.0.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.1.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Manual%20v1.1.pdf" "${your_dir}\\${Fdocs}\CPF_Manual_v1.1.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook%20v1.1.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.1.pdf"
 
 
 **------------------------------------------------------------------------------
