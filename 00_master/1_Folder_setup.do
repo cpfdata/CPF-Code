@@ -15,7 +15,7 @@ C. Additionally, you can:
 	- Download CPF documentation (#6)
 D. Copy the original input datafiles to specific folders (#7). 
    You must do it manually according to the instructions in the Manual
-E. Remember to copy all CPF-do-files to "11_CPF_in_syntax". Or simply re-name downloaded "CPF-Code-main" into "11_CPF_in_syntax".
+E. Remember to copy all CPF-do-files to "11_CPF_in_syntax". Or simply re-name downloaded "CPF-Code-main" as "11_CPF_in_syntax".
 */
 
 **------------------------------------------------------------------------------
