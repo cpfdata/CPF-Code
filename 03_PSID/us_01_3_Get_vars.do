@@ -29,7 +29,7 @@
 - add name to global macro for further use (merging)
 */
 
-// program drop combvars
+capture program drop combvars
 
 program define combvars
 	syntax namelist, list(string)
