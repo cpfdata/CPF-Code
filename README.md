@@ -20,3 +20,11 @@ GitHub: www.github.com/cpfdata
 OSF: www.osf.io/h3yxq
 
 CPF is managed by Konrad Turek and Matthijs Kalmijn at the Netherlands Interdisciplinary Demographic Institute (NIDI-KNAW) and Thomas Leopold at the University of Cologne. The CPF's code and online platform were designed and developed by Konrad Turek.
+
+## How to start
+1. Read the Manual. 
+2. Copy/unpack the entire folder structure of the CPF-do-files (downloaded from the Github/OSF/www) to "11_CPF_in_syntax". Or simply re-name "CPF-Code-main" to "11_CPF_in_syntax".
+3. Run "1_Folder_setup.do" according to instruction in the do-file. 
+4. Copy the original input datafiles (e.g. from SOEP) to specific folders (e.g. "C:\CPF\02_Country_Data_Origin\06_SOEP\data"). 
+5. Go to "2_CPF_Main__Fill_and_run.do" and follow instructions regarding the worfklows. 
+
