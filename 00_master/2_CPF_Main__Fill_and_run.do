@@ -7,12 +7,12 @@
 **|=========================================================================|
 
 /* INSTRUCTIONS:
-Before running this code, extract the original survey data files into specific folders 
+Before running this code, extract the original survey data files into specific folders "Data"
 (follow instructions in the Manual). 
 1. Fill-in the part (A) to setup data characteristics (select surveys, specify waves and files) 
    - see Workflow A, B and C in Manual
    - for Workflow A (no modifications, all surveys), do not change anything 
-2. Run the do-files in part (B) together with part (A) [Ctrl+A -> Crtl+D]
+2. Run the do-files in part (B) together with part (A) 
 3. In case of problems or new variables added - go to the lower-level codes
    (see Workflow D in Manual)
 */
