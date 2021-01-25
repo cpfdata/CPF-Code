@@ -50,12 +50,13 @@ Before running this code, extract the original survey data files into specific f
 ** 3. Insert number of waves for selected surveys
 **------------------------------------------------------------------------------
 // This is required for some surveys due to names of files
+// Inster the version that you have and want to harmonize (not necessairly the latest release)
 
 	global hilda_w 	"18"		// version of HILDA, number of waves
 	global klips_w 	"21"		// number of waves  
 	global shp_w 	"20"		// number of waves  
 	global soep_w 	"35"		// version and number of waves  
-	global ukhls_w	"9"			// version, number of UKHLS waves (without BHPS)
+	global ukhls_w	"9"		// version, number of UKHLS waves (without BHPS)
 
 **------------------------------------------------------------------------------
 ** 4. Insert names of files of directories for selected surveys
