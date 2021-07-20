@@ -37,7 +37,7 @@ Before running this code, extract the original survey data files into specific f
 **------------------------------------------------------------------------------
 // Inster the main directory for storing original datasets and CPF working files 
 
-	global your_dir "C:\KT_CPF_07.21\"  // <--insert your directory 
+	global your_dir "C:\CPF\"  // <--insert your directory 
 
 **------------------------------------------------------------------------------
 ** 2. Define surveys to be included 
