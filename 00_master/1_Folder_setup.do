@@ -1,9 +1,9 @@
 *
 **|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
+**|	    ####	CPF	ver 1.3		####										|
 **|		>>>	Folder setup for extracting original data 		 						
 **|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
+**|		Konrad Turek 	| 	2021	|	turek@nidi.nl						|			
 **|=========================================================================|
 /* INSTRUCTION:
 A. Insert your directory in #1 
@@ -87,8 +87,8 @@ capture mkdir 	"${Gdr_out}\\`surv'_cpf\temp"  	//working files
 *
 *** Additional survey-specific folders 
 * PSID
-capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017" 	// update name (year) with new waves		
-capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017\pack" 	// update name (year) with new waves
+capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2019" 	// update name (year) with new waves		
+capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2019\pack" 	// update name (year) with new waves
 capture mkdir  	"${Gdr_in}\\${psid}\data\Family and Ind Files (zip)"
 capture mkdir  	"${Gdr_in}\\${psid}\data\PSIDtools_files"	
 * SHP
