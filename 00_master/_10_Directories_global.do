@@ -1,9 +1,9 @@
 *
 **|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
+**|	    ####	CPF	ver 1.3		####										|
 **|		>>>	Create directories for all syntaxes		 						|
 **|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
+**|		Konrad Turek 	| 	2021	|	turek@nidi.nl						|			
 **|=========================================================================|
 * 
 /* INSTRUCTION:
@@ -76,16 +76,17 @@
 global hilda_in "${Gdr_in}\\${hilda}\Data" 			
 
 * KLPIS
-global klips_in "${Gdr_in}\\${klips}\data\Stata 1-${klips_w}" 	
+global klips_in "${Gdr_in}\\${klips}\Data" 	
 
 * PSID
-global psid_in 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2017" 		 
+global psid_in 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-${psid_w}" 	// update with new waves  	 
 global psid_downl   "${Gdr_in}\\${psid}\data\Family and Ind Files (zip)"
 global psidtools_in	"${Gdr_in}\\${psid}\data\PSIDtools_files"
 global psid_org "${psid_in}\psid_crossy_ind.dta"
-global psid_syntax "${Grd_syntax}\\${psid}\"		//PSID syntax
+global psid_syntax "${Grd_syntax}\\${psid}\"				//PSID syntax
+global psid_ind_er_name	"IND${psid_w}ER.txt" 	// PSID "Cross-year Individual 1968-XXXX" file
 global psid_ind_er "${psid_in}\pack\\${psid_ind_er_name}" 	// PSID "Cross-year Individual 1968-XXXX" file
-
+	
 * RLMS
 global rlms_in "${Gdr_in}\\${rlms}\data" 		 
 
@@ -112,6 +113,11 @@ global shp_out_work_cnef "${shp_out_work}\CNEF"
 global CPF_out "${Gdr_out}\\10_CPF" 	
 
 
+**--------------------------------------
+** B3. Create additional folders for input data 
+**--------------------------------------
 
-
+*** HILDA
+capture mkdir "${Gdr_in}\\${hilda}\data\STATA ${hilda_w}0c (Combined)"
+capture mkdir "${Gdr_in}\\${hilda}\data\STATA ${hilda_w}0c (Other)"
 
