@@ -1,9 +1,9 @@
 *
 **|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
+**|	    ####	CPF	ver 1.3		####										|
 **|		>>>	Fill in and run							 						|
 **|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
+**|		Konrad Turek 	| 	2021	|	turek@nidi.nl						|			
 **|=========================================================================|
 
 /* INSTRUCTIONS:
@@ -26,7 +26,7 @@ Before running this code, extract the original survey data files into specific f
 *#							#
 *############################
 ** Define CPF version
-	global cpfv "1.0"
+	global cpfv "1.3"
 	
 **==============================================================================
 **============= FILL-IN THIS PART ==============================================
@@ -37,14 +37,14 @@ Before running this code, extract the original survey data files into specific f
 **------------------------------------------------------------------------------
 // Inster the main directory for storing original datasets and CPF working files 
 
-	global your_dir "C:\CPF\"  // <--insert your directory 
+	global your_dir "C:\KT_CPF_07.21\"  // <--insert your directory 
 
 **------------------------------------------------------------------------------
 ** 2. Define surveys to be included 
 **------------------------------------------------------------------------------
 // keep all or choose selected surveys from: hilda klips psid rlms shp soep ukhls 
 
-	global surveys "  hilda klips psid rlms shp soep ukhls  " 
+	global surveys "    hilda klips psid rlms shp soep ukhls   " 
 
 **------------------------------------------------------------------------------
 ** 3. Insert number of waves for selected surveys
@@ -52,11 +52,12 @@ Before running this code, extract the original survey data files into specific f
 // This is required for some surveys due to names of files
 // Inster the version that you have and want to harmonize (not necessairly the latest release)
 
-	global hilda_w 	"18"		// version of HILDA, number of waves
-	global klips_w 	"21"		// number of waves  
-	global shp_w 	"20"		// number of waves  
+	global hilda_w 	"19"		// version of HILDA, number of waves
+	global klips_w 	"22"		// number of waves  
+	global psid_w	"2017"		// latest year of PSID
+	global shp_w 	"21"		// number of waves  
 	global soep_w 	"35"		// version and number of waves  
-	global ukhls_w	"9"		// version, number of UKHLS waves (without BHPS)
+	global ukhls_w	"10"			// version, number of UKHLS waves (without BHPS)
 
 **------------------------------------------------------------------------------
 ** 4. Insert names of files of directories for selected surveys
@@ -65,14 +66,13 @@ Before running this code, extract the original survey data files into specific f
 // Note, also other surveys not listed here might require updating with subsequent editions. 
 
 * RLMS
-	global rlms_dataIND 	"USER_RLMS-HSE_IND_1994_2018_v2_eng_STATA.dta"
-	global rlms_dataHH 	"USER_RLMS-HSE_HH_1994_2018_eng.dta"
+	global rlms_dataIND 	"USER_RLMS-HSE_IND_1994_2019_v2_eng.dta"
+	global rlms_dataHH 		"USER_RLMS-HSE_HH_1994_2019_v3_eng.dta"
 	
 * UKHLS
-	global ukhls_data 	"UKDA-6614-stata\stata\stata11_se" 
+	global ukhls_data 	"UKDA-6614-stata\stata\stata13_se" // folder that contains Stata raw data 
 
-* PSID
-	global psid_ind_er_name	"IND2017ER.txt" 	// PSID "Cross-year Individual 1968-XXXX" file
+
 
 
 **==============================================================================
