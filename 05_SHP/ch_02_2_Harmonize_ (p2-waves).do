@@ -123,7 +123,7 @@ rename birthy yborn
 * educat isced
 
 
-recode isced (-6 0 10 20=1) (31/33 41=2) (51/60=3) (-2=-2) (-1 -3=-1), gen(edu3)
+recode isced (-6 0 10 20=1) (31/33 41=2) (51/60=3) (-2=-2) (-1 -3 16=-1), gen(edu3)
 	lab def edu3  1 "Low" 2 "Medium" 3 "High" // 2 incl Vocational
 	lab val edu3 edu3
 	lab var edu3 "Education: 3 levels"
@@ -140,7 +140,7 @@ replace D11108=-3 if D11108==. & status$$==2 /* Survey NR */
 
 
 *** edu4
-recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51/60=4) (-2=-2) (-1 -3=-1), gen(edu4)
+recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51/60=4) (-2=-2) (-1 -3 16=-1), gen(edu4)
 
 	lab def edu4  1 "[0-1] Primary" 2 "[2] Secondary lower" ///
 				  3 "[3-4] Secondary upper" 4 "[5-8] Tertiary" 
@@ -148,7 +148,7 @@ recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51/60=4) (-2=-2) (-1 -3=-1), gen(e
 	lab var edu4 "Education: 4 levels"
 	
 *** edu5
-recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51=4) (52 60=5) (-2=-2) (-1 -3=-1), gen(edu5)
+recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51=4) (52 60=5) (-2=-2) (-1 -3 16=-1), gen(edu5)
 
 	lab def edu5  1 "[0-1] Primary" 2 "[2] Secondary lower" ///
 				  3 "[3-4] Secondary upper" ///
@@ -159,7 +159,7 @@ recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51=4) (52 60=5) (-2=-2) (-1 -3=-1)
 	lab var edu5 "Education: 5 levels"
 
 	* Alternative version:
-recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51 52=4) (60=5) (-2=-2) (-1 -3=-1), gen(edu5v2)
+recode isced (-6 0 10=1) (20=2) (31/33 41=3) (51 52=4) (60=5) (-2=-2) (-1 -3 16=-1), gen(edu5v2)
 
 	lab def edu5v2  1 "[0-1] Primary" 2 "[2] Secondary lower" ///
 					3 "[3-4] Secondary upper" ///
