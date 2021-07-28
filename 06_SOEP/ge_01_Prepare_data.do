@@ -120,7 +120,7 @@ keep	pid hid syear	///
 d11104 		d11109		/// 	 to chck
 x11103 x11105			///
 d11106 d11107			///
-e11101 e11102 e11103 e11104 e11105	///
+e11101 e11102 e11103 e11104 e11105_v*	///
 e11106 e11107			///
 i11101 i11102 i11110	///
 w11101 w11102 w11103 w11105 w11107 w11108 w11109 w11110 w11111	/// weights
@@ -158,7 +158,7 @@ plb0057_h plb0586				/// self-empl
 plb0058  plb0064_v1 plb0064_v2 	/// work type 
 plb0284_h						/// Type Of Job Change (harmonized)
 plb0570							/// no of employees (self-empl)
-plh0353   plh0354_h 			/// pay by hour (not precise) 
+plh0353_v*   plh0354_h 			/// pay by hour (not precise) 
 plb0211							/// flexible arrangements
 plh0042							/// job security
 /// UNEMPL 	
