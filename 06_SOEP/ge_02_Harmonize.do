@@ -382,17 +382,28 @@ recode e11104 (-2=-3) (2=0), gen(work_d)
 
 // ssc install iscogen
 
-*** isco88_4
-clonevar isco88_4 = e11105
-recode isco88_4 (0 -2=.)  
+clonevar isco88_4 = e11105_v1 // if wavey<=2017
+clonevar isco08_4 = e11105_v2 // if wavey>=2018
+recode isco88_4 (-2 -8=-3) (0=-1) 
+recode isco08_4 (-2 -8=-3) (0=-1) 
 
-capture lab copy e11105 isco88_4
+capture lab copy e11105_v1 isco88_4
 capture lab def isco88_4 -1 "[-1] MV general"					///
 				-3 "[-3] Does not apply"	 , modify
 capture lab val isco88_4 isco88_4
 
+capture lab copy e11105_v2 isco08_4
+capture lab def isco08_4 -1 "[-1] MV general"					///
+				-3 "[-3] Does not apply"	 , modify
+capture lab val isco08_4 isco08_4
+
 *** Recode isco88 into 08 (4 digits) 
-iscogen isco08_4= isco08(isco88_4) ,  from(isco88)
+iscogen isco08_4a= isco08(isco88_4) ,  from(isco88)
+iscogen isco88_4a= isco88(isco08_4) ,  from(isco08)
+replace isco08_4=isco08_4a if wavey<=2017
+replace isco88_4=isco88_4a if wavey>=2018
+drop isco08_4a isco88_4a
+
 
 
 *** isco_1 isco_2
@@ -468,11 +479,8 @@ lab def isco_2															///
 		-3 "[-3] Does not apply"	  
 		  
 *		  
-generate isco_1 = cond(e11105 > 100, int(e11105/1000), e11105)
-recode isco_1 (0 -2=-3) (100=0)
-
-generate isco_2 = cond(e11105 > 100, int(e11105/100), e11105)
-recode isco_2 (0 -2=-3) (100=0)
+generate isco_1 = cond(isco08_4 > 100, int(isco08_4/1000), isco08_4)
+generate isco_2 = cond(isco08_4 > 100, int(isco08_4/100), isco08_4)
  
 	lab val isco_1 isco_1
 	lab var isco_1 "Occupation: ISCO-1digit"
