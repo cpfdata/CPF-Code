@@ -26,7 +26,7 @@ Before running this code, extract the original survey data files into specific f
 *#							#
 *############################
 ** Define CPF version
-	global cpfv "1.4 beta"
+	global cpfv "1.4"
 	
 **==============================================================================
 **============= FILL-IN THIS PART ==============================================
