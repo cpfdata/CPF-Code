@@ -26,7 +26,7 @@ Before running this code, extract the original survey data files into specific f
 *#							#
 *############################
 ** Define CPF version
-	global cpfv "1.35"
+	global cpfv "1.4 beta"
 	
 **==============================================================================
 **============= FILL-IN THIS PART ==============================================
@@ -54,7 +54,7 @@ Before running this code, extract the original survey data files into specific f
 
 	global hilda_w 	"19"		// version of HILDA, number of waves
 	global klips_w 	"22"		// number of waves  
-	global psid_w	"2017"		// latest year of PSID
+	global psid_w	"2019"		// latest year of PSID
 	global shp_w 	"21"		// number of waves  
 	global soep_w 	"36"		// version and number of waves  
 	global ukhls_w	"10"			// version, number of UKHLS waves (without BHPS)
