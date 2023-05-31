@@ -1,13 +1,12 @@
 *
-**|=========================================================================|
-**|	    ####	CPF 		####											|
-**|		>>>	UK							 									|
-**|		>>	Select vars , create new vars 				 					|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=============================================|
+**|	    ####	CPF v1.5	####				|
+**|		>>>	UK							 		|
+**|		>>	Select vars , create new vars 		|
+**|---------------------------------------------|
+**|		Konrad Turek 	| 	2023				|
+**|=============================================|
 * https://www.understandingsociety.ac.uk/documentation/mainstage/dataset-documentation
-
 
 **--------------------------------------
 ** Open merged dataset
@@ -23,16 +22,12 @@ qui tab wave
 display _newline(1) "   Total ->> Vars: " c(k) "; N: " _N "; Waves: " r(r)  
 
 
-
-
 **--------------------------------------
-** Common lables 
+** Common labels 
 **-------------------------------------- 
 lab def yesno 0 "[0] No" 1 "[1] Yes" ///
 	-1 "-1 MV general" -2 "-2 Item non-response" ///
 	-3 "-3 Does not apply" -8 "-8 Question not asked in survey", replace
-
-
 	
 
 *################################
@@ -93,7 +88,7 @@ sort pid wave
 //recode age_dv (-9=-1), gen(age)
 
 capture gen age=age_dv
-replace age=age_dv 
+replace age=age_dv if wave!=1 //exception made for wave 1 because birthy and age_dv variable not available
 replace age=-1 if age_dv==-9  
 
 	lab var age "Age" 
@@ -103,8 +98,7 @@ recode birthy (-9/-1=-1), gen(yborn)
 replace yborn=doby_dv if (birthy==. | birthy<0) & doby_dv!=.
 	lab var yborn "Birth year" 
 
-	
-	
+		
 	* Fill yborn if missing	(cross-filling)
 		replace yborn=intyear-age if (yborn<0|yborn==.) & age>0 & age<.
 		
@@ -136,13 +130,9 @@ replace yborn=doby_dv if (birthy==. | birthy<0) & doby_dv!=.
 		replace age=temp_age_yborn if (temp_age_err>1 | temp_age_err<-1) & temp_age_err!=.
 		
 
-
 		drop temp*
 	
-	
- 
 
-	
 /***** Identify resp with repeated age - however, it's possible in the survey design 
 
 	bysort pid (wave): gen temp_mark1a=1 if age>=age[_n+1] & age[_n+1]<.
@@ -162,12 +152,7 @@ replace yborn=doby_dv if (birthy==. | birthy<0) & doby_dv!=.
 	drop temp*
 */
 
-
-
 	
-
-
-		
 		
 * Gender
 recode sex (-9/-1=-1) (1=0) (2=1), gen(female)
@@ -371,7 +356,7 @@ recode mlstat 	(1=2)(2 3=1)(4 8=5)(6 9=3)(5 7=4) ///
 	
 * marstat5
 recode marstat_dv (1 2=1)   (6=2) (3=3) (4=4) (5=5) (0=-3) (-9=-1), gen(marstat5a)
-recode mastat (1 2=1)   (6=2) (3=3) (4=4) (5=5) (0=-3) (-9 -2 -1 7/10=-1), gen(marstat5b)
+recode mastat (1 2 7=1)   (6=2) (3 10=3) (4 8=4) (5 9=5) (0=-3) (-9 -2 -1 7/10=-1), gen(marstat5b)
 gen marstat5=marstat5b
 replace marstat5=marstat5a if wave>=19
 	drop marstat5a marstat5b
@@ -417,7 +402,7 @@ replace marstat5=marstat5a if wave>=19
 *** Partner
 * livpart
 recode marstat_dv (1 2=1)  (3/6=0)  (0=-3) (-9=-1), gen(livpartA)
-recode mastat (1 2=1)  (3/6=0)  (0=-3) (-9 -2 -1 7/10=-1), gen(livpartB)
+recode mastat (1 2 7=1)  (3/6=0) (8/10=0) (0=-3) (-9 -2 -1=-1), gen(livpartB)
 gen livpart=livpartB
 replace livpart=livpartA if wave>=19
 	drop livpartA livpartB
@@ -433,7 +418,7 @@ replace livpart=livpartA if wave>=19
 * haspart
 * NOTE: not reliable, especially for waves 1-20
 recode marstat_dv (1 2=1)  (3/6=0)  (0=-3) (-9=-1), gen(haspartA)
-recode mastat (1 2=1)  (3/6=0)  (0=-3) (-9 -2 -1 7/10=-1), gen(haspartB)
+recode mastat (1 2 7=1)  (3/6=0) (8/10=0) (0=-3) (-9 -2 -1 7/10=-1), gen(haspartB)
 gen haspart=haspartB
 replace haspart=haspartA if wave>=19
 	drop haspartA haspartB
@@ -589,23 +574,31 @@ recode nkids_dv (-9=-1), gen(kidsn_hh15) // the total number of children aged 15
 // 		lprnt	// Ever had/fathered children   
 // 		ladopt	// Ever had step/adopted child(ren)
 	
+	*UKHLS
 	recode nnatch (1/max=1), gen(kids_any)
 	replace kids_any=1 if lprnt==1
 	replace kids_any=1 if ladopt==1
+	
+	*BHPS
+		replace kids_any=1 if lprnt_bh==1
+		replace kids_any=0 if lprnt_bh==2
+		replace kids_any=-1 if lprnt_bh==-9
+		replace kids_any=-1 if (lprnt_bh==. & wave<19)
+
  	
 	* Forward filling 1
 	sort pid wave
 	bysort pid (wave): replace  kids_any=1 if 				///
-							(kids_any==. | kids_any<=0)	&	/// MV or 0
+							(kids_any==. | kids_any<=0)	&	/// MV or <0
 							kids_any[_n-1]==1   			//  has values 1
 							
 	* Forward filling 0
 	sort pid wave
 	bysort pid (wave): replace  kids_any=0 if 				///
-							(kids_any==. | kids_any<0)	&	/// MV
-							kids_any[_n-1]==0   			//  has values	0						
+							(kids_any==. | kids_any<0)	&	/// MV or <0
+							kids_any[_n-1]==0   			//  has values 0						
 							
-	recode 	kids_any	(-7=-1)			
+	recode 	kids_any	(-7 =-1)			
 							 
 	
 	lab var kids_any  "Has children"
@@ -655,7 +648,7 @@ replace work_d=1 if jbhas==2 & ((wave<19 & jboff==1 & jboffy_bh!=1) | (wave>=19 
 
 * emplst5
 
-recode jbstat 	(1 2 5 10 11=1) (3=2) (4 8=3) (6=4) (7 9=5) ///
+recode jbstat 	(1 2 5 10 11 12 13=1) (3=2) (4 8=3) (6=4) (7 9=5) ///
 				(-9 -2 -1=-1) (-8 -7=-3) , gen(emplst5)
 replace emplst5=1 if emplst5==97 & (jbhas==1 | jboff==1)
 replace emplst5=2 if emplst5==97 & jboff==3
@@ -674,7 +667,7 @@ replace emplst5=2 if emplst5<0 & julk4wk==1
 	lab var emplst5 "Employment status [5]"
 
 * emplst6
-recode jbstat 	(1 2 10 11=1) (3=2) (4 8=3) (6=4) (7 9=5) (5=6) ///
+recode jbstat 	(1 2 10 11=1) (3=2) (4 8=3) (6=4) (7 9=5) (5 12 13=6) ///
 				(  -9 -2 -1  =-1) (-8 -7=-3) , gen(emplst6)
 replace emplst6=1 if emplst6==97 & jbhas==1 
 replace emplst6=6 if emplst6==97 & jboff==1
@@ -801,9 +794,12 @@ replace isco_2=0 if isco88_3==10 | isco88_3==11
 **--------------------------------------    
 ** Industry 
 **--------------------------------------
-// jbsic - to w12 SIC 1980 (3 digit) 
-// jbsic92 - w13-w19 SIC 1992 (3 digit) 
+// jbsic - to w11 SIC 1980 (3 digit) 
+// jbsic92 - w12-w15 SIC 1992 (3 digit) 
 // jbsic07_cc - w19+ SIC 2007 (2 digit) 
+// Also avaliable: mrjsic, mrjsic9, jlsic92 
+// Also avaliable: jbiindb_dv w19+ CNEF --> differnt categorisation 
+
 
 *** Recode  jbsic & jbsic92 into 2-digit categories
 * Any case with 3 digits is missing a leading zero. This means that "100" should be read as 0100 or 01.00 .
@@ -813,8 +809,8 @@ replace isco_2=0 if isco88_3==10 | isco88_3==11
 
 local n=1
 foreach var in jbsic jbsic92   {
-local w1 = cond("`var'" =="jbsic", 1, 13)
-local w2 = cond("`var'" =="jbsic", 13, 19)
+local w1 = cond("`var'" =="jbsic", 1, 12)
+local w2 = cond("`var'" =="jbsic", 12, 19)
 	generate temp_ind`n'_1 = cond(`var' >=1000, int(`var'/100), .) if wave>=`w1' & wave<`w2'
 	generate temp_ind`n'_2 = cond(`var' >=100 & `var' <1000, int(`var'/100), .) if wave>=`w1' & wave<`w2'
 		gen indust2d`n'=.
@@ -981,7 +977,7 @@ recode  indust2d1 (1/10 11/14 23 15/18 20/22 24/49 50/59 =1) ///
 				  (90/93 95 96 =3)	///
 				   , gen(indust1a)
 				   
-recode  indust2d2 (1/45=1)(50/74 90/96=2)(75/86 99=3) ///
+recode  indust2d2 (1/49=1)(50/74 90/96=2)(75/86 89 99=3) ///
 				   , gen(indust1b)				   
 				   
 recode  indust2d3 (1/43=1)(45/82 87 90 92/98=2)(84/86 88 91 99=3) ///
@@ -1009,7 +1005,7 @@ recode  indust2d1 (1/10=1)(11/14 23=3)(15/18=2)(20/22 24/49=4)  ///
 				   , gen(indust2a)
 				   
 recode  indust2d2 (1/8=1)(10/14=3)(40/41=2)(15/37=4)  ///
-				  (45=5)(50/53=6) (55 58 70/94=9)(60/64=7) ///
+				  (45/48=5)(50/53=6) (55 56 58 70/94=9)(60/64=7) ///
 				  (65/67=8) (95/99=10)	///
 				   , gen(indust2b)
 				   
@@ -1046,8 +1042,8 @@ recode  indust2d1 (1/2=1)(3/9=2)(11/15 23=3)(16/18=5)(20/22 24/49=4) ///
 				  , gen(indust3a)
 
 recode  indust2d2 (1 2=1)(5 8=2)(10/14=3)(15/37=4)(40/41=5) ///
-				  (45=6)(50/53=7)(55 58=8)(60/64=9)(65/67=10)	///
-				  (70/74=11)(75/77=12)(90/94=15)(80/84=13)(85/86=14)	///
+				  (45/48=6)(50/53=7)(55 56 58=8)(60/64=9)(65/67=10)	///
+				  (70/74=11)(75/77=12)(90/94=15)(80/84=13)(85/89=14)	///
 				  (95 96=16)(99=17) ///
 				  , gen(indust3b)
 
@@ -1316,7 +1312,7 @@ replace nempl=2 if entrep2==1 & temp_nempl==2
 	
 *################################
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 
@@ -1847,10 +1843,370 @@ recode maedqf (1 2=1)(3=2)(4=3)(5=4) (-11 -8 -7=-3)(-9 97=-1)(-2=-2), gen(medu4)
 	}
 	}
 
+*################################
+*#								#
+*#	    Ethnicity 				#
+*#								#
+*################################	
+//self-reported ethnicity, mixed race UK moved to separate category
+// uses racel_dv: a derived variable incorporating all waves, codings, modes and bhps
+
+label define ethnicity ///
+1 "Black" ///
+2 "White" ///
+3 "Asian" ///
+4 "Mixed (UK only)" ///
+5 "American Indian (US only)" ///
+6 "Other" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+gen ethn=.
+replace ethn=1 if inrange(racel_dv, 14, 16) //Black
+replace ethn=2 if inrange(racel_dv, 1, 4) //White
+replace ethn=3 if inrange(racel_dv, 9, 13) //Asian
+replace ethn=4 if inrange(racel_dv, 5, 8) //Mixed (UK only)
+replace ethn=6 if (racel_dv==17 | racel_dv==97) //Other
+replace ethn=-3 if racel_dv==-8 //Inapplicable
+replace ethn=-2 if racel_dv==-2 //Non-response
+replace ethn=-1 if (racel_dv==-1 | racel_dv==-7 | racel_dv==-9) //DK, missing non-specified
+
+lab val ethn ethnicity
+
+*fill MV
+
+*first fill for missing in UKHLS using "racel" -  especially relevant to specify missing
+replace ethn=1 if (ethn==. | ethn<0) & ///
+	inrange(racel, 14, 16) //Black
+replace ethn=2 if (ethn==. | ethn<0) & ///
+	inrange(racel, 1, 4) // White
+replace ethn=3 if (ethn==. | ethn<0) & ///
+	inrange(racel, 9, 13) //Asian
+replace ethn=4 if (ethn==. | ethn<0) & ///
+	inrange(racel, 5, 8) //Mixed
+replace ethn=6 if (ethn==. | ethn<0) & ///
+	(racel==17 | racel==97) //Other
+replace ethn=-3 if (ethn==. | ethn<0) & ///
+	racel==-8 //Inapplicable
+replace ethn=-2 if (ethn==. | ethn<0) & ///
+	racel==-2 //Non-response
+replace ethn=-1 if (ethn==. | ethn<0) & ///
+	(racel==-1 | racel==-7 | racel==-9) //DK, missing non-specified
+
+*fill missing
+	bysort pid: egen temp_ethn=mode(ethn), maxmode // identify most common response
+	replace ethn=temp_ethn if ethn==. & temp_ethn>=0 & temp_ethn<.
+	replace ethn=temp_ethn if ethn!=temp_ethn // correct a few inconsistent cases
+
+	
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	
+	
+**-------------------------
+**   Migration Background
+**-------------------------	
+
+*** migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "Native-born" ///
+1 "Foreign-born" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+//Primarily uses bornuk_dv: a derived variable. Only for missing values filled with item ukborn for new respondents in UKHLS.
+
+recode bornuk_dv (1=0) (2=1) (-9=-1) (else=.), gen(migr) // based on BHPS
+
+*fill missing from UKHLS
+replace migr=0 if inrange(ukborn, 1, 4) & (bornuk_dv==. | bornuk_dv==-9) // fill missing from UKHLS
+replace migr=1 if ukborn==5 & (bornuk_dv==. | bornuk_dv==-9) //Fill missing from UKHLS
+
+*specify missing
+replace migr=-1 if migr==. & (ukborn==-9 | ukborn==-2 | ukborn==-1) //missing unspecified/DK/Refusal
+replace migr=-3 if migr==. & ukborn==-8 //inapplicable
+
+//fill missing based on specific country of birth (plbornc)
+replace migr=1 if inrange(plbornc, 5, 97) & (migr==. | migr<0)
+
+*fill MV
+mvdecode migr, mv(-9=.a \ -8=.b \ -3=.c \ -1=.d) //temporarily decode missing value specifications
+
+	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
+	replace migr=temp_migr if (migr==. | migr==.a/.d) & temp_migr>=0 & temp_migr<.
+	replace migr=temp_migr if migr!=temp_migr  // correct inconsistent cases
+	
+mvencode migr, mv(.a=-9 \.b=-8 \.c=-3 \.d=-1) //restore mv
+
+lab val migr migr
+
  
+**--------------------------------------
+**   COB respondent, father and mother
+**--------------------------------------	
+/// NOTE: with addition new waves, check if new countries are added to codebook UKHLS
+
+label define COB ///
+0 "Born in Survey-Country" ///
+1 "Oceania and Antarctica" ///
+2 "North-West Europe" ///
+3 "Southern and Eastern Europe" ///
+4 "North Africa and the Middle East" ///
+5 "South-East Asia" ///
+6 "North-East Asia" ///
+7 "Southern and Central Asia" ///
+8 "Americas" ///
+9 "Sub-Saharan Africa" ///
+10 "Other" ///
  
- 
+foreach var in plbornc pacob macob {
+	gen cob_`var'=.
+		replace cob_`var'=0 if `var'==1 //england
+		replace cob_`var'=0 if `var'==2 //scotland
+		replace cob_`var'=0 if `var'==3 //wales
+		replace cob_`var'=0 if `var'==4 //Northern Ireland
+		replace cob_`var'=2 if `var'==5 //Ireland
+		replace cob_`var'=2 if `var'==6 //France
+		replace cob_`var'=2 if `var'==7 //Germany
+		replace cob_`var'=2 if `var'==8 //Italy
+		replace cob_`var'=3 if `var'==9 //Spain
+		replace cob_`var'=3 if `var'==10 //Poland
+		replace cob_`var'=3 if `var'==11 //Cyprus
+		replace cob_`var'=4 if `var'==12 //Turkey
+		replace cob_`var'=1 if `var'==13 //Australia
+		replace cob_`var'=1 if `var'==14 //New Zealand
+		replace cob_`var'=8 if `var'==15 //Canada
+		replace cob_`var'=8 if `var'==16 //USA
+		replace cob_`var'=6 if `var'==17 //ChinaHK
+		replace cob_`var'=7 if `var'==18 //India
+		replace cob_`var'=7 if `var'==19 //Pakistan
+		replace cob_`var'=7 if `var'==20 //Bangladesh
+		replace cob_`var'=7 if `var'==21 //Sri Lanka
+		replace cob_`var'=9 if `var'==22 //Kenya
+		replace cob_`var'=9 if `var'==23 //Ghana
+		replace cob_`var'=9 if `var'==24 //Nigeria
+		replace cob_`var'=9 if `var'==25 //Uganda
+		replace cob_`var'=9 if `var'==26 //South Africa
+		replace cob_`var'=8 if `var'==27 //Jamaica
+		replace cob_`var'=3 if `var'==28 //Portugal
+		replace cob_`var'=8 if `var'==29 //Brazil
+		replace cob_`var'=10 if `var'==97 //Other
+ }
+
+
+rename cob_plbornc cob_rt // Working variables COB 
+rename cob_pacob cob_ft
+rename cob_macob cob_mt
+
+***COB not specified if respondent uk-born: using migr to fill
+replace cob_rt=0 if migr==0
+//fill if cob missing but foreign-born 
+replace cob_rt=10 if cob_rt==. & migr==1 //foreign but unspecified >> other
+
+//MV
+*** Identify valid COB and fill across waves  
+sort pid wave 
+
+*** Generate valid stage 1 - mode across the waves (values 1-10)
+	// It takes the value of the most common valid answer between 1 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	bysort pid: egen mode_`var'=mode(`var')
+	}
+	
+*** Generate valid stage 2 - first valid answer provided (values 1-9)
+	// It takes the value of the first recorded answer between 1 and 9 (so ignors 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	by pid (wave), sort: gen temp_first_`var'=`var' if ///
+			sum(inrange(`var', 0,9)) == 1 &      ///
+			sum(inrange(`var'[_n - 1],0,9)) == 0 // identify 1st valid answer in range 1-9
+	bysort pid: egen first_`var'=max(temp_first_`var') // copy across waves within pid
+	drop  temp_first_`var'
+	}
+	
+*** Fill the valid COB across waves
+	foreach var in cob_r cob_m cob_f {
+	gen `var' = mode_`var't // stage 1 - based on mode
+	replace `var' = first_`var't if (`var'==. | `var'<0) & inrange(first_`var't, 0,10) // stage 2 - based on the first for MV
+	replace `var' = first_`var't if `var'==10 & inrange(first_`var't, 1,9) // stage 2 - based on the first for 10'other'
+	drop `var't
+	*
+	label values `var' COB
+	}
+
+rename cob_r cob
+
+*specify some missing values
+replace cob=-8 if cob==. & migr==-8
+replace cob=-3 if cob==. & migr==-3
+replace cob=-2 if cob==. & migr==-2
+replace cob=-1 if cob==. & migr==-1
+
+*fill some MV for parents
+replace cob_f=-1 if cob_f==. & (pacob==-1 | pacob==-9 | pacob==-1) // MV general
+replace cob_f=-2 if cob_f==. & pacob==-2 //refusal
+replace cob_m=-1 if cob_m==. & (macob==-1 | macob==-9 | macob==-1) // MV general
+replace cob_m=-2 if cob_m==. & macob==-2 //refusal
+
+**--------------------------------------
+**   Migration Background (parents)
+**--------------------------------------	
+
+//if father/mother foreign-born
+foreach p in f m {
+		gen migr_`p'=cob_`p'
+		replace migr_`p'=1 if inrange(cob_`p', 1, 10)
+}
+
+lab val migr migr_f migr_m migr
+
+**--------------------------------------
+**   Migrant Generation (respondent)
+**--------------------------------------	
+//NOTE: migr_gen - migrant generation of the respondent - is a derived variable (from migr, migr_f and migr_m)
+
+lab def migr_gen ///
+0 "no migration background" ///
+1 "1st generation" ///
+2 "2st generation" ///
+3 "2.5th generation" ///
+4 "incomplete information parents"
+
+gen migr_gen=.
+
+* 0 "No migration background"
+replace migr_gen=0 if migr==0 & (migr_f==0 & migr_m==0) // respondent and both parents native-born
+replace migr_gen=0 if migr==0 & ///
+	 ((migr_f==0 & (migr_m==. | migr_m<0)) | ((migr_f==. | migr_f<0) & migr_m==0)) // respondent native-born, one parent native other unknown
+replace migr_gen=0 if migr==1 & (migr_f==0 & migr_m==0) // respondent foreign-born but both parents native
+
+* 1 "1st generation"
+replace migr_gen=1 if migr==1 & (migr_f==1 & migr_m==1) // respondent and both parents foreign-born
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & (migr_m==. | migr_m<0)) | (migr_m==1 & (migr_f==. | migr_f<0))) // respondent, one parent foreign-born other  unknown
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // respondent and one parent foreign-born, other native born
+
+*2 "2st generation"
+replace migr_gen=2 if migr==0 & (migr_f==1 & migr_m==1) // native-born, both parents foreign born
+replace migr_gen=2 if migr==0 & ///
+	((migr_f==1 & migr_m==.) | (migr_m==1 & migr_f==.)) // native-born, one parent foreign-born other missing
+
+*3 "2.5th generation"
+replace migr_gen=3 if migr==0 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // native-born, one parent foreign-born other native-born	
 	 
+* Incomplete information parents
+replace migr_gen=4 if migr==0 & (migr_f==. |migr_f<0) & (migr_m==. | migr_m<0) // respondent native-born, both parents unknown
+replace migr_gen=4 if migr==1 & ((migr_f==. | migr_f<0) & (migr_m==. | migr_m<0)) // respondent foreign-born, both parents unknown
+replace migr_gen=0 if migr==1 & ///
+	 ((migr_f==0 & (migr_m==.|migr_m<0)) | ((migr_f==.|migr_f<0) & migr_m==0)) // respondent native-born, one parent native other unknown
+
+  
+	label values migr_gen migr_gen
+
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+/* Not indluded in the current version due to too many MV
+
+lab def langchild ///
+0 "Same as country of residence" ///
+1 "Other language" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+//first based on englang (english is first language)
+gen langchild=.
+replace langchild=0 if englang==1 //English
+replace langchild=1 if englang==2
+replace langchild=-2 if englang==-2
+replace langchild=-1 if englang==-1
+replace langchild=-3 if (englang==-8 | englang==-7)
+
+//fill based on kidlang (What language was spoken in your home when you were a child?) >> less specific phrasing
+replace langchild=0 if kidlang==1 & (englang==. | englang<0)
+replace langchild=1 if inrange(kidlang, 2, 97) & (englang==. |englang<0)
+
+lab val langchild langchild
+	
+
+*fill MV
+gen langchild_t=langchild
+	bysort pid: egen temp_lc=mode(langchild), maxmode // identify most common response
+	replace langchild=temp_lc if langchild==. & temp_lc>=0 & temp_lc<.
+	replace langchild=temp_lc if langchild!=temp_lc // correct a few inconsistent cases
+	
+	drop temp_lc langchild_t
+	
+*specify when question not asked and data cannot be filled
+replace langchild=-8 if langchild==. & migr==0 & wavey!=2010 // not asked if uk-born, except in wave 2 UKHLS
+replace langchild=-8 if langchild==. & englang==. & !inlist(wavey, 2009, 2013, 2014, 2018) // years when englang not asked
+replace langchild=-8 if langchild==. & kidlang==. & !inlist(wavey, 2010, 2014, 2016) // years when kidlang not asked
+
+*/
+
+
+*################################
+*#								#
+*#	    Religion			 	#
+*#								#
+*################################
+
+**--------------------------------------  
+** Religiosity
+**--------------------------------------
+//NOTE: because we do not want to assume religious affiliation to be time-constant, missing values are not filled automatically across waves. 
+
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode oprlg (1=1) (2=0) (-2=-2) (-1 -9=-1) (-7=-8), gen(relig)
+
+lab val relig relig
+
+*specify if question not asked
+replace relig=-8 if relig==. & inlist(wavey, 1992, 1993, 1994, 1995, 1996, 1998, 2000, 2002, 2006, 2007) // not available for some BHPS waves (2-6; 8; 10; 12; 16-17)
+
+**--------------------------------------  
+** Attendance
+**--------------------------------------
+lab def attendance ///
+1 "Never or practically never" ///
+2 "Less than once a month" ///
+3 "At least once a month" ///
+4 "Once a week or more" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode oprlg2 (1=4) (2=3) (3=2) (4/5=1) (-2=-2) (-1 -9=-1) (-7=-8) , gen(relig_att)
+
+lab val relig_att attendance
+
+*specify if question not asked
+replace relig_att=-8 if relig_att==. & inlist(wavey, 1992, 1993, 1994, 1995, 1996, 1998, 2000, 2002, 2003, 2005, 2006, 2007, /// not available for some BHPS waves (2-6; 8; 10; 12; 16-17)
+	2010, 2011, 2013, 2014, 2015, 2017, 2018, 2019) //rotating module in UKHLS
+		 
 	 
 *################################
 *#								#
@@ -1915,24 +2271,25 @@ jbisco88_cc jbsic ///
 jbseg_dv jbrgsc_dv jlseg_dv jlrgsc_dv jbnssec_dv					///
 jbnssec8_dv mrjnssec_dv jlnssec_dv mrjnssec8_dv pensioner_dv hhtype_dv 	///
 jbiindb_dv jbnssec5_dv jbnssec3_dv jliindb_dv jlnssec5_dv jlnssec3_dv 	///
-sf12pcs_dv sf12mcs_dv swemwbs_dv nunmpsp_dv nmpsp_dv nnmpsp_dv isced11_dv	///
+sf12pcs_dv sf12mcs_dv swemwbs_dv nunmpsp_dv nmpsp_dv nnmpsp_dv 	///isced11_dv
 ivfio	/// interview statust 
-xrwght xewght lrwght lewght xrwghte xewghte indinus_lw 	/// weights
+xrwght xrwghte  indinus_lw 	/// weights xewght lrwght lewght xewghte
 indinub_xw indinub_lw indpxui_xw indinui_xw indpxui_lw indinui_lw indscui_lw	///weights
 intmonth   jsecu jsecu2	///
 wavey	///
 divor separ widow	///
+migr* ethn* cob*   relig* ///
 nempl isei* siops* mps* fedu* medu* sampid_*
 
-*
+
 order	///
 isced qfhigh_dv  /// edu
 jbisco88_cc jbsic ///
 jbseg_dv jbrgsc_dv jlseg_dv jlrgsc_dv jbnssec_dv					///
 jbnssec8_dv mrjnssec_dv jlnssec_dv mrjnssec8_dv pensioner_dv hhtype_dv 	///
 jbiindb_dv jbnssec5_dv jbnssec3_dv jliindb_dv jlnssec5_dv jlnssec3_dv 	///
-sf12pcs_dv sf12mcs_dv swemwbs_dv nunmpsp_dv nmpsp_dv nnmpsp_dv isced11_dv	///
-xrwght xewght lrwght lewght xrwghte xewghte indinus_lw 	/// weights
+sf12pcs_dv sf12mcs_dv swemwbs_dv nunmpsp_dv nmpsp_dv nnmpsp_dv 	/// isced11_dv
+xrwght  indinus_lw 	/// weights lrwght lewght xrwghte xewghte xewght
 indinub_xw indinub_lw indpxui_xw indinui_xw indpxui_lw indinui_lw indscui_lw	///weights
 ivfio sampid_*	/// interview statust 
 , last
@@ -1941,7 +2298,7 @@ ivfio sampid_*	/// interview statust
 **|  SAVE
 **|=========================================================================|
  
-label data "CPF_UK v1.0"	 	 
+label data "CPF_UK v1.5"	 	 
 save "${ukhls_out}\uk_02_CPF.dta", replace  	
 
 	 
