@@ -1,11 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF			####											|
-**|		>>>	SHP						 										|
-**|		>>	03_ Prepare data - waves 										|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	v1.5	####		  	|
+**|		>>>	SHP						 		|
+**|		>>	03_ Prepare data - waves 		|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|
+**|=========================================|
 *  
 
 
@@ -386,12 +386,12 @@ recode kidsn_all (0=0) (1/50=1), gen(kids_any)
 Work status (WSTAT$$) is constructed from P$$W01 (working for pay last week), P$$W03 (have a job although not working last week) and P$$W06 (can start work imme-diately), from the individual questionnaire. Another occupational variable is OCCUPA$$, this information comes from the grid and should be considered as less reliable.
 */
 
-recode wstat (1=1)  (2 3=4) , gen(emplst5)
+recode wstat (1=1)  (2 3=4), gen(emplst5)
 replace emplst5=3 if (p_w12==2 | p_w13==2 | p_w14==2) & age>=50
-replace emplst5=3 if p_w12==3 | p_w13==3 | p_w14==3
-replace emplst5=5 if p_w12==1 | p_w13==1 | p_w14==1
+replace emplst5=3 if (p_w12==3 | p_w13==3 | p_w14==3)
+replace emplst5=5 if (p_w12==1 | p_w13==1 | p_w14==1)
 replace emplst5=2 if p_w05==1
-replace emplst5=1 if x_w02>0 & x_w02<.
+replace emplst5=1 if (x_w02>0 & x_w02<.)
 
 	lab def emplst5	///
 			1 "Employed" 			/// including leaves
@@ -399,6 +399,7 @@ replace emplst5=1 if x_w02>0 & x_w02<.
 			3 "Retired, disabled"	///
 			4 "Not active/home"		/// home-working separate?  
 			5 "In education"		///
+			-3 "Not Apply"			///
 			-1 "MV"
 	lab val emplst5 emplst5
 	lab var emplst5 "Employment status [5]"
@@ -776,7 +777,7 @@ replace nempl=2 if entrep2==1 & temp_nempl>3 & temp_nempl<=7
 	
 *################################			 
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 
@@ -789,6 +790,7 @@ gen retf=0 if emplst5>0 & emplst5<.
 replace retf=1 if (p_w12==2 | p_w13==2 | p_w14==2) & age>=50 & wstat!=1 // Self-cat & age 50+ & NW
 replace retf=1 if (p_i70==1 | p_i90==1) & age>=50 & wstat!=1 // Receives old-age pension & age 50+
 replace retf=1 if age>=65 & wstat!=1 // Age 65+  
+replace retf=0 if retf==. & age<50 //age below 50
 					  
 	lab var retf "Retired fully (NW, old-age pens, 45+)"
 	lab val retf yesno 
@@ -933,7 +935,9 @@ recode i_ptotn (-8 -5 -4=-1), gen (inctot_mn)
 // only pension
 
 gen disab=0 if  wstat>0 &  wstat<.	
-replace disab=1 if (p_w12==3 | p_w13==3 | p_w14==3)
+replace disab=1 if (p_w12==9 | p_w13==9 | p_w14==9) & wave<=5
+replace disab=1 if (p_w12==3 | p_w13==3 | p_w14==3) & wave>5 // changed coding from wave 6 (2004) onwards
+
 
 	lab var disab	"Disability (any)"
 // 	lab var disab2c "Disability (min. category 2 or >30%)"
@@ -1169,6 +1173,260 @@ recode p__o34 (0=1)(1=2)(2/4 5 6/8 18=3)(12/17 =4) , gen(medu4)
 	drop `p'temp`e'
 	}
 	}
+	
+	
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	 
+
+**--------------------------------------
+**   Migration Background
+**--------------------------------------	
+
+*** migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "Native-born" ///
+1 "Foreign-born" ///
+-1 "MV General" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+gen migr=. 
+replace migr=0 if p_d160==1 //native-born
+replace migr=1 if p_d160==2 // foreign born
+*replace migr=0 if migr==. & nat_1_==8100 & (p_d160<=0 | p_d160==.) // born in Switzerland, but p_d160 missing
+*replace migr=1 if migr==. & inrange(nat_1_, 8200, 8999) & (p_d160<=0 | p_d160==.) //foreign-born based on first nationality, but p_d160 missing
+
+lab val migr migr
+
+*fill MV
+	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
+	replace migr=temp_migr if migr==. & temp_migr>=0 & temp_migr<.
+	replace migr=temp_migr if migr!=temp_migr // correct inconsistent cases
+	
+*specify some missing:
+replace migr=-2 if migr==. & (p_d160==-1 | p_d160==-2) //DK/Refusal
+replace migr=-3 if migr==. & p_d160==-3 //NA
+
+**--------------------------------------
+**   COB respondent, father and mother
+**--------------------------------------	
+// NOTE:because of the extensive list of countries, a separate do-file generates the variables for the country of birth of the respondent and their parents categories by region. (see additional do-file for details)
+
+do "${Grd_syntax}\05_SHP\ch_02add_labels_COB.do" 
+//generates temporary workingvariables (*t) for cob respondent and both parents	
+
+*** Identify valid COB and fill across waves  
+sort pid wave 
+
+*** Generate valid stage 1 - mode across the waves (values 0-10)
+	// It takes the value of the most common valid answer between 0 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	bysort pid: egen mode_`var'=mode(`var')
+	}
+	
+*** Generate valid stage 2 - first valid answer provided (values 1-9)
+	// It takes the value of the first recorded answer between 0 and 9 (so ignores 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	by pid (wave), sort: gen temp_first_`var'=`var' if ///
+			sum(inrange(`var', 0,9)) == 1 &      ///
+			sum(inrange(`var'[_n - 1],0,9)) == 0 // identify 1st valid answer in range 0-9
+	bysort pid: egen first_`var'=max(temp_first_`var') // copy across waves within pid
+	drop  temp_first_`var'
+	}
+	
+*** Fill the valid COB across waves
+	foreach var in cob_r cob_m cob_f {
+	gen `var' = mode_`var't // stage 1 - based on mode
+	replace `var' = first_`var't if `var'==. & inrange(first_`var't, 0,9) // stage 2 - based on the first for MV
+	replace `var' = first_`var't if `var'==10 & inrange(first_`var't, 0,9) // stage 2 - based on the first for 10'other'
+	drop `var't
+	*
+	label values `var' COB
+	}
+	
+	rename cob_r cob
+	
+replace migr=0 if (migr==. | migr<0) & cob==0
+replace migr=1 if (migr==. | migr<0) & inrange(cob, 1, 10)
+replace cob=0 if (cob==. | cob<0) & migr==0
+replace cob=10 if (cob==. | cob<0) & migr==1
+
+
+**--------------------------------------
+**   Migration Background (parents foreign-born)
+**--------------------------------------	
+//if father/mother foreign born
+gen migr_f=.
+replace migr_f=0 if p__o20==8100 //Swiss-born
+replace migr_f=1 if inrange(p__o20, 8200, 8999) //foreign-born
+
+gen migr_m=.
+replace migr_m=0 if p__o37==8100 //Swiss-born
+replace migr_m=1 if inrange(p__o37, 8200, 8999) //foreign-born
+
+*fill MV
+	bysort pid: egen temp_migr_f=mode(migr_f), maxmode // identify most common response
+	replace migr_f=temp_migr_f if migr_f==. & temp_migr_f>=0 & temp_migr_f<.
+	replace migr_f=temp_migr_f if migr_f!=temp_migr_f // correct a few inconsistent cases
+
+	bysort pid: egen temp_migr_m=mode(migr_m), maxmode // identify most common response
+	replace migr_m=temp_migr_m if migr_m==. & temp_migr_m>=0 & temp_migr_m<.
+	replace migr_m=temp_migr_m if migr_m!=temp_migr_m // correct a few inconsistent cases
+
+	drop temp*
+
+**--------------------------------------
+**   Migrant Generation
+**--------------------------------------	
+//NOTE: migr_gen - migrant generation of the respondent - is a derived variable (from migr, migr_f and migr_m)
+
+lab def migr_gen ///
+0 "no migration background" ///
+1 "1st generation" ///
+2 "2st generation" ///
+3 "2.5th generation" ///
+4 "incomplete information parents"
+
+gen migr_gen=.
+
+* 0 "No migration background"
+replace migr_gen=0 if migr==0 & (migr_f==0 & migr_m==0) // respondent and both parents native-born
+replace migr_gen=0 if migr==0 & ///
+	 ((migr_f==0 & migr_m==.) | (migr_f==. & migr_m==0)) // respondent native-born, one parent native other unknown
+replace migr_gen=0 if migr==1 & (migr_f==0 & migr_m==0) // respondent foreign-born but both parents native
+
+* 1 "1st generation"
+replace migr_gen=1 if migr==1 & (migr_f==1 & migr_m==1) // respondent and both parents foreign-born
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==.) | (migr_m==1 & migr_f==.)) // respondent, one parent foreign-born other  unknown
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // respondent and one parent foreign-born, other native born
+
+*2 "2st generation"
+replace migr_gen=2 if migr==0 & (migr_f==1 & migr_m==1) // native-born, both parents foreign born
+replace migr_gen=2 if migr==0 & ///
+	((migr_f==1 & migr_m==.) | (migr_m==1 & migr_f==.)) // native-born, one parent foreign-born other missing
+
+*3 "2.5th generation"
+replace migr_gen=3 if migr==0 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // native-born, one parent foreign-born other native-born	
+	 
+* Incomplete information parents
+replace migr_gen=4 if migr==0 & migr_f==. & migr_m==. // respondent native-born, both parents unknown
+replace migr_gen=4 if migr==1 & (migr_f==. & migr_m==.) // respondent foreign-born, both parents unknown
+replace migr_gen=0 if migr==1 & ///
+	 ((migr_f==0 & migr_m==.) | (migr_f==. & migr_m==0)) // respondent native-born, one parent native other unknown
+
+  
+	label values migr_gen migr_gen
+
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+/* Not indluded in the current version due to too many MV
+lab def langchild ///
+0 "same as country of residence" ///
+1 "other" ///
+-1 "MV general" ///
+-2 "DK/refusal" ///
+-3 "NA" ///
+
+//NB multiple officially recognised languages: German, French, Italian and Romansh
+// 'Which language do you relate to and master best?'
+
+gen langchild=.
+replace langchild=0 if p_e16==1 //Swiss-German
+replace langchild=0 if p_e16==2 // German
+replace langchild=0 if p_e16==3 // French
+replace langchild=0 if p_e16==4 // Swiss-French
+replace langchild=0 if p_e16==5 // Romansh-Italian
+replace langchild=0 if p_e16==6 // Romansh
+replace langchild=0 if p_e16==7 // Italian
+replace langchild=1 if inrange(p_e16, 8, 14) // Other specified languages
+
+lab val langchild langchild
+	
+*fill MV
+	bysort pid: egen temp_lc=mode(langchild), maxmode // identify most common response
+	replace langchild=temp_lc if langchild==. & temp_lc>=0 & temp_lc<.
+	replace langchild=temp_lc if langchild!=temp_lc // correct a few inconsistent cases
+	
+	drop temp_lc
+*/
+*################################
+*#								#
+*#	Religion					#
+*#								#
+*################################	 
+**--------------------------------------
+**   Religiosity
+**--------------------------------------
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+/*
+p_r01 coding:
+-3.Inap
+-2.NA
+-1.DK
+1.Protestant or Reformed
+2.Roman Catholic
+3.Christian Catholic
+4.Other Christian
+5.Jewish
+6.Muslim
+7.Other
+8.No denomination or religion
+9.Evangelical (free)
+10.Christian orthodox
+11.Buddhist
+12.Hindu
+*/
+
+recode p_r01 (8=0) (1/7=1) (9/12=1) (-3=-3) (-2=-2) (-1=-1), gen(relig)
+
+*specify waves when not asked
+replace relig=-8 if inlist(wavey, 2010, 2011, 2013, 2014, 2016, 2017, 2019, 2020)
+
+lab val relig relig
+
+
+**--------------------------------------
+**   Religion - Attendance
+**--------------------------------------	
+lab def attendance ///
+1 "Never or practically never" ///
+2 "Less than once a month" ///
+3 "At least once a month" ///
+4 "Once a week or more" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode p_r04 (1/3=1) (4/5=2) (6/7=3) (8/9=4) (-3=-3) (-2=-2) (-1=-1), gen(relig_att)
+
+*specify for years when not asked (i.e. prior to 2016)
+replace relig_att=-8 if inlist(wavey, 2010, 2011, 2013, 2014, 2016, 2017, 2019, 2020)
+
+
+lab val relig_att attendance
+
 	 
 	 
 *################################
@@ -1222,9 +1480,8 @@ p_c01 x_c05 wavey	///
 marstat* parstat* mlstat* livpart civsta p_d29	///
 nvmarr haspart livpart respstat	///
 divor separ widow	///
-nempl isei* siops* mps* isco* fedu* medu* 
-
-
+nempl isei* siops* mps* isco* fedu* medu* ///
+migr* cob*   relig*
 
 
 

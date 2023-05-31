@@ -1,13 +1,12 @@
 *
-**|=========================================================================|
-**|	    ####	CPF			####											|
-**|		>>>	SHP						 										|
-**|		>>	01 Create long file (pequiv)		 							|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=============================================|
+**|	    ####	CPF	v1.5	####				|
+**|		>>>	SHP						 			|
+**|		>>	01 Create long file (pequiv)		|
+**|---------------------------------------------|
+**|		Konrad Turek 	| 	2023				|
+**|=============================================|
 *
-
 *############################
 *#							#
 *#	CNEF					#
@@ -17,7 +16,7 @@
 
 *** Prepare for appending 
 /*Note:
-- code delets year in vars' names
+- code deletes year in vars' names
 */
  
 *** Correct var names
@@ -39,7 +38,7 @@ local wl `wf'+ ${shp_w}-1 // last wave
 	  local `wf++'
 	  display "Appending wave: "`wf'
 			qui append using "${shp_out_work_cnef}\shpequiv_`wf'.dta"
-	  display "No of vars after appned: " c(k) " N: " _N
+	  display "No of vars after append: " c(k) " N: " _N
 	  display ""
 	}
 *	

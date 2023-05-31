@@ -1,11 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF			####											|
-**|		>>>	SHP						 										|
-**|		>>	02 Waves to long												|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=====================================|
+**|	    ####	CPF	v1.5	####		|
+**|		>>>	SHP							|
+**|		>>	02 Waves to long			|
+**|-------------------------------------|
+**|		Konrad Turek 	| 	2023		|
+**|=====================================|
 *
 
 /*NOTES:
@@ -152,7 +152,7 @@ idpers* wave*  age*  idhous* birthy isced* educat* occupa*	pdate*	///
 p*d110a p*d110b ownkid* civsta* p*c44 p*c01 p*c02 p*c19a		///
 p*e03 p*e04 p*e05 p*e30		///
 p*e14 p*e15a p*e15b p*e15 		///
-wstat* p*w01 p*w03 p*w04 p*w05 p*w613 p*w12 p*w13 p*w14		///
+wstat* p*w01 p*w03 p*w04 p*w05 p*w06 p*w613 p*w12 p*w13 p*w14		///
 p*w610 p*w29 p*w291 p*w292 p*w293 p*w31 p*w32 p*w34a		///
 p*w39 p*w42 p*w46 p*w85 p*w71a p*w74 p*w77 		///
 p*w86a p*w87 p*w90 		///
@@ -167,8 +167,9 @@ i*ptotn i*ptotg i*empyn i*empyg i*indyn i*indyg i*wyg 		///
 i*wyn i*empmg i*empmn i*indmg i*indmn		///
 p*ql04 p*n35		///
 x*c15 x*c16 x*c05 x*i04 x*w01 xis1ma* xis2ma* xis3ma* xis4ma* x*w02 x*w03 x*w04	 ///
-p*d29 status* rnpx*
-
+p*d29 status* rnpx* ///
+p*e16 nat_1_* reg_1_* p*d160 /// migration set indiv
+p*r01 p*r04 //religion
 
 *
 save "${shp_out_work}\01_selected_w.dta", replace
@@ -232,7 +233,7 @@ unab all:    ///
 	p0*e03 p0*e04 p0*e05 	p0*e14 p0*e15 	/// to distinghuish from pdate*
 	p1*e03 p1*e04 p1*e05 	p1*e14 p1*e15 	/// to distinghuish from pdate*
 	p*e15a p*e15b p*e30		///
-	p*w01 p*w03 p*w04 p*w05 p*w613 p*w12 p*w13 p*w14		///
+	p*w01 p*w03 p*w04 p*w05 p*w06 p*w613 p*w12 p*w13 p*w14		///
 	p*w610 p*w29 p*w291 p*w292 p*w293 p*w31 p*w32 p*w34a		///
 	p*w39 p*w42 p*w46 p*w85 p*w71a p*w74 p*w77 		///
 	p*w86a p*w87 p*w90 		///
@@ -245,7 +246,10 @@ unab all:    ///
 	i*ptotn i*ptotg i*empyn i*empyg i*indyn i*indyg i*wyg 		///
 	i*wyn i*empmg i*empmn i*indmg i*indmn		///
 	x*c15 x*c16 x*c05 x*i04 x*w01  x*w02 x*w03 x*w04 ///
-	p*d29
+	p*d29 ///
+	p*e16 p*d160 /// migration indiv
+	p*r01 p*r04 //religion
+
 	
 local allcount : word count `all'
 disp `allcount'
@@ -313,7 +317,8 @@ unab all:    ///
 	idpers* wave*  age*  idhous*   isced* educat* occupa*	pdate* ownkid*	///
 	civsta* wstat*  is1maj* is2maj* is3maj* is4maj*	cspmaj* gldmaj* esecmj* 	///
 	tr1maj* caimaj* wr3maj*	noga2m*  xis1ma* xis2ma* xis3ma* xis4ma*		///
-	status* rnpx*
+	status* rnpx* nat_1_* reg_1_* 
+
 local allcount : word count `all'
 disp `allcount'
 
@@ -322,11 +327,13 @@ disp `allcount'
 	*>>> NEW VARS [y*] 2b/3 : remove year-suffix 
 	*>>> e.g. IS3MAJ17 --> is3maj
 	*>>>
+rename statuscovid COVIDstatuscovid
 
 local x=0
 foreach name in  wave age idhous   isced educat occupa pdate ownkid ///
 	civsta wstat is1maj is2maj is3maj is4maj cspmaj gldmaj esecmj 	///
-	tr1maj caimaj wr3maj noga2m xis1ma xis2ma xis3ma xis4ma status rnpx {
+	tr1maj caimaj wr3maj noga2m xis1ma xis2ma xis3ma xis4ma status rnpx nat_1_ reg_1_ ///
+{
 rename `name'* `name'#, renumber dryrun  // Reports results 
 rename `name'* `name'_#, renumber r
 unab namess: `name'*
@@ -353,23 +360,25 @@ disp "vars: " c(k) "   N: " _N
 **--------------------------------------
 ** Reshape
 **--------------------------------------
-* Varaibles to reshape 
+* Variables to reshape 
 
 	*>>>
 	*>>> NEW VARS [x*x;y*] 3/3: substitute year by "_" and add suffix "_"  
 	*>>> e.g. P17E18 --> p_e18_; IS3MAJ17 --> is3maj_
 	*>>>
 
+*only include time-changing variables:	
 local vars1 	///
 		age_ idhous_ isced_ educat_ occupa_ pdate_ ownkid_ 				///
 		civsta_ wstat_ is1maj_ is2maj_ is3maj_ is4maj_ cspmaj_ gldmaj_ esecmj_ 	///
 		tr1maj_ caimaj_ wr3maj_ noga2m_ xis1ma_ xis2ma_ xis3ma_ xis4ma_ 	///
-		status_ rnpx_
+		status_ rnpx_ nat_1__ reg_1__ 
+
 local vars2 	///
 		p_d110a_ p_d110b_ p_c44_ p_c01_ p_c02_ p_c19a_					///
 		p_e05_ 	p_e03_ p_e04_  p_e14_ p_e15_ 							/// 
 		p_e15a_ p_e15b_ p_e30_											///
-		p_w01_ p_w03_ p_w04_ p_w05_ p_w613_ p_w12_ p_w13_ p_w14_		///
+		p_w01_ p_w03_ p_w04_ p_w05_ p_w06_ p_w613_ p_w12_ p_w13_ p_w14_	///
 		p_w610_ p_w29_ p_w291_ p_w292_ p_w293_ p_w31_ p_w32_ p_w34a_	///
 		p_w39_ p_w42_ p_w46_ p_w85_ p_w71a_ p_w74_ p_w77_ 				///
 		p_w86a_ p_w87_ p_w90_ 											///
@@ -382,24 +391,41 @@ local vars2 	///
 		i_ptotn_ i_ptotg_ i_empyn_ i_empyg_ i_indyn_ i_indyg_ i_wyg_ 	///
 		i_wyn_ i_empmg_ i_empmn_ i_indmg_ i_indmn_						///
 		x_c15_ x_c16_ x_c05_ x_i04_ x_w01_  x_w02_ x_w03_ x_w04_ 		///
-		p_d29_
-		 
+		p_d29_ p_e16_ p_d160_ 											
+		
+local vars3	///
+		p_r01_ p_r04_ 	// religion
+
+	
+
 			
-		* Capture variable labels
+		 *Capture variable labels
 			foreach n in `vars1' `vars2' {
-				local `n'label: variable label `n'${shp_w}
+				capture local `n'label: variable label `n'${shp_w} 
 			}
-			*local birthy_label: variable label birthy
+			* for religion separate besouse of rotating panel
+			foreach n in `vars3' {
+				local `n'label: variable label `n'20
+						}
+			
+local vars_all `vars1' `vars2' `vars3'
+
+
 		* Reshape
-		reshape long  "`vars1'" "`vars2'" ///
-			, i(idpers) j(wave $wavesn)
+		reshape long  "`vars_all'" ///
+		, i(idpers) j(wave $wavesn)
 
 		* Redefine labels
 			foreach n in `vars1' `vars2' {
 				label variable `n' "``n'label'"
 			}
-			*label variable birthy "`birthy_label'"
-*
+			* for religion separate besouse of rotating panel
+			foreach n in `vars3' {
+				label variable `n' "``n'label'"
+			}
+			lab val p_r01_ P18R01 //note: new labels can be added in future waves
+			lab val p_r04_ P18R04 //
+			*
 
 
 ***	
@@ -451,8 +477,8 @@ disp "vars: " c(k) "   N: " _N
 // rename pid idpers		  
 merge m:1 idpers  using "${shp_in}\SHP-Data-WA-STATA\shp_so.dta" , ///
 	keep(1 2 3) nogen  keepusing(	///
-	p__o07 is1faj__ is4faj__ cspfaj__ gldfaj__ esecfa__ tr1faj__ caifaj__ wr3faj__ p__o17	/// father
-	p__o24 is1moj__ is4moj__ cspmoj__ gldmoj__ esecmo__ tr1moj__ caimoj__ wr3moj__ p__o34	/// mother
+	p__o07 is1faj__ is4faj__ cspfaj__ gldfaj__ esecfa__ tr1faj__ caifaj__ wr3faj__ p__o17	p__o20 /// father
+	p__o24 is1moj__ is4moj__ cspmoj__ gldmoj__ esecmo__ tr1moj__ caimoj__ wr3moj__ p__o34	p__o37 /// mother
 	)
 rename  idpers pid
 
