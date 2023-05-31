@@ -1,13 +1,12 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0	####											|
-**|		>>>	RLMS						 									|
-**|		>>	Harmonize variables 		 									|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	v1.5	####			|
+**|		>>>	RLMS							|
+**|		>>	Harmonize variables 			|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|
+**|=========================================|
 * 
-
 
 **--------------------------------------
 ** Open merged dataset
@@ -22,11 +21,9 @@ use "${rlms_out}\ru_01.dta", clear
 lab def yesno 0 "[0] No" 1 "[1] Yes" ///
 	-1 "-1 MV general" -2 "-2 Item non-response" ///
 	-3 "-3 Does not apply" -8 "-8 Question not asked in survey", replace
-
 // numlabel, add
 
 
-	
 *################################
 *#								#
 *#	Technical					#
@@ -34,9 +31,10 @@ lab def yesno 0 "[0] No" 1 "[1] Yes" ///
 *################################	
 * pid
 * intyear 
+* intmonth
 * wave 
-rename  idind pid
-rename  year wavey
+rename  IDIND pid
+rename  YEAR wavey
 rename  INT_Y  intyear
 recode H7_2 (13/max=-1), gen(intmonth)
 
@@ -68,7 +66,8 @@ replace respstat=1 if respstat==. & wave==1
 ** Demographic
 **--------------------------------------
 * age
-recode age (999/max=.)
+recode AGE (999/max=.)
+rename AGE age
 
 * Birth year
 
@@ -76,8 +75,6 @@ gen yborn=H6
 recode yborn (9990/max=-1) 
 	lab var yborn "Birth year" 
 
-	
-				
 	
 	
 	* Correct yborn if not consistent values of yborn across weaves
@@ -115,9 +112,6 @@ recode yborn (9990/max=-1)
 
 	
 	
-	
-	
-	
 * Gender
 recode H5 (1=0) (2=1), gen(female)
 	lab def female 0 "Male" 1 "Female" 
@@ -128,7 +122,7 @@ recode H5 (1=0) (2=1), gen(female)
 ** Place of living (e.g. size/rural)
 **--------------------------------------
 * place
-recode status (1 2 3=1) (4=2), gen (place)
+recode STATUS (1 2 3=1) (4=2), gen (place)
 
 	lab var place "Place of living"
 	lab def place 1 "city" 2 "rural area"
@@ -153,13 +147,13 @@ recode status (1 2 3=1) (4=2), gen (place)
 //            5 Vocational secondary education Diploma
 //            6 Higher education Diploma and more
 
-recode educ (0/13=1) (14/18 =2) (19/23=3) (999/max .=-1), gen(edu3)
+recode EDUC (0/13=1) (14/18 =2) (19/23=3) (999/max .=-1), gen(edu3)
 	lab def edu3  1 "Low" 2 "Medium" 3 "High" // 2 incl Vocational
 	lab val edu3 edu3
 	lab var edu3 "Education: 3 levels"
 	
 *** edu4 
-recode educ (0/6=1) (7/13=2) (14/18=3) (19/23=4) (999/max .=-1), gen(edu4)
+recode EDUC (0/6=1) (7/13=2) (14/18=3) (19/23=4) (999/max .=-1), gen(edu4)
 
 	lab def edu4  1 "[0-1] Primary" 2 "[2] Secondary lower" ///
 				  3 "[3-4] Secondary upper" 4 "[5-8] Tertiary" 
@@ -167,7 +161,7 @@ recode educ (0/6=1) (7/13=2) (14/18=3) (19/23=4) (999/max .=-1), gen(edu4)
 	lab var edu4 "Education: 4 levels"
 	
 *** edu5
-recode educ (0/6=1) (7/13=2) (14/18=3) (19/20=4) (21/23=5) (999/max .=-1), gen(edu5)
+recode EDUC (0/6=1) (7/13=2) (14/18=3) (19/20=4) (21/23=5) (999/max .=-1), gen(edu5)
 
 	lab def edu5  1 "[0-1] Primary" 2 "[2] Secondary lower" ///
 				  3 "[3-4] Secondary upper" ///
@@ -192,7 +186,7 @@ recode educ (0/6=1) (7/13=2) (14/18=3) (19/20=4) (21/23=5) (999/max .=-1), gen(e
 * marstat
 // alternative: J72_17 and J322  - more-less fits marst
 
-recode marst (2 3 7=1)(1=2)(4=4)(5=3)(6=5) (999/max .=-1), gen(marstat5)
+recode MARST (2 3 7=1)(1=2)(4=4)(5=3)(6=5) (999/max .=-1), gen(marstat5)
 
 	lab var marstat5 "Primary partnership status [5]"
 	lab def marstat5				///
@@ -209,7 +203,7 @@ recode marst (2 3 7=1)(1=2)(4=4)(5=3)(6=5) (999/max .=-1), gen(marstat5)
 ** Formal marital status 	 
 **--------------------------------------
 
-recode marst (2 7=1)(1 3=2)(4=4)(5=3)(6=5) (999/max .=-1), gen(mlstat5)
+recode MARST (2 7=1)(1 3=2)(4=4)(5=3)(6=5) (999/max .=-1), gen(mlstat5)
 
 
 	lab var mlstat5 "Formal marital status [5]"
@@ -233,7 +227,7 @@ recode marst (2 7=1)(1 3=2)(4=4)(5=3)(6=5) (999/max .=-1), gen(mlstat5)
 recode mlstat5 (1=1)(2/5=0) , gen(livpart)
 	replace livpart=1 if (J324==1|J324==2) 
 	replace livpart=0 if (J324==3) 
-	replace livpart=0 if nfm==1
+	replace livpart=0 if NFM==1
 				
 // 		lab var haspart "Has a partner"
 		lab var livpart "Living together with partner"
@@ -283,7 +277,7 @@ recode mlstat5 (1=1)(2/5=0) , gen(livpart)
 // 		lab val csing yesno
 								
 *** Never married 
-recode marst (1=1)(2/7=0) (999/max .=-1), gen(nvmarr)
+recode MARST (1=1)(2/7=0) (999/max .=-1), gen(nvmarr)
 
 		lab var nvmarr "Never married"
 		lab val nvmarr yesno						
@@ -344,7 +338,7 @@ replace kidsn_hh17=0 if kids_any==0
 **--------------------------------------
 ** People in HH 
 **--------------------------------------
-	clonevar nphh=nfm
+	clonevar nphh=NFM
 	
 	lab var nphh   "Number of People in HH" 
 	
@@ -828,7 +822,7 @@ replace nempl=2 if entrep2==1 & size>=10 & size<.
 	
 *################################
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 **--------------------------------------
@@ -1288,9 +1282,222 @@ capture recode J217B (1/3 12=1)(4/5=2)(6/7=3)(8/11=4) (999/max=-1), gen(medu4)
 	}
 	}
 
-	 
-	 
-	 
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	 
+
+**--------------------------------------
+**   Migration Background
+**--------------------------------------	
+*migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "native-born" ///
+1 "foreign-born" ///
+-1 "MV general" -2 "Item non-response" ///
+-3 "Does not apply" -8 "Question not asked in survey"
+
+gen migr=. 
+replace migr=0 if I2==1 //Russia
+replace migr=0 if I1==2 //Born in same place as current residence
+replace migr=1 if inrange(I2, 2, 16) //Foreign
+
+*fill MV / correct inconsistent responses
+	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
+	replace migr=temp_migr if migr==. & temp_migr>=0 & temp_migr<.
+	replace migr=temp_migr if migr!=temp_migr // correct a few inconsistent cases
+
+*specify some missing values
+replace migr=-1 if migr==. & (I2==99999997 | I2==99999998) //DK/Refusal
+replace migr=-2 if migr==. & I2==99999999
+
+lab val migr migr
+	
+**----------------------
+**   COB respondent
+**----------------------
+*country of birth by global region, only if respondent non-native	
+
+*NOTE: only broad region available if respondent not born in Russia
+
+label define COB ///
+0 "Born in Survey-Country" ///
+1 "Oceania and Antarctica" ///
+2 "North-West Europe" ///
+3 "Southern and Eastern Europe" ///
+4 "North Africa and the Middle East" ///
+5 "South-East Asia" ///
+6 "North-East Asia" ///
+7 "Southern and Central Asia" ///
+8 "Americas" ///
+9 "Sub-Saharan Africa" ///
+10 "Other" ///
+-1 "MV general" -2 "Item non-response" ///
+-3 "Does not apply" -8 "Question not asked in survey"
+
+gen cob_r=.
+replace cob_r=0 if (I2==1 | I1==2) //Russia
+replace cob_r=3 if I2==2 //Ukraine
+replace cob_r=3 if I2==3 //Belarus
+replace cob_r=7 if inrange(I2, 4, 8)
+replace cob_r=3 if inrange(I2, 9, 11)
+replace cob_r=7 if inrange(I2, 12, 14)
+replace cob_r=3 if I2==15 //Estonia
+replace cob_r=10 if I2==16 //Other
+replace cob_r=0 if cob_r==. & migr==0 //Born in place of current residence (=Russia)
+replace cob_r=10 if cob_r==. & migr==1 
+
+rename cob_r cob_rt //temp working var 
+
+*** Identify valid COB and fill across waves  
+sort pid wave 
+
+*** Generate valid stage 1 - mode across the waves (values 0-10)
+	// It takes the value of the most common valid answer between 0 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+	bysort pid: egen mode_cob_rt=mode(cob_rt)
+	
+*** Generate valid stage 2 - first valid answer provided (values 0-9)
+	// It takes the value of the first recorded answer between 1 and 9 (so ignors 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	by pid (wave), sort: gen temp_first_cob_rt=cob_rt if sum(inrange(cob_rt, 0, 9)) == 1 & sum(inrange(cob_rt[_n - 1], 0, 9)) ==0 // identify first valid answer in range 0-9
+	bysort pid: egen first_cob_rt=max(temp_first_cob_rt) // copy across waves within pid
+	drop temp_first_cob_rt
+	
+*** Fill the valid COB across waves
+
+	gen cob_r = mode_cob_rt // stage 1 - based on mode
+	replace cob_r = first_cob_rt if cob_r ==. & inrange(first_cob_rt, 0, 9) // stage 2 - based on the first for MV
+	replace cob_r = first_cob_rt if cob_r==10 & inrange(first_cob_rt, 1, 9) // stage 2 - based on the first for 10 'other'
+	drop cob_rt
+	
+	rename cob_r cob
+
+	*specify MV
+	replace cob=-1 if cob==. & (I2==99999997 | I2==99999998) //DK/Refusal 
+	replace cob=-2 if cob==. & I2==99999999 //non-response
+	
+	*correct a few migr values based on cob
+	replace migr=0 if cob==0
+	
+lab val cob COB	
+
+**--------------------------------------
+**   Migration Background (parents)
+**--------------------------------------	
+//Not available
+
+**--------------------------------------
+**   Migrant Generation (respondent)
+**--------------------------------------	
+//Not available
+
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+/* Not indluded in the current version due to too many MV
+lab def langchild ///
+0 "same as country of residence" ///
+1 "other" ///
+-1 "MV general" -2 "DK/refusal" ///
+-3 "NA" -8 "not asked in survey"
+
+///Note: dialects which are not officially recognised at the national level are categorised as 'other'
+
+gen langchild=.
+replace langchild=0 if I6==1 // russian
+replace langchild=1 if inrange(I6, 2, 171) // other
+replace langchild=-1 if I6==101 //handicapped, does not speak
+replace langchild=-1 if I6==143 //slurs words
+replace langchild=-1 if I6==155 //No nationality
+replace langchild=-1 if I6==99999997 //DK
+replace langchild=-1 if I6==99999998 //refusal
+replace langchild=-3 if I6==99999999 //NA
+
+lab val langchild langchild
+
+*fill MV
+	bysort pid: egen temp_lc=mode(langchild), maxmode // identify most common response
+	replace langchild=temp_lc if langchild==. & temp_lc>=0 & temp_lc<.
+	replace langchild=temp_lc if langchild!=temp_lc // correct a few inconsistent cases
+	
+	drop temp_lc 
+	
+*specify when question not asked and cannot be filled using data from other years:
+replace langchild=-8 if langchild==. & wavey>=2008
+*/
+
+
+*################################
+*#								#
+*#	    Religion			 	#
+*#								#
+*################################
+
+**--------------------------------------  
+** Religiosity
+**--------------------------------------
+*J72 - Of what religion do you consider yourself?
+
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+gen relig=1
+replace relig=0 if J72_19==99999996 //No religion
+replace relig=0 if J72_19==13 //
+replace relig=0 if J72_19==21 //
+replace relig=0 if J72_19==23 //
+replace relig=0 if J72_19==37 //
+replace relig=0 if J72_19==38 //
+replace relig=0 if J72_19==48 //
+replace relig=0 if J72_19==51 //
+replace relig=0 if J72_19==59 //
+replace relig=0 if J72_19==71 //
+replace relig=0 if J72_19==88 //
+replace relig=-1 if J72_19==99999997 //DK
+replace relig=-1 if J72_19==99999998 //refusal
+replace relig=-2 if J72_19==99999999 //No answer
+replace relig=. if J72_19==.
+
+replace relig=-8 if inrange(wavey, 1994, 1998)
+replace relig=-8 if inrange(wavey, 2004, 2010)
+
+lab val relig relig
+
+**--------------------------------------  
+** Religion - Attendance
+**--------------------------------------
+*J131.1 Do you visit divine services, meetings or other religious events? If yes how often?	
+
+lab def attendance ///
+1 "Never or practically never" ///
+2 "Less than once a month" ///
+3 "At least once a month" ///
+4 "Once a week or more" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode J131_1 (1/2=1) (3/4=2) (5/6=3) (7=4) (99999997/99999998=-1) (99999999=-2), gen(relig_att)
+
+*specify for years when not asked (i.e. prior to 2016)
+replace relig_att=-8 if wavey<=2015
+
+lab val relig_att attendance
+ 
+
+ 
 *################################
 *#								#
 *#	Weights						#
@@ -1300,7 +1507,7 @@ capture recode J217B (1/3 12=1)(4/5=2)(6/7=3)(8/11=4) (999/max=-1), gen(medu4)
 **   Cross-sectional sample weight
 **--------------------------------------	
 
-gen wtcs= inwgt
+gen wtcs= INWGT
  
   
 **--------------------------------------
@@ -1319,7 +1526,7 @@ gen wtcs= inwgt
 **   Sample identifier
 **--------------------------------------	
 
-clonevar sampid_rlms  =   origsm
+clonevar sampid_rlms  =   ORIGSM
 lab var sampid_rlms  "Sample identifier: RLMS"
 
  
@@ -1328,7 +1535,7 @@ lab var sampid_rlms  "Sample identifier: RLMS"
 **|=========================================================================|
 
 keep			///
-wave pid country  intyear intmonth inwgt  age place  isco*  		///
+wave pid country  intyear intmonth wtcs INWGT  age place  isco*  		///
 marstat* parstat* mlstat* livpart nvmarr				///
 edu3 edu4 edu5 indust*  wavey	wave1st	respstat					///
 sat* size* inc* entrep*  train* exp* superv*				///
@@ -1338,6 +1545,7 @@ neverw hhinc* srh* disab* eduwork*	jsecu*					///
 H7_1 H7_2 			/// day month interv 
 J1_1_2 J1_1_4 J1_1_6 J1_1_7 J1_1_8 J1_1_9 /// jo quality / sat
 ID_H				/// hh num
+migr* cob*   relig* /// 
 wtcs isei* siops* mps* nempl selfemp*	///
 widow divor separ fedu* medu*   sampid*
 
@@ -1347,7 +1555,7 @@ widow divor separ fedu* medu*   sampid*
 **|  SAVE
 **|=========================================================================|
  
-label data "CPF_RUS v1.0"
+label data "CPF_RUS v1.5"
 save "${rlms_out}\ru_02_CPF.dta", replace  	
 
 	 
