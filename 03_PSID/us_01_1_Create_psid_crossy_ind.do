@@ -1,13 +1,13 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
-**|		>>>	PSID						 									|
-**|		>>	Create psid_crossy_ind.dta
-**|		>>	- long file for time-constant variables 
-**|		>>	- from Cross-year Individual files
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
-**|=========================================================================|
+**|=====================================================|
+**|	    ####	CPF	ver 1.5		####					|
+**|		>>>	PSID						 				|
+**|		>>	Create psid_crossy_ind.dta					|
+**|		>>	- long file for time-constant variables 	|
+**|		>>	- from Cross-year Individual files			|
+**|-----------------------------------------------------|
+**|		Konrad Turek 	 |  	2023		  			|			
+**|=====================================================|
 * 
 // Download “Cross-year Individual: 1968-XXXX” zipped file from:
 // https://simba.isr.umich.edu/Zips/ZipMain.aspx 

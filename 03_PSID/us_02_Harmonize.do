@@ -1,24 +1,22 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	####													|
-**|		>>>	PSID						 									|
-**|		>>	02 Harmonize variables 											|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	v1.5 ####				|
+**|		>>>	PSID						 	|
+**|		>>	02 Harmonize variables 			|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023		    |			
+**|=========================================|
 /* NOTE:
 - for this do-file, use item-blocks created in us_01_3_Get_vars.do
 - check variables at 
 https://simba.isr.umich.edu/default.aspx
 */
 
-
 **--------------------------------------
 ** Open merged dataset
 **-------------------------------------- 
 *** Combined 
 use "${psid_out}\us_01.dta", clear
-
 
 
 **--------------------------------------
@@ -143,6 +141,8 @@ replace	intmonth = intyB2 if intmonth==.
 // rename intyear intyear_c
 // merge 1:1 pid wave using "${psid_out}\us_Merg_03cnef.dta", keep(1 2 3)   
 *******
+
+
 
 *################################
 *#								#
@@ -1206,7 +1206,7 @@ replace nempl=2 if entrep2==1 & size>=10 & size <.
 	
 *################################
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 
@@ -1948,8 +1948,493 @@ replace medu4=meduS4 if  href==2
 	}
 	}
 
+*################################
+*#								#
+*#	Ethnicity					#
+*#								#
+*################################	
+
+**----------------------
+**   ethnicity
+**----------------------
+
+label define ethnicity ///
+1 "Black" ///
+2 "white" ///
+3 "Asian" ///
+4 "Mixed (UK only)" ///
+5 "American Indian (US only)" ///
+6 "Other" ///
+-1 "MV General"
+
+gen temp_ethn=.
+	replace temp_ethn=race_H if href==1
+	replace temp_ethn=race_S if href==2
 	
+recode temp_ethn (1=2) /// White
+				(2=1) ///Black
+				(3=5) /// Native American
+				(4=3) ///Asian, Pacific Islander
+				(5=6) /// Latino origin (hispanic)
+				(6=6) /// color besides black or white
+				(7=6) /// Other
+				(9=-1) /// NA/DK
+				, gen(ethn)
+
+drop temp*
+label val ethn ethnicity
+
+*fill MV
+	bysort pid: egen temp_ethn=mode(ethn), maxmode // identify most common response
+	replace ethn=temp_ethn if ethn==. & temp_ethn>=0 & temp_ethn<.
+	replace ethn=temp_ethn if ethn!=temp_ethn // correct inconsistent cases
+
+	
+**--------------------------------
+**   Hispanicity (US only)
+**--------------------------------
+label define ethn_hisp ///
+0 "Not Hispanic" ///
+1 "Hispanic" ///
+-1 "MV general"
+
+gen ethn_hisp=.
+replace ethn_hisp=1 if inrange(hispanic_H, 1, 7) & href==1 //yes hispanic (head)
+replace ethn_hisp=1 if inrange(hispanic_S, 1, 7) & href==2 //yes hispanic (spouse)
+replace ethn_hisp=0 if hispanic_H==0 & href==1 //no (head)
+replace ethn_hisp=0 if hispanic_S==0 & href==2 //no (spouse)
+replace ethn_hisp=-1 if hispanic_H==9 & href==1 //DK/refusal (head)
+replace ethn_hisp=-1 if hispanic_S==9 & href==2 // DK/refusal (spouse)
+
+*fill MV based on country_born&subsample
+//NOTE: assumption that all individuals from Latino subsample / born in countries defined as Hispanic are automatically of Hispanic descent
+replace ethn_hisp=1 if (ethn_hisp==. | ethn_hisp==-1) & country_born==300 //Cuba
+replace ethn_hisp=1 if (ethn_hisp==. | ethn_hisp==-1) & country_born==595 //Mexico
+replace ethn_hisp=1 if (ethn_hisp==. | ethn_hisp==-1) & country_born==745 //Puerto Rico
+replace ethn_hisp=1 if (ethn_hisp==. | ethn_hisp==-1) & country_born==830 //Spain
+replace ethn_hisp=1 if (ethn_hisp==. | ethn_hisp==-1) & inrange(ER30001, 7001, 9308) // Latino subsample
+
+
+*copy values across years for each respondent
+	bysort pid: egen temp_hisp=mode(ethn_hisp), maxmode // identify most common response
+	replace ethn_hisp=temp_hisp if ethn_hisp==. & temp_hisp>=0 & temp_hisp<.
+	replace ethn_hisp=temp_hisp if ethn_hisp!=temp_hisp // correct a few inconsistent cases
+
+label values ethn_hisp ethn_hisp
+drop temp*
+
+
+
+
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	
+
+	
+**--------------------------------------
+**   Migration Background
+**--------------------------------------	
+
+*** migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "Native-born" ///
+1 "Foreign-born" ///
+-1 "MV General" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey" ///
+.a "[.a] missing: grewup_US available"
+
+gen temp_migr=.
+	replace temp_migr=state_H if href==1 // Head 2013 onwards
+	replace temp_migr=state_S if href==2 //Spouse 2013 onwards
+	replace temp_migr=state_born if temp_migr==. // Head/Spouse before 2000
+	
+	*redefine missing values, 0-value different for 97 and 99:
+	replace temp_migr=-8 if temp_migr==0 & wavey<=2000 // if 0 before 2000 then question not asked
+
+	
+//because state born only asked consistently since 2013, first fill MV by pid
+	mvdecode temp_migr, mv(-8=.a \ 99=.b)
+	
+	bysort pid: egen temp_state_MV=mode(temp_migr), maxmode // identify most common response
+	replace temp_migr=temp_state_MV if temp_migr==. & temp_state_MV>=0 & temp_state_MV<.
+	replace temp_migr=temp_state_MV if temp_migr!=temp_state_MV // correct inconsistent cases	
+	
+	mvencode temp_migr, mv(.a=-8 \ .b=99)
+
+
+gen migr=.
+	replace migr=0 if inrange(temp_migr, 1, 56) // born in US state
+	replace migr=1 if temp_migr==0 // no state info because foreign-born (only after 2013)
+	replace migr=-8 if temp_migr==-8 // not asked (before 2000)
+	
+	replace migr=1 if inrange(country_born, 100, 990) // born outside of US
+	
+	replace migr=-1 if migr==. & (temp_migr==99 & country_born==.)  // DK NA for state
+	replace migr=-1 if migr==. & (country_born==999 & temp_migr==.) //DK NA for country
+	replace migr=-8 if migr==. & (temp_migr==. & country_born==0) //State info missing, country not asked
+
+*fill for subsamples
+replace migr=1 if (migr==. | migr<0) & inrange(ER30001, 3001, 3511) // new immigrant sample 1997 & 1999
+replace migr=1 if (migr==. | migr<0) & inrange(ER30001, 4001, 4851) // NIS 2017
+replace migr=1 if (migr==. | migr<0) & inrange(ER30001, 7001, 9308) // Latino subsample
+
+
+*fill MV 
+	mvdecode migr, mv(-8=.a \ -1=.b)
+
+	bysort pid: egen temp_migr_MV=mode(migr), maxmode // identify most common response
+	replace migr=temp_migr_MV if migr==. & temp_migr_MV>=0 & temp_migr_MV<.
+	replace migr=temp_migr_MV if migr!=temp_migr_MV & temp_migr_MV>=0 // correct a few inconsistent cases	
+	
+	mvencode migr, mv(.a=-8 \ .b=-1)
+	
+	replace migr=-8 if migr==. & wavey<1997 //Question not asked before 1997
+
+//NOTE: some missing information corrected after specification cob (see below)
+
+drop temp*
+lab val migr migr
+
+**-------------------
+**   COB respondent
+**-------------------	
+/// NOTE: with addition new waves, check if new countries are added to codebook
+
+// generate working var
+gen temp_cob=.
+	replace temp_cob=country_born // country specified only if foreign-born
+	replace temp_cob=.a if country_born==0 // no country specified: question not asked (temporary placeholder)
+	replace temp_cob=.b if ((temp_cob==. | temp_cob==.a) & migr==1) // no country specified but respondent foreign-born (temporary placeholder)
+	
+*fill MV
+	bysort pid: egen mode_temp_cob=mode(temp_cob), maxmode // identify most common response
+	replace temp_cob=mode_temp_cob if (temp_cob==. | temp_cob==.a | temp_cob==.b) & mode_temp_cob>=0 & mode_temp_cob<.
+	replace temp_cob=mode_temp_cob if temp_cob!=mode_temp_cob // correct inconsistent cases
+
+// COB labels in separate file	
+do "${your_dir}\11_CPF_in_syntax\03_PSID\us_02add_labels_COB.do"
+
+*** Identify valid COB and fill across waves  
+sort pid wave 
+
+*** Generate valid stage 1 - mode across the waves (values 1-10)
+	// It takes the value of the most common valid answer between 1 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+		bysort pid: egen mode_cob_rt=mode(cob_rt)
+	
+*** Generate valid stage 2 - first valid answer provided (values 1-9)
+	// It takes the value of the first recorded answer between 1 and 9 (so ignors 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	by pid (wave), sort: gen temp_first_cob_rt=cob_rt if ///
+			sum(inrange(cob_rt, 0,9)) == 1 &      ///
+			sum(inrange(cob_rt[_n - 1],0,9)) == 0 // identidy 1st valid answer in range 1-9
+	bysort pid: egen first_cob_rt=max(temp_first_cob_rt) // copy across waves within pid
+	drop  temp_first_cob_rt
+	
+	
+*** Fill the valid COB across waves
+	gen cob_r = mode_cob_rt // stage 1 - based on mode
+	replace cob_r = first_cob_rt if (cob_r==. | cob_r==.a | cob_r==.b) ///
+		& inrange(first_cob_rt, 0,10) // stage 2 - based on the first for MV
+	replace cob_r = first_cob_rt if cob_r==10 & inrange(first_cob_rt, 1,9) // stage 2 - based on the first for 10'other'
+	drop cob_rt
+	*
+	
+	mvencode cob_r, mv(.a=-8)
+	label values cob_r COB
+	rename cob_r cob
+	
+
+	
+*** correct some migr-values now that cob is filled
+replace migr=1 if inrange(cob, 1, 10) & (migr<0 | migr==.)
+
+	*specify missings cob
+	replace cob=-8 if cob==. & migr==-8
+	replace cob=-1 if cob==. & migr==-1
+
+
+
+//Note: detailed information COB father and mother not available
+
+**----------------------------------------------
+**   Region Grew Up (US-only)
+**----------------------------------------------	
+//NOTE: this variable is not used for harmonization. It specifies whether respondent grew up in the US or not. 
+//The variable can be used  to fill the gaps where information on country of birth is incomplete (see codebook for further explanation). 
+
+lab def grewup ///
+0 "Grew up in US State" ///
+1 "Grew up outside US" ///
+-1 "MV general (DK/NA)" ///
+
+gen temp_grewup=.
+	replace temp_grewup=grewup_H if href==1 // Head/RP
+	replace temp_grewup=grewup_S if href==2 // Spouse/partner
+
+gen grewup_US=. 
+replace grewup_US=0 if inrange(temp_grewup, 1, 5) // US region, including Alaska and Hawaii but excluding US territories
+replace grewup_US=1 if temp_grewup==6 // foreign country
+replace grewup_US=-1 if (temp_grewup==9 | temp_grewup==0) //NA
+
+**CHECK
+*fill MV
+	bysort pid: egen temp_grewup_MV=mode(grewup_US), maxmode // identify most common response
+	replace grewup_US=temp_grewup_MV if grewup_US==. & temp_grewup_MV>=0 & temp_grewup_MV<9
+	replace grewup_US=temp_grewup_MV if grewup_US!=temp_grewup_MV // correct a few inconsistent cases	
+	
+lab val grewup_US grewup
+	
+drop temp*
+
+replace cob=.a if cob==. & (grewup_US>=0)
+replace migr=.a if migr==. & (grewup_US>=0)
+
+	
+**----------------------------------------------
+**   Migration Background (parents foreign-born)
+**----------------------------------------------	
+//Note: no detailed information on country of birth parents available, only if foreign-born yes/no 
+
+gen temp_migr_f=.
+	replace temp_migr_f=cob_f_H if href==1 // father of head/ref
+	replace temp_migr_f=cob_f_S if href==2 // father of spouse
+gen temp_migr_m=.
+	replace temp_migr_m=cob_m_H if href==1 // mother of head/ref
+	replace temp_migr_m=cob_m_S if href==2 // mother of spouse
+
+gen migr_f=.
+	replace migr_f=0 if inrange(temp_migr_f, 1, 90) // born in US state
+	replace migr_f=1 if temp_migr_f==0 // born in foreign country or US territory
+	replace migr_f=-1 if temp_migr_f==99 // DK NA Refused
+
+gen migr_m=.
+	replace migr_m=0 if inrange(temp_migr_m, 1, 90) // born in US state
+	replace migr_m=1 if temp_migr_m==0 // born in foreign country or US territory
+	replace migr_m=-1 if temp_migr_m==99 // DK NA Refused
+
+
+*fill MV
+	bysort pid: egen migr_f_MV=mode(migr_f), maxmode // identify most common response
+	replace migr_f=migr_f_MV if migr_f==. & migr_f_MV>=0 & migr_f_MV<.
+	replace migr_f=migr_f_MV if migr_f!=migr_f_MV // correct a few inconsistent cases
+
+	bysort pid: egen migr_m_MV=mode(migr_m), maxmode // identify most common response
+	replace migr_m=migr_m_MV if migr_m==. & migr_m_MV>=0 & migr_m_MV<.
+	replace migr_m=migr_m_MV if migr_m!=migr_m_MV // correct a few inconsistent cases
+	
+*question not asked before 97
+	foreach var in migr_f migr_m {
+		replace `var'=-8 if `var'==. & wavey<1997
+	}
+
+	drop temp* migr_m_MV migr_f_MV
+	lab val migr_f migr_m migr
+	
+**--------------------------------------
+**   Migrant Generation
+**--------------------------------------	
+//NOTE: migr_gen - migrant generation of the respondent - is a derived variable (from migr, migr_f and migr_m)
+	
+	
+lab def migr_gen ///
+0 "no migration background" ///
+1 "1st generation" ///
+2 "2st generation" ///
+3 "2.5th generation" ///
+4 "incomplete information parents"
+
+gen migr_gen=.
+
+* 0 "No migration background"
+replace migr_gen=0 if migr==0 & (migr_f==0 & migr_m==0) // respondent and both parents native-born
+replace migr_gen=0 if migr==0 & ///
+	 ((migr_f==0 & (migr_m==. | migr_m<0)) | ((migr_f==.| migr_f<0) & migr_m==0)) // respondent native-born, one parent native other unknown
+replace migr_gen=0 if migr==1 & (migr_f==0 & migr_m==0) // respondent foreign-born but both parents native
+
+* 1 "1st generation"
+replace migr_gen=1 if migr==1 & (migr_f==1 & migr_m==1) // respondent and both parents foreign-born
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & (migr_m==. | migr_m<0)) | (migr_m==1 & (migr_f==. | migr_f<0))) // respondent, one parent foreign-born other  unknown
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // respondent and one parent foreign-born, other native born
+
+*2 "2st generation"
+replace migr_gen=2 if migr==0 & (migr_f==1 & migr_m==1) // native-born, both parents foreign born
+replace migr_gen=2 if migr==0 & ///
+	((migr_f==1 & (migr_m==. | migr_m<0)) | (migr_m==1 & (migr_f==. | migr_f<0))) // native-born, one parent foreign-born other missing
+
+*3 "2.5th generation"
+replace migr_gen=3 if migr==0 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // native-born, one parent foreign-born other native-born	
 	 
+* Incomplete information parents
+replace migr_gen=4 if migr==0 & ((migr_f<0 | migr_f==.) & (migr_m<0 | migr_m==.)) // respondent native-born, both parents unknown
+replace migr_gen=4 if migr==1 & ((migr_f<0 | migr_f==.) & (migr_m<0 | migr_m==.)) // respondent foreign-born, both parents unknown
+replace migr_gen=4 if migr==1 & ///
+	 ((migr_f==0 & (migr_m==. | migr_m<0)) | ((migr_f==. | migr_f<0) & migr_m==0)) // respondent native-born, one parent native other unknown
+
+	label values migr_gen migr_gen
+
+//NOTE: if respondent is foreign-born but no information is available for parents, migr_gen is coded as missing.
+
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+/* Not indluded in the current version due to too many MV
+lab def langchild ///
+0 "same as country of residence" ///
+1 "other" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+
+// recode var to account for change in coding
+
+foreach var in lcB_H lcB_S {
+    recode `var' (1=1) /// English
+			(2/97=5) /// other non-English
+			(98=8) ///DK
+			(99=9) /// NA/Refusal
+			(0=0), /// Inap.
+	gen(re_`var')
+}
+
+//fill for head and spouse
+gen temp_lc=.
+	replace temp_lc=lcA_H if href==1 & intyear<=2000 // head before 2000
+	replace temp_lc=re_lcB_H if href==1 & intyear>2000 // head after 2000
+	replace temp_lc=lcA_S if href==2 & intyear<=2000 //spouse before 2000
+	replace temp_lc=re_lcB_S if href==2 & intyear>2000
+
+
+gen langchild =. // working variable for langchild
+replace langchild=0 if temp_lc==1 //English
+replace langchild=1 if temp_lc==5 //other
+replace langchild=-1 if (temp_lc==8 | temp_lc==9)
+
+
+
+*fill MV
+	bysort pid: egen temp_lc_MV=mode(langchild), maxmode // identify most common response
+	replace langchild=temp_lc_MV if langchild==. & temp_lc_MV>=0 & temp_lc_MV<.
+	replace langchild=temp_lc_MV if langchild!=temp_lc_MV // correct a few inconsistent cases
+	
+*specify when question not asked and cannot be filled using data from other years:
+replace langchild=-8 if langchild==. & !inlist(wavey, 1997, 1999, 2017, 2019)
+*question not asked of core sample:
+replace langchild=-8 if langchild==. & (inrange(ER30001, 1, 2930) | inrange(ER30001, 5001, 6872))
+	
+	drop temp*
+	
+	*/
+	
+	
+*################################
+*#								#
+*#	    Religion			 	#
+*#								#
+*################################
+
+**--------------------------------------  
+** Religiosity
+**--------------------------------------
+//NOTE: because we do not want to assume religious affiliation to be time-constant, missing values are not filled automatically across waves. 
+//It is important to note however that information is sometimes brought forward from previous waves in the PSID data. For further information on this, please refer to the psid codebook.
+
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-8 "Question not asked in survey"
+
+gen rel_pref=.
+replace rel_pref=rel_pref_H1 if href==1 & (wavey<=1975 | inrange(wavey, 1977, 1984)) // Head, protestantism only
+replace rel_pref=rel_pref_H2 if href==1 & (wavey==1976 | wavey>=1985) // Head
+replace rel_pref=rel_pref_S if href==2 & (wavey==1976 | wavey>=1985) // Spouse
+
+*coding 1976
+recode rel_pref (0=0) (1/9=1) (else=.), gen(temp_rel_A)
+
+*coding 1985-2019
+recode rel_pref (0=0) (1/35=1) (97=1) (98/99=-1) (else=.), gen(temp_rel_B)
+
+*coding 1970-1975 & 1977-1984
+recode rel_pref (1/9=1) (else=.), gen(temp_rel_C)
+//Note: for the years 1970-1975 and 1977-1985 information is only available for the head, and only considers those who belong to protestant denominations
+
+gen relig=.
+replace relig=temp_rel_A if wavey==1976
+replace relig=temp_rel_B if wavey>=1985
+replace relig=temp_rel_C if inrange(wavey, 1970, 1975)
+replace relig=temp_rel_C if inrange(wavey, 1977, 1984)
+
+*fill MV: 
+*#1.question not asked before 1970
+replace relig=-8 if wavey<1970
+
+*#2 question not asked of spouse in all waves
+replace relig=-8 if (inrange(wavey, 1970, 1975) | inrange(wavey, 1977, 1984)) & href==2
+
+lab val relig relig
+drop temp*
+
+**--------------------------------------  
+** Attendance
+**--------------------------------------
+lab def attendance ///
+1 "never or practically never" ///
+2 "less than once a month" ///
+3 "at least once a month" ///
+4 "once a week or more" ///
+-1 "MV general" ///
+-8 "question not asked in survey"
+
+gen temp_att=.
+replace temp_att=rel_att1 if inrange(wavey, 1968, 1972)
+replace temp_att=rel_att2_H if wavey>=2000 & href==1 // Head after 2000
+replace temp_att=rel_att2_S if wavey>=2000 & href==2 // Spouse after 2000
+
+*coding 1968
+recode temp_att (0=1) (1=2) (2/3=3) (4/5=4) (9=-1) (else=.), gen(att_A) //68
+
+*coding 1969
+recode temp_att (0/1=1) (2=2) (3=3) (4/5=4) (9=-1) (else=.), gen(att_B) //69
+
+*coding 1970-1972
+recode temp_att (0=1) (1=4) (2=3) (3=2) (9=-1) (else=.), gen(att_C) //70, 71, 72
+
+*coding 2003<
+//NOTE: from 2003 onwards, respondents are asked to estimate the total number of times they attended religious in the previous year
+recode temp_att (0=1) (1/11=2) (12/51=3) (52/97=4) (98/99=-1) (else=.), gen(att_D) //2003 onwards
+
+gen relig_att=.
+replace relig_att=att_A if wavey==1968
+replace relig_att=att_B if wavey==1969
+replace relig_att=att_C if inrange(wavey, 1970, 1972)
+replace relig_att=att_D if wavey>=2000
+
+*fill when question not asked
+replace relig_att=-8 if inrange(wavey, 1973, 2002)
+replace relig_att=-8 if wavey==2007
+replace relig_att=-8 if wavey==2009
+replace relig_att=-8 if wavey==2013
+replace relig_att=-8 if wavey==2015
+
+lab val relig_att attendance
+drop temp*
+
+
 *################################
 *#								#
 *#	Weights						#
@@ -1987,14 +2472,14 @@ gen wtcs3=w_indDcross if wavey>=1996
 **   Sample identifier 
 **-------------------------------------- 
 
-recode ER30001 (1/2930=1)(3001/3511=2)(4001/4462=3)(5001/6872=4)(7001/9308=5), gen(sampid_psid)
+recode ER30001 (1/2930=1)(3001/3511=2)(4001/4851=3)(5001/6872=4)(7001/9308=5), gen(sampid_psid)
 
 lab var sampid_psid "Sample identifier: PSID"
 
 lab def sampid_psid	///
 	1 "1968 SRC cross-section sample"	///
 	2 "Immigrant sample 1997 and 1999"	///
-	3 "Immigrant sample 2017"	///
+	3 "Immigrant sample 2017 and 2019"	///
 	4 "1968 Census sample"	///
 	5 "Latino sample 1990 and 1992" 	 
 
@@ -2021,8 +2506,9 @@ w_ind*   xsqnr	///
 wavey country wave1st   marstat5 mlstat5 	///
 livpart parstat6 nvmarr kidsn_hh17 satlife5 satlife10	///
 divor separ widow	///
-isei* siops* wtcs* mps* nempl fedu3 fedu4 medu3 medu4 sampid*
- 
+isei* siops* wtcs* mps* nempl fedu3 fedu4 medu3 medu4 sampid* ///
+migr* ethn* cob grewup_US   relig*
+
 order pid wave intyear   age female  , first
 order isresp href who_resp refer xsqnr w_ind*  sampid*, last
 
@@ -2030,7 +2516,7 @@ order isresp href who_resp refer xsqnr w_ind*  sampid*, last
 **|=========================================================================|
 **|  SAVE
 **|=========================================================================|
-label data "CPF_USA v1.0"
+label data "CPF_USA v1.5"
 
 save "${psid_out}\us_02_CPF.dta", replace  	
 

@@ -1,11 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF			####											|
-**|		>>>	PSID						 									|
-**|		>>	Use with 'psidtools'											|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF			####			|
+**|		>>>	PSID						 	|
+**|		>>	Use with 'psidtools'			|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|			
+**|=========================================|
 * 
 // https://simba.isr.umich.edu/default.aspx
 
@@ -19,7 +19,7 @@
 
 
 **|=========================================================================|
-**|  Step 1: Define program to be used in this syntax
+**|  Step 1: Define program to be used in this syntax						|
 **|=========================================================================|
 *** program combvars: 
 /* Use "combvars" to:
@@ -72,7 +72,7 @@ combvars age, list("[68]ER30004 [69]ER30023 [70]ER30046 [71]ER30070 [72]ER30094 
 // - For <83 get rom age
 // - Fill MV across waves 
 combvars yborn, list("[83]ER30404 [84]ER30434 [85]ER30468 [86]ER30503 [87]ER30540 [88]ER30575 [89]ER30611 [90]ER30647 [91]ER30694 [92]ER30738 [93]ER30811 [94]ER33106 [95]ER33206 [96]ER33306 [97]ER33406 [99]ER33506 [01]ER33606 [03]ER33706 [05]ER33806 [07]ER33906 [09]ER34006 [11]ER34106 [13]ER34206 [15]ER34307 [17]ER34506 [19]ER34706")
- 
+
 
 
 **--------------------------------------
@@ -1350,6 +1350,7 @@ combvars  sat_life , list("[09]ER42024 [11]ER47324 [13]ER53024 [15]ER60025 [17]E
 // 1	Completely satisfied
 // 5	Not at all satisfied
 
+
  
 *################################
 *#								#
@@ -1455,7 +1456,155 @@ combvars  meduS , list("[74]V3609 [75]V4109 [76]V4754 [77]V5573 [78]V6122 [79]V6
 // 99	DK; NA; refused
 // 0	Inap.:
 
+*################################
 
+*#  Ethnicity                   #
+
+*################################
+
+// Note: only using mention 1
+
+**--------------------------------------
+** ethnicity 
+**--------------------------------------
+combvars race_H, list("[68]V181 [69]V801 [70]V1490 [71]V2202 [72]V2828 [73]V3300 [74]V3720 [75]V4204 [76]V5096 [77]V5662 [78]V6209 [79]V6802 [80]V7447 [81]V8099 [82]V8723 [83]V9408 [84]V11055 [85]V11938 [86]V13565 [87]V14612 [88]V16086 [89]V17483 [90]V18814 [91]V20114 [92]V21420 [93]V23276 [94]ER3944 [95]ER6814 [96]ER9060 [97]ER11848 [99]ER15928 [01]ER19989 [03]ER23426 [05]ER27393 [07]ER40565 [09]ER46543 [11]ER51904 [13]ER57659 [15]ER64810 [17]ER70882 [19]ER76897") //Head
+
+combvars race_S, list("[85]V12293 [86]V13500 [87]V14547 [88]V16021 [89]V17418 [90]V18749 [91]V20049 [92]V21355 [93]V23212 [94]ER3883 [95]ER6753 [96]ER8999 [97]ER11760 [99]ER15836 [01]ER19897 [03]ER23334 [05]ER27297 [07]ER40472 [09]ER46449 [11]ER51810 [13]ER57549 [15]ER64671 [17]ER70744 [19]ER76752") //Spouse
+
+/**
+1	White
+2	Black, African-American, or Negro
+3	American Indian or Alaska Native
+4	Asian
+5	Native Hawaiian or Pacific Islander
+7	Other
+0	Wild code
+9	NA; DK
+*/
+
+**--------------------------------------
+** Ethnicity (Hispanic)  
+**--------------------------------------
+combvars hispanic_H, list("[85]V11937 [86]V13564 [87]V14611 [88]V16085 [89]V17482 [90]V18813 [91]V20113 [92]V21419 [93]V23275 [94]ER3941 [95]ER6811 [96]ER9057 [05]ER27392 [07]ER40564 [09]ER46542 [11]ER51903 [13]ER57658 [15]ER64809 [17]ER70881 [19]ER76896")
+
+combvars hispanic_S, list("[85]V12292 [86]V13499 [87]V14546 [88]V16020 [89]V17417 [90]V18748 [91]V20048 [92]V21354 [93]V23211 [94]ER3880 [95]ER6750 [96]ER8996 [05]ER27296 [07]ER40471 [09]ER46448 [11]ER51809 [13]ER57548 [15]ER64670 [17]ER70743 [19]ER76751")
+
+/*
+G31/L39 'Are you Spanish, Hispanic, or Latino?--That is, Mexican, Mexican American, Chicano, Puerto Rican, Cuban, or other Spanish?'
+1	Mexican
+2	Mexican American
+3	Chicano
+4	Puerto Rican
+5	Cuban
+6	Combination; more than 1 mention
+7	Other Spanish; Hispanic; Latino
+9	DK/NA/Refusal
+0	Inap:
+*/
+
+*################################
+
+*#  Migration                   #
+
+*################################
+
+**-------------------------------------------
+** Country of Birth (respondent and parents)  
+**-------------------------------------------
+combvars country_born, list("[97]ER33422" "[99]ER33525") //ind file --> if cob is not US. For coding see do-file "us_02add_labels_COB.do"
+
+combvars state_born, list("[97]ER33421 [99]ER33524") // state info 97 and 99
+
+combvars state_H, list("[13]ER57651" "[15]ER64802" "[17]ER70874" "[19]ER76889") //Head
+
+combvars state_S, list("[13]ER57541" "[15]ER64663" "[17]ER70736" "[19]ER76744") //Spouse
+
+/* 
+L33: 'Where (were/was) (you/HEAD) born? (What State is that in?)'
+1. - 56.	Actual State (FIPS code)
+99			DK/NA/Refusal
+0			Inap: US territory or foreign country
+*/
+
+***region growing up, only supplementary***
+combvars grewup_H, list("[68]V362 [69]V877 [70]V1573 [71]V2285 [72]V2912 [73]V3280 [74]V3700 [75]V4179 [76]V5055 [77]V5634 [78]V6181 [79]V6774 [80]V7420 [81]V8072 [82]V8696 [83]V9382 [84]V11029 [85]V12383 [86]V13635 [87]V14682 [88]V16156 [89]V17542 [90]V18893 [91]V20193 [92]V21499 [93]V23331 [94]ER4157C [95]ER6997C [96]ER9248C [97]ER12221C [99]ER16431A [01]ER20377A [03]ER24146 [05]ER28045 [07]ER41035 [09]ER46977 [11]ER52401 [13]ER58219 [15]ER65455 [17]ER71534 [19]ER77595") // Region where head grew up
+
+combvars grewup_S, list("[76]V5100 [85]V12387 [09]ER46979 [11]ER52403 [13]ER58221 [15]ER65457 [17]ER71536 [19]ER77597") //Spouse region
+
+
+*parents born (state)
+combvars cob_f_H, list("[97]ER11813" "[99]ER15891" "[01]ER19952" "[03]ER23389" "[05]ER27353" "[07]ER40528" "[09]ER46505" "[11]ER51866" "[13]ER57619" "[15]ER64770" "[17]ER70842" "[19]ER76857") 
+
+combvars cob_m_H, list("[97]ER11821" "[99]ER15900" "[01]ER19961" "[03]ER23398" "[05]ER27363" "[07]ER40538" "[09]ER46515" "[11]ER51876" "[13]ER57629" "[15]ER64780" "[17]ER70852" "[19]ER76867")
+
+combvars cob_f_S, list("[97]ER11732" "[99]ER15806" "[01]ER19867" "[03]ER23304" "[05]ER27264" "[07]ER40439" "[09]ER46411" "[11]ER51772" "[13]ER57509" "[15]ER64631" "[17]ER70704" "[19]ER76712")
+
+combvars cob_m_S, list("[97]ER11740" "[99]ER15815" "[01]ER19876" "[03]ER23313" "[05]ER27274" "[07]ER40449" "[09]ER46421" "[11]ER51782" "[13]ER57519" "[15]ER64641" "[17]ER70714" "[19]ER76722")
+
+/*coding
+L2. 'Where was your father born? (FIPS code)'
+1. - 56.	Actual State (FIPS code)
+99			DK/NA/Refusal
+0			Inap: US territory or foreign country
+*/
+
+**--------------------------------------
+** Language spoken as child
+**--------------------------------------
+//Note: coding changed after 2000
+
+combvars lcA_H, list("[97]ER11936" "[99]ER16023") // English first language
+combvars lcB_H, list("[17]ER70983" "[19]ER77005") // first language open question
+
+combvars lcA_S, list("[97]ER12018" "[99]ER16110") //English first language
+combvars lcB_S, list("[17]ER71012" "[19]ER77034") // first language open question
+
+/*
+coding '97 & '99
+M33. 'Was English the first lagnuage that you learned to speak when you were a child?'
+1	yes
+5	no
+8	DK
+9	NA/Refusal
+0	Inap: 
+*/
+
+/*
+coding '17 & '19
+IMM3. 'What language did you speak at home with your parents when you were age 10?'  (first mention)
+1. 		English
+2.-17	Non-English languages
+97		Other
+98		DK
+99		NA/Refusal
+0		Inap: 
+*/
+
+*################################
+
+*#    Religion                  #
+
+*################################
+
+**----------------------------------
+**  Religiosity
+**----------------------------------
+
+combvars rel_pref_H1, list("[70]V1431 [71]V2187 [72]V2813 [73]V3231 [74]V3653 [75]V4129 [77]V5617 [79]V6763 [80]V7396 [81]V8048 [82]V8672 [83]V9358 [84]V11005")  //Protestantism
+
+combvars rel_pref_H2, list("[76]V4693 [85]V11981 [86]V13604 [87]V14651 [88]V16125 [89]V17522 [90]V18853 [91]V20153 [92]V21459 [93]V23315 [94]ER3983 [95]ER6853 [96]ER9099 [97]ER11895 [99]ER15977 [01]ER20038 [03]ER23474 [05]ER27442 [07]ER40614 [09]ER46592 [11]ER51953 [13]ER57709 [15]ER64869 [17]ER70941 [19]ER76960") // religious preference head
+
+combvars rel_pref_S, list("[76]V4765 [85]V12336 [86]V13530 [87]V14577 [88]V16051 [89]V17448 [90]V18779 [91]V20079 [92]V21385 [93]V23242 [94]ER3913 [95]ER6783 [96]ER9029 [97]ER11807 [99]ER15884 [01]ER19945 [03]ER23382 [05]ER27346 [07]ER40521 [09]ER46498 [11]ER51859 [13]ER57599 [15]ER64730 [17]ER70803 [19]ER76815") // religious preference spouse 
+
+**----------------------------------
+**  Religion - Attendance
+**----------------------------------
+
+combvars rel_att1, list("[68]V284 [69]V763 [70]V1430 [71]V2142 [72]V2783") // 68-72
+
+combvars rel_att2_H, list("[03]ER23699 [05]ER27708 [11]ER52046 [17]ER71064 [19]ER77086") // Head after 2000
+
+combvars rel_att2_S, list("[03]ER23701 [05]ER27710 [11]ER52064 [17]ER71066 [19]ER77088") // Spouse after 2000
 
 *################################  
 *#								#
