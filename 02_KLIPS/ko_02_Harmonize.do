@@ -1,15 +1,12 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
-**|		>>>	KLIPS						 									|
-**|		>>	Harmonize variables 		 					|
-**|-------------------------------------------------------------------------|
-**|		Stata 16		| 	2020											|	
-**|		Konrad Turek 	|	turek@nidi.nl									|
-**|=========================================================================|
+**|=================================================|
+**|	    ####	CPF	v1.5		####				|
+**|		>>>	KLIPS						 			|
+**|		>>	Harmonize variables 		 			|
+**|-------------------------------------------------|
+**|		Konrad Turek 		| 	2023				|	
+**|=================================================|
 * 
-
-
 
 **--------------------------------------
 ** Open merged dataset
@@ -38,6 +35,7 @@ lab def yesno 0 "[0] No" 1 "[1] Yes" ///
 *################################	
 * pid
 * intyear 
+* intmonth
 * wave 
 
 
@@ -54,12 +52,13 @@ gen country=2
  
 bysort pid: egen wave1st = min(wave) // hwaveent for HH entry (sometimes different sample entry)
 
-*** Repsondent status 
-recode p_9509 (-1/7=1), gen(respstat)
+*** Respondent status 
+recode p_9509 (-1/8=1), gen(respstat)
 	lab def respstat 	1 "Interviewed" 					///
 						2 "Not interviewed (has values)" 	///
 						3 "Not interviewed (no values)"
 	lab val respstat respstat
+	
 
 
 *################################
@@ -986,7 +985,7 @@ replace nempl=2 if entrep2==1 & (p_0403>=3 & p_0403<11)
 	
 *################################
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 
@@ -1487,7 +1486,194 @@ recode p_9053 (1 2=1)(3=2) (4=3) (5/7=4), gen(medu4)
 
 *** Mother  
 
-	 
+*################################
+*#								#
+*#	    Ethnicity 				#
+*#								#
+*################################	
+//Not available for KLIPS
+
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	
+
+**--------------------------
+**   Migration Background 
+**--------------------------
+
+*** migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "Native-born" ///
+1 "Foreign-born" ///
+-1 "MV general" ///
+-2 "DK/refusal" ///
+-3 "NA" ///
+-8 "not asked in survey"
+
+gen migr=.
+*first based on item p_9001 (city/province of birth)
+replace migr=0 if inrange(p_9001, 1, 16) // South Korean city or province
+replace migr=1 if p_9001==17 // North Korea
+replace migr=1 if p_9001==18 //Overseas
+
+*fill based on p_9005
+replace migr=1 if migr==. & inrange(p_9005, 1, 42) & p_9005!=16
+
+lab val migr migr
+
+*fill MV
+	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
+	replace migr=temp_migr if migr==. & temp_migr>=0 & temp_migr<.
+	replace migr=temp_migr if migr!=temp_migr // correct a few inconsistent cases
+	
+*specify missing:
+replace migr=-1 if migr==. & (p_9001==-1 | p_9005==-1)
+
+
+**-------------------
+**   COB respondent
+**-------------------	
+/// NOTE: item asks specific country where respondent lived at age 14 IF born in foreign country
+
+label define COB ///
+0 "Born in Survey-Country" ///
+1 "Oceania and Antarctica" ///
+2 "North-West Europe" ///
+3 "Southern and Eastern Europe" ///
+4 "North Africa and the Middle East" ///
+5 "South-East Asia" ///
+6 "North-East Asia" ///
+7 "Southern and Central Asia" ///
+8 "Americas" ///
+9 "Sub-Saharan Africa" ///
+10 "Other" ///
+-1 "MV general" ///
+-2 "DK/refusal" ///
+-3 "NA" ///
+-8 "not asked in survey"
+
+gen cob_rt=. // temp working var
+	replace cob_rt=6 if p_9005==1 //China
+	replace cob_rt=2 if p_9005==2 //Germany
+	replace cob_rt=6 if p_9005==3 //Japan
+	replace cob_rt=2 if p_9005==4 //England
+	replace cob_rt=5 if p_9005==7 //Thailand
+	replace cob_rt=8 if p_9005==8 //USA
+	replace cob_rt=6 if p_9005==9 //Taiwan
+	replace cob_rt=8 if p_9005==10 //Paraguay
+	replace cob_rt=8 if p_9005==12 //Canada
+	replace cob_rt=8 if p_9005==13 //Saipan
+	replace cob_rt=3 if p_9005==19 //Russia
+	replace cob_rt=1 if p_9005==25 //NZ
+	replace cob_rt=5 if p_9005==27 //Philippines
+	replace cob_rt=6 if p_9005==30 //Mongolia
+	replace cob_rt=5 if p_9005==31 //Malaysia
+	replace cob_rt=5 if p_9005==32 //Vietnam
+	replace cob_rt=6 if p_9005==35 //North Korea
+	replace cob_rt=5 if p_9005==36 //Cambodia
+	replace cob_rt=7 if p_9005==37 //Bangladesh
+	replace cob_rt=7 if p_9005==38 //Nepal
+	replace cob_rt=5 if p_9005==39 //Cambodia
+	replace cob_rt=7 if p_9005==40 //Pakistan
+	replace cob_rt=5 if p_9005==41 //Singapore
+	replace cob_rt=-1 if p_9005==16 //DK
+	replace cob_rt=-1 if p_9005==-1 //MV
+	replace cob_rt=6 if (p_9005==. | p_9005<0) & p_9001==17 //North Korea 
+	replace cob_rt=0 if migr==0 //native-born (i.e. cob = South Korea)
+	replace cob_rt=10 if migr==1 & (p_9005==. | p_9005==-1) // foreign not specified
+
+*fill MV: Identify valid COB and fill across waves  
+sort pid wave 
+
+*** Generate valid stage 1 - mode across the waves (values 1-10)
+	// It takes the value of the most common valid answer between 1 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+	bysort pid: egen mode_cob_rt=mode(cob_rt)
+	
+*** Generate valid stage 2 - first valid answer provided (values 1-9)
+	// It takes the value of the first recorded answer between 1 and 9 (so ignores 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	by pid (wave), sort: gen temp_first_cob_rt=cob_rt if sum(inrange(cob_rt, 1, 9)) ==1 & sum(inrange(cob_rt[_n - 1], 1, 9)) == 0 //identify first valid answer in range 1-9
+	bysort pid: egen first_cob_rt=max(temp_first_cob_rt) // copy across waves within pid
+	drop temp_first_cob_rt
+	
+
+*** Fill the valid COB across waves
+	gen cob_r = mode_cob_rt  // stage 1 (mode)
+	replace cob_r = first_cob_rt if cob_r==. & inrange(first_cob_rt, 1, 9) // stage 2 - based on first for MV
+	replace cob_r = first_cob_rt if cob_r==10 & inrange(first_cob_rt, 1, 9) // stage 2 - based on first for other
+	drop cob_rt
+	
+*specify some missing values
+replace cob_r=-1 if cob_r==. & (p_9001==-1 | p_9005==-1)
+	
+	label values cob_r COB
+	rename cob_r cob
+	
+**--------------------------------------
+**   Migrant Generation (respondent)
+**--------------------------------------	
+	//Not available (no information parents) 
+	
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+	//Not available
+	
+*################################
+*#								#
+*#	    Religion			 	#
+*#								#
+*################################
+
+**--------------------------------------  
+** Religiosity
+**--------------------------------------
+
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey" ///
+
+recode p_9031 (1=0) (2/10=1) (-1=-1) (.=-2), gen(relig)
+
+*asked only of new respondents in wave 1-11
+replace relig=-8 if relig==. & wavey<2009
+
+lab val relig relig
+
+**--------------------------------------  
+** Religion - Attendance
+**--------------------------------------
+//note: Not available for harmonization
+//Alternative item "active participation in religious activity" is available but not included in relig_att
+
+lab define relig_KOR ///
+1 "very actively" ///
+2 "actively in general" ///
+3 "not very actively" ///
+4 "not actively at all" ///
+-1 "MV general" ///
+-8 "Question not asked in survey" ///
+
+
+clonevar relig_KOR=p_9032 
+
+*asked of all respondents from wave 12 onwards
+replace relig_KOR=-8 if wavey<2009
+
+lab val relig_KOR relig_KOR
+
+
 
 *################################
 *#								#
@@ -1560,13 +1746,14 @@ isco* indust* 	ksco* wavey wave1st srh*	///
 p_9509	/// interveiw results 
 h_0261 h_0262 h_0263 h_0264 h_0265 h_0266 h_0267 h_0268 h_0269 h_0270 h_0271 h_0272 h_0273 h_0274 h_0275 /// relation to head 
 isei* siops* mps* wtcp*  nempl	///
+migr* cob* relig* /// migration & religion
 widow divor separ fedu* medu*   sampid*
 
 **|=========================================================================|
 **|  SAVE
 **|=========================================================================|
  
-label data "CPF_Korea v1.0"
+label data "CPF_Korea v1.5"
 
 save "${klips_out}\ko_02_CPF.dta", replace  	
 

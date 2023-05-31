@@ -1,12 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
-**|		>>>	KLIPS						 									|
-**|		>>	Prepare data + Combine (all files, all vars)					|
-**|-------------------------------------------------------------------------|
-**|		Stata 16		| 	2020											|	
-**|		Konrad Turek 	|	turek@nidi.nl									|
-**|=========================================================================|
+**|=======================================================|
+**|	    ####	CPF	ver 1.5		####					  |
+**|		>>>	KLIPS						 				  |
+**|		>>	Prepare data + Combine (all files, all vars)  |
+**|-------------------------------------------------------|
+**|		Konrad Turek		| 	2023					  |	
+**|=======================================================|
 * 
 
 
@@ -249,7 +248,7 @@ clear
 foreach w in $waves {
 	  display "Appending wave: "`w'
 			qui append using "${klips_out_work}\ph_klips`w'.dta"
-	  display "After appned of wave `w' - Vars:" c(k) " N: " _N
+	  display "After append of wave `w' - Vars:" c(k) " N: " _N
 	  display ""
 	}
 qui tab wave
