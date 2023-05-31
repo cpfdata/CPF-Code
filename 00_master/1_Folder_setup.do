@@ -1,10 +1,10 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.3		####										|
-**|		>>>	Folder setup for extracting original data 		 						
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2021	|	turek@nidi.nl						|			
-**|=========================================================================|
+**|=====================================================|
+**|	    ####	CPF	ver 1.5		####					|
+**|		>>>	Folder setup for extracting original data 	|	 						
+**|-----------------------------------------------------|
+**|		Konrad Turek 	| 	2023						|			
+**|=====================================================|
 /* INSTRUCTION:
 A. Insert your directory in #1 
 B. Run the rest of the code unchanged  
@@ -23,7 +23,7 @@ E. Remember to copy all CPF-do-files to "11_CPF_in_syntax". Or simply rename dow
 **------------------------------------------------------------------------------
 // Inster the main directory for storing original datasets and all the CPF files 
 	
-global your_dir "C:\CPF\"  // <--inster your directory //E:\2019_20 CRITEVENTS   //E:\temp2
+global your_dir "D:\__CPFv.1.5"  // <--inster your directory 
 
 
 
@@ -133,8 +133,8 @@ set more off
 
 // Copy the latest files from the CPF online platform 
 
-copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Manual%20v1.3.pdf" "${your_dir}\\${Fdocs}\CPF_Manual_v1.3.pdf"
-copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook%20v1.1.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.1.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_manual%20v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_manual_v1.5.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook%20v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.5.pdf"
 
 
 **------------------------------------------------------------------------------
