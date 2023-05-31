@@ -134,7 +134,7 @@ set more off
 // Copy the latest files from the CPF online platform 
 
 copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_manual%20v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_manual_v1.5.pdf"
-copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook%20v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.5.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook_v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.5.pdf"
 
 
 **------------------------------------------------------------------------------
