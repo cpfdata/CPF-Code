@@ -1,11 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF			####											|
-**|		>>>	SOEP						 									|
-**|		>>	New Vars for the merged dataset		 							|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=============================================|
+**|	    ####	CPF	v1.5	####				|
+**|		>>>	SOEP						 		|
+**|		>>	New Vars for the merged dataset		|
+**|---------------------------------------------|
+**|		Konrad Turek 	| 	2023				|
+**|=============================================|
 *
 
 
@@ -79,7 +79,7 @@ clonevar yborn=gebjahr
 	lab var yborn "Birth year" 
 
 * Gender
-recode sex (1=0) (2=1), gen(female)
+recode sex (1=0) (2=1) (else=.), gen(female)
 	lab def female 0 "Male" 1 "Female" 
 	lab val female female 
 	lab var female "Gender" 
@@ -197,7 +197,7 @@ recode pgisced11 (0 1=1) (2=2) (3 4=3) (5 6 7=4) (8=5) if intyear >=2010, gen(ed
 
 
 recode pgfamstd (1 7=1)(2 6 8=5)(3=2)(4=4)(5=3)	///
-				(-1=-2) (-3=-1) (-5=-8), gen(marstat5)
+				(-1=-2) (-3=-1) (-5 -8=-8), gen(marstat5)
 
 	lab var marstat5 "Primary partnership status [5]"
 	lab def marstat5				///
@@ -219,7 +219,7 @@ recode pgfamstd (1 7=1)(2 6 8=5)(3=2)(4=4)(5=3)	///
 * Never married include singles  
 
 recode pgfamstd (1 7=1)(2 6 8=5)(3=2)(4=4)(5=3)	///
-				(-1=-2) (-3=-1) (-5=-8), gen(mlstat5)
+				(-1=-2) (-3=-1) (-5 -8=-8), gen(mlstat5)
 
 	lab var mlstat5 "Formal marital status [5]"
 	lab def mlstat5				///
@@ -249,7 +249,7 @@ replace parstat6=2 if (pgfamstd!=1 & pgfamstd!=7) & (partner>=1 & partner<=4)
 replace parstat6=1 if (pgfamstd==1|pgfamstd==7)	// pgfamstd is cleaned, so it has a priority over partner info 
 
 		recode  pgfamstd (1 7=1)(2 6 8=6)(3=3)(4=5)(5=4)	///
-						 (-1=-2) (-3=-1) (-5=-8), gen(temp_parstat6)
+						 (-1=-2) (-3=-1) (-5 -8=-8), gen(temp_parstat6)
 		replace parstat6=temp_parstat6 if parstat6==-3 & temp_parstat6>0 & temp_parstat6<.
 
 
@@ -318,7 +318,7 @@ clonevar nphh= d11106
 								
 *** Never married 
 recode pgfamstd (3=1)(1 2 4/8=0)	///
-				(-1=-2) (-3=-1) (-5=-8), gen(nvmarr)
+				(-1=-2) (-3=-1) (-5 -8=-8), gen(nvmarr)
 
 		lab var nvmarr "Never married"
 		lab val nvmarr yesno					
@@ -382,6 +382,7 @@ recode e11104 (-2=-3) (2=0), gen(work_d)
 
 // ssc install iscogen
 
+*** isco88_4
 clonevar isco88_4 = e11105_v1 // if wavey<=2017
 clonevar isco08_4 = e11105_v2 // if wavey>=2018
 recode isco88_4 (-2 -8=-3) (0=-1) 
@@ -403,8 +404,6 @@ iscogen isco88_4a= isco88(isco08_4) ,  from(isco08)
 replace isco08_4=isco08_4a if wavey<=2017
 replace isco88_4=isco88_4a if wavey>=2018
 drop isco08_4a isco88_4a
-
-
 
 *** isco_1 isco_2
 lab def isco_1															///
@@ -481,7 +480,7 @@ lab def isco_2															///
 *		  
 generate isco_1 = cond(isco08_4 > 100, int(isco08_4/1000), isco08_4)
 generate isco_2 = cond(isco08_4 > 100, int(isco08_4/100), isco08_4)
- 
+
 	lab val isco_1 isco_1
 	lab var isco_1 "Occupation: ISCO-1digit"
 
@@ -503,8 +502,9 @@ generate isco_2 = cond(isco08_4 > 100, int(isco08_4/100), isco08_4)
 
 
 * Major groups 
-recode e11107 (0 -2=-3)(1/15=1)(16/26 32=2)(27/31 33=3), gen(indust1)
+recode e11107 (0 -2=-3)(1/15=1)(16/26 32=2)(27/31 33=3) (99=-1), gen(indust1)
 replace indust1=1 if e11107==26 & e11106==4
+*TEMPIV: 99=not attributable to -1
  		
 lab def indust1											///
            1 "[1] Production, Construction, Heavy Ind"	///
@@ -538,9 +538,11 @@ lab def indust2						///
 	lab var indust2 "Industry (submajor groups/1 dig)" 
 	
 * Minor groups 
-recode e11107 (0 -2=-3)(3=5)(4 =3)(5 6 7 8 11 12 13=4)(9 10 14 15=6) ///
-			  (16=7)(21=9)(22 23=10)(24=8)(25 26=7)	///
-			  (27=13)(28=14)(30 31=15)(32=16)(33=12), gen(indust3)
+recode e11107 (0 -2 99=-3)(3=5)(4 =3)(5 6 7 8 11 12 13=4)(9 10 14 15=6) ///
+			  (16/18=7)(20 21=9)(22 23=10)(24=8)(25 26=7)	///
+			  (27=13)(28=14)(29 30 31=15)(32=16)(33=12), gen(indust3)
+			  
+
 replace indust3=4 if (e11107==9 | e11107==10) & e11106==4
 replace indust3=4 if e11107==26 & e11106==4
  		
@@ -672,7 +674,7 @@ replace whweek=whyear/(12*4.3) if (whweek==.|whweek<0) & whyear>0 & whyear<.
 **--------------------------------------
 ** maternity leave   
 **--------------------------------------
-recode  pglfs (4=1)(1/3 5/12=0) (-2=-3) , gen(mater)
+recode  pglfs (4=1)(1/3 5/13=0) (-2=-3) , gen(mater)
  
 // 	lab val mater yesno
 // 	lab var mater "maternity leave "	
@@ -727,9 +729,9 @@ lab var un_act "Unemployed: actively looking for work "
 *#								#
 *################################
 **--------------------------------------
-** Self-imployed	!! Harmon
+** Self-employed	!! Harmon
 **--------------------------------------
-* plb0057_h plb0586
+* plb0057_h plb0057_v9
 /*Notes: 
 - decide about Help in Family Business
 - could include info about income 
@@ -737,24 +739,25 @@ lab var un_act "Unemployed: actively looking for work "
 */
 
 *** v1 - all without Family Business
-gen 	selfemp_v1=1 	if plb0057_h>0 	 & plb0057_h<6 		& syear< 2014
-replace selfemp_v1=0 	if plb0057_h==-2 | plb0057_h==6 	& syear< 2014
-replace selfemp_v1=-2 	if plb0057_h==-1 | plb0057_h==-3 	& syear< 2014
-replace selfemp_v1=-8 	if plb0057_h==-8 | plb0057_h==-5 	& syear< 2014
-replace selfemp_v1=1 	if plb0586>0 	 & plb0586<=3 		& syear>=2014
-replace selfemp_v1=0 	if plb0586==-2 	 | plb0586==4 		& syear>=2014
-replace selfemp_v1=-2 	if plb0586==-1 	 			 		& syear>=2014
-replace selfemp_v1=-8 	if plb0586==-8 	 			 		& syear>=2014
+*@change to h1
+gen 	selfemp_v1=1 	if plb0057_h1>0 	 & plb0057_h1<6 		& syear< 2014
+replace selfemp_v1=0 	if plb0057_h1==-2 | plb0057_h1==6 	& syear< 2014
+replace selfemp_v1=-2 	if plb0057_h1==-1 | plb0057_h1==-3 	& syear< 2014
+replace selfemp_v1=-8 	if plb0057_h1==-8 | plb0057_h1==-5 	& syear< 2014
+replace selfemp_v1=1 	if plb0057_v9>0 	 & plb0057_v9<=3 		& syear>=2014
+replace selfemp_v1=0 	if plb0057_v9==-2 	 | plb0057_v9==4 		& syear>=2014
+replace selfemp_v1=-2 	if plb0057_v9==-1 	 			 		& syear>=2014
+replace selfemp_v1=-8 	if plb0057_v9==-8 	 			 		& syear>=2014
 
 *** v2 - with Family Business
-gen 	selfemp=1 	if plb0057_h>0 	 & plb0057_h<=6		& syear< 2014
-replace selfemp=0 	if plb0057_h==-2 				 	& syear< 2014
-replace selfemp=-2 	if plb0057_h==-1 | plb0057_h==-3 	& syear< 2014
-replace selfemp=-8 	if plb0057_h==-8 | plb0057_h==-5 	& syear< 2014
-replace selfemp=1 	if plb0586>0 	 & plb0586<=4 		& syear>=2014
-replace selfemp=0 	if plb0586==-2 	  			 		& syear>=2014
-replace selfemp=-2 	if plb0586==-1 	 			 		& syear>=2014
-replace selfemp=-8 	if plb0586==-8 	 			 		& syear>=2014
+gen 	selfemp=1 	if plb0057_h1>0 	 & plb0057_h1<=6		& syear< 2014
+replace selfemp=0 	if plb0057_h1==-2 				 	& syear< 2014
+replace selfemp=-2 	if plb0057_h1==-1 | plb0057_h1==-3 	& syear< 2014
+replace selfemp=-8 	if plb0057_h1==-8 | plb0057_h1==-5 	& syear< 2014
+replace selfemp=1 	if plb0057_v9>0 	 & plb0057_v9<=4 		& syear>=2014
+replace selfemp=0 	if plb0057_v9==-2 	  			 		& syear>=2014
+replace selfemp=-2 	if plb0057_v9==-1 	 			 		& syear>=2014
+replace selfemp=-8 	if plb0057_v9==-8 	 			 		& syear>=2014
 
 *** v3 - based on income from self-empl
 gen 	selfemp_v3=1 if iself>100
@@ -774,18 +777,19 @@ replace selfemp_v3=0 if iself==0
 to harmonize across waves, we ignored Freie Berufe & Selbst. Landwirte
 which have employees (recognized for w>=2014)
 */
+
 clonevar entrep=selfemp_v1
-replace  entrep=0 	if plb0057_h>=1	& plb0057_h<4		& syear< 2014
-replace  entrep=0	if plb0586<3						& syear>=2014
-replace  entrep=0	if plb0586==3 	& plb0570<2 		& syear>=2014
+replace  entrep=0 	if plb0057_h1>=1	& plb0057_h1<4		& syear< 2014
+replace  entrep=0	if plb0057_v9<3						& syear>=2014
+replace  entrep=0	if plb0057_v9==3 	& plb0057_v9<2 		& syear>=2014
 	
 	lab val entrep yesno
 	lab var entrep "Entrepreneur (not farmer; has employees)"
 
 clonevar entrep2=selfemp_v1
-replace  entrep2=0 	if plb0057_h>=2	& plb0057_h<4		& syear< 2014
-replace  entrep2=0	if plb0586>=2 	& plb0586<3			& syear>=2014
-replace  entrep2=0	if plb0586==3 	& plb0570<2 		& syear>=2014
+replace  entrep2=0 	if plb0057_h1>=2	& plb0057_h1<4		& syear< 2014
+replace  entrep2=0	if plb0057_v9>=2 	& plb0057_v9<3			& syear>=2014
+replace  entrep2=0	if plb0057_v9==3 	& plb0057_v9<2 		& syear>=2014
 
 	lab val entrep2 yesno
 	lab var entrep2 "Entrepreneur (incl. farmers; has employees)"
@@ -794,8 +798,8 @@ replace  entrep2=0	if plb0586==3 	& plb0570<2 		& syear>=2014
 ** Number of employees 
 **--------------------------------------
 recode entrep2 (0 1=-1), gen(nempl)
-replace nempl=1 if entrep2==1 & plb0570==2
-replace nempl=2 if entrep2==1 & plb0570==3
+replace nempl=1 if entrep2==1 & plb0057_v9==2
+replace nempl=2 if entrep2==1 & plb0057_v9==3
 
 
 	lab def nempl 1 "1-9" 2 "10+" 	///
@@ -804,10 +808,11 @@ replace nempl=2 if entrep2==1 & plb0570==3
 	lab val nempl nempl
 	lab var nempl "Number of employees (entrepreneurs)"
 	
+
 		
 *################################
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 
@@ -919,8 +924,7 @@ replace emplst6=6 if (pglfs==4 | pglfs==12) & /// NW-maternity leave or NW-work 
 *  plb0022_h e11103
 /*Notes: 
 */
-recode plb0022_h (1=1) (2 4=2) (3 5/11=3) (-5 .=-1), gen(fptime_r)
-
+recode plb0022_h (1=1) (2 4=2) (3 5/12=3) (-5 .=-1), gen(fptime_r)
 
 *
 gen fptime_h=.
@@ -1200,9 +1204,9 @@ recode ple0036 (1=1)(2=0) (-1=-2)(-2=-3)(-8 -5=-8), gen(chron)
 **   Training
 **--------------------------------------
 * plg0269
-/*Note: 
-- only from 2014
-*/
+*Note: 
+*- only from 2014
+*@temp removed
 
 recode plg0269_v1 plg0269_v2 (1=1) (2 3=0) 			///
 		(-1 -3 -4=-2) (-8 -5=-8), gen(temp_train1 temp_train2)
@@ -1212,7 +1216,7 @@ replace train=temp_train2 if wavey>=2016
 lab val train yesno
 
 	lab var train "Training (previous year)"
-
+*/
 **--------------------------------------
 **   work-edu link
 **--------------------------------------
@@ -1436,8 +1440,291 @@ drop temp_medu*
 	}
 	}
 
+*################################
+*#								#
+*#	    Ethnicity				#
+*#								#
+*################################	 
+//Not available for SOEP
+
+
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	 
+
+**--------------------------------------
+**   COB respondent, father and mother
+**--------------------------------------	
+// NOTE:because of the extensive list of countries, a separate do-file generates the variables for the country of birth of the respondent and their parents categories by region. (see additional do-file for details)
+
+do "${Grd_syntax}\06_SOEP\ge_02add_labels_COB.do" 
+
+*** Identify valid COB and fill across waves  
+sort pid wave 
+
+
+*** Generate working variables
+	gen cob_rt=cob_r
+ 
+
+*** Generate valid stage 1 - mode across the waves (values 1-10)
+	// It takes the value of the most common valid answer between 1 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	bysort pid: egen mode_cob_rt=mode(cob_rt)
+	
+	
+*** Generate valid stage 2 - first valid answer provided (values 0-9)
+	// It takes the value of the first recorded answer between 0 and 9 (so ignores 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	by pid (wave), sort: gen temp_first_cob_rt=cob_rt if ///
+			sum(inrange(cob_rt, 0,9)) == 1 &      ///
+			sum(inrange(cob_rt[_n - 1],0,9)) == 0 // identify 1st valid answer in range 1-9
+	bysort pid: egen first_cob_rt=max(temp_first_cob_rt) // copy across waves within pid
+	drop  temp_first_cob_rt
 
 	
+*** Fill the valid COB across waves
+ 	replace cob_r = mode_cob_rt // stage 1 - based on mode
+	replace cob_r = first_cob_rt if cob_r==. & inrange(first_cob_rt, 0,9) // stage 2 - based on the first for MV
+	replace cob_r = first_cob_rt if cob_r==10 & inrange(first_cob_rt, 1,9) // stage 2 - based on the first for 10'other'
+	drop cob_rt
+	 
+		
+rename cob_r cob
+	
+*specify some missing
+replace cob=-2 if cob==. & corigin==-1 // non response
+
+
+lab val cob  COB
+
+
+/* Alternative version of the code that includes cob_m and cob_f. It is not used 
+in this version due to many MV. 
+
+*** Generate working variables
+	foreach var in cob_r cob_m cob_f {
+	gen `var't=`var'
+	}
+
+*** Generate valid stage 1 - mode across the waves (values 1-10)
+	// It takes the value of the most common valid answer between 1 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	bysort pid: egen mode_`var'=mode(`var')
+	}
+	
+*** Generate valid stage 2 - first valid answer provided (values 0-9)
+	// It takes the value of the first recorded answer between 0 and 9 (so ignores 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	by pid (wave), sort: gen temp_first_`var'=`var' if ///
+			sum(inrange(`var', 0,9)) == 1 &      ///
+			sum(inrange(`var'[_n - 1],0,9)) == 0 // identify 1st valid answer in range 1-9
+	bysort pid: egen first_`var'=max(temp_first_`var') // copy across waves within pid
+	drop  temp_first_`var'
+	}
+	
+*** Fill the valid COB across waves
+	foreach var in cob_r cob_m cob_f {
+	replace `var' = mode_`var't // stage 1 - based on mode
+	replace `var' = first_`var't if `var'==. & inrange(first_`var't, 0,9) // stage 2 - based on the first for MV
+	replace `var' = first_`var't if `var'==10 & inrange(first_`var't, 1,9) // stage 2 - based on the first for 10'other'
+	drop `var't
+		}
+		
+rename cob_r cob
+	
+*specify some missing
+replace cob=-2 if cob==. & corigin==-1 // non response
+
+	foreach p in f m {
+	replace cob_`p'=-2 if cob_`p'==. & germborn_`p'==-1
+	replace cob_`p'=-3 if cob_`p'==. & germborn_`p'==-2 //not apply
+	replace cob_`p'=-8 if cob_`p'==. & germborn_`p'==-5 //not asked
+	replace cob_`p'=-1 if cob_`p'==. & germborn_`p'==-8 //MV not specified
+	}
+
+	foreach p in f m  			{    
+	replace cob_`p'=-2 if cob_`p'==. & `p'origin==-1 //nonresponse
+	replace cob_`p'=-3 if cob_`p'==. & `p'origin==-2 //not apply
+	replace cob_`p'=-8 if cob_`p'==. & `p'origin==-5 //not asked
+	replace cob_`p'=-1 if cob_`p'==. & `p'origin==-8 //MV not specified
+	}
+	
+	foreach p in f m {
+		replace cob_`p'=-8 if (cob_`p'==. | cob_`p'<0) & (`p'origin==. | `p'origin==-2) & wavey<2006
+	} // before 2006 germborn not asked in main survey
+
+	
+lab val cob cob_f cob_m COB
+*/
+
+**-------------------------------------------------
+**   Migration Background (respondent)
+**-------------------------------------------------
+
+*migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "Native-born" ///
+1 "Foreign-born" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode cob (0=0) (1/10=1) (-1=-1) (-2=-2) (-3=-3) (-8=-8), gen(migr)
+
+/**--------------------------------------
+**   Migration Background (parents)
+**--------------------------------------	
+
+foreach p in f m {
+	recode cob_`p' (0=0) (1/10=1) (-1=-1) (-2=-2) (-3=-3) (-8=-8), gen(migr_`p')
+}	
+
+lab val migr_f migr_m migr
+*/
+
+**--------------------------------------
+**   Migrant Generation
+**--------------------------------------	
+/* Due to many MV on parents' migration background (cob_m & cob_f) in GER, migr_gen is 
+not included in this version of the code. However, the appropriate code is provided below. 
+*/
+
+//NOTE: migr_gen - migrant generation of the respondent - is a derived variable (from migr, migr_f and migr_m)
+
+/*
+lab def migr_gen ///
+0 "no migration background" ///
+1 "1st generation" ///
+2 "2st generation" ///
+3 "2.5th generation" ///
+4 "incomplete information parents"
+
+gen migr_gen=.
+
+* 0 "No migration background"
+replace migr_gen=0 if migr==0 & (migr_f==0 & migr_m==0) // respondent and both parents native-born
+replace migr_gen=0 if migr==0 & ///
+	 ((migr_f==0 & (migr_m==. | migr_m<0)) | ((migr_f==. | migr_f<0) & migr_m==0)) // respondent native-born, one parent native other unknown
+replace migr_gen=0 if migr==1 & (migr_f==0 & migr_m==0) // respondent foreign-born but both parents native
+
+* 1 "1st generation"
+replace migr_gen=1 if migr==1 & (migr_f==1 & migr_m==1) // respondent and both parents foreign-born
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & (migr_m==. | migr_m<0)) | (migr_m==1 & (migr_f==.| migr_f<0))) // respondent, one parent foreign-born other  unknown
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // respondent and one parent foreign-born, other native born
+
+*2 "2st generation"
+replace migr_gen=2 if migr==0 & (migr_f==1 & migr_m==1) // native-born, both parents foreign born
+replace migr_gen=2 if migr==0 & ///
+	((migr_f==1 & (migr_m==. | migr_m<0)) | (migr_m==1 & (migr_f==. | migr_f<0))) // native-born, one parent foreign-born other missing
+
+*3 "2.5th generation"
+replace migr_gen=3 if migr==0 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // native-born, one parent foreign-born other native-born	
+	 
+* Incomplete information parents
+replace migr_gen=4 if migr==0 & (migr_f==. | migr_f<0) & (migr_m==. | migr_m<0) // respondent native-born, both parents unknown
+replace migr_gen=4 if migr==1 & ((migr_f==. | migr_f<0) & (migr_m==.| migr_m<0)) // respondent foreign-born, both parents unknown
+replace migr_gen=4 if migr==1 & ///
+	 ((migr_f==0 & (migr_m==. | migr_m<0)) | ((migr_f==. | migr_f<0) & migr_m==0)) // respondent native-born, one parent native other unknown
+
+  
+	label values migr_gen migr_gen
+
+*/
+
+
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+// Not indluded in the current version due to too many MV
+/*
+***NOTE: very limited availability: question only asked of migrant subsample since 2017
+
+lab def langchild ///
+0 "same as country of residence" ///
+1 "other" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode lr2076 (min/-5=-8) (-3=-1) (1/max=1) (else=.), gen(langchild)
+
+lab val langchild langchild
+
+*fill MV / correct inconsistent responses
+	bysort pid: egen temp_langchild=mode(langchild), maxmode // identify most common response
+	replace langchild=temp_langchild if langchild==. & temp_langchild>=0 & temp_langchild<.
+	replace langchild=temp_langchild if langchild!=temp_langchild // correct a few inconsistent cases
+
+*specify when question not asked
+replace langchild=-8 if langchild==. & migr==0 // not asked if german-born
+replace langchild=-8 if langchild==. & wave<2017 // not asked before 2017
+*/
+	
+*################################
+*#								#
+*#	    Religion			 	#
+*#								#
+*################################
+
+**--------------------------------------  
+** Religiosity
+**--------------------------------------
+//NOTE: because we do not want to assume religious affiliation to be time-constant, missing values are not filled automatically across waves. 
+
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode plh0258 (1/5=1) (6=0) (7/11=1) (-8 -5=-8), gen(relig)
+
+lab val relig relig
+
+*specify if question not asked
+replace relig=-8 if relig==. & !inlist(wavey, 1990, 1991, 1997, 2003, 2007, 2011, 2015, 2019)
+
+**--------------------------------------  
+** Attendance
+**--------------------------------------
+lab def attendance ///
+1 "Never or practically never" ///
+2 "Less than once a month" ///
+3 "At least once a month" ///
+4 "Once a week or more" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+recode pli0098_h (1/2=4) (3=3) (4=2) (5=1) (-1=-2) (-2 -3 -4=-1) (-8 -5=-8) , gen(relig_att)
+
+lab val relig_att attendance
+
+*specify if question not asked
+replace relig_att=-8 if relig_att==. & wavey<1990
+replace relig_att=-8 if relig_att==. & inlist(wavey, 1991, 1993, 2000, 2002, 2004, 2006, 2010, 2012, 2014, 2016, 2020)
+
+		
 *################################
 *#								#
 *#	Weights						#
@@ -1474,26 +1761,25 @@ lab var sampid_soep "Sample Identifier: SOEP"
 keep			///
 wave pid country  intyear    age   marst* isco*  		///
 edu* indust* inc* wavey	fpt* 						///
-sat* size* inc* entrep* selfemp* train* exp*  			///
+sat* size* inc*   exp*  entrep* train* selfemp*			///
 kids* yborn female nphh work_* empls* public 			///
 wh* mater un_*   retf*   	///
-  hhinc* srh* disab*  	train					///
+  hhinc* srh* disab*  						///train
 nett* hid w11*    hnetto	nett*			///
 wave1st intmonth mlstat* livpart nvmarr					///
 respstat parstat*  jsecu chron	///
-nempl isei* siops* mps*   wtcp	///
+ isei* siops* mps*   wtcp	///nempl
 widow divor separ fedu* medu* oldpens	///
+cob* migr*   relig* /// migration and religion
 sampid*
 	 
-	 
-
-
+	
 
 **|=========================================================================|
 **|  SAVE
 **|=========================================================================|
  
-label data "CPF_Germany v1.0"	 
+label data "CPF_Germany v1.5"	 
 save "${soep_out}\ge_02_CPF.dta", replace  	
 
 	 

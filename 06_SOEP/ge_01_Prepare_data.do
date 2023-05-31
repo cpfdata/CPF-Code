@@ -1,11 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF			####											|
-**|		>>>	SOEP						 									|
-**|		>>	Prepare data + Merge				 							|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=====================================|
+**|	    ####	CPF	v1.5	####		|
+**|		>>>	SOEP						|
+**|		>>	Prepare data + Merge		|
+**|-------------------------------------|
+**|		Konrad Turek 	| 	2023		|
+**|=====================================|
 *
 
 
@@ -26,7 +26,9 @@ phrf 					/// weighting variable
 sex gebjahr todjahr 	///
 erstbefr				/// first year interviewed 
 parid partner 			/// partner id and status 
-psample					// Sample Member 
+psample					/// Sample Member 
+germborn                /// born in germany (migr1)
+corigin                 /// COB respondent
 *
 sort  pid syear
 *
@@ -95,13 +97,17 @@ save "${soep_out_work}\gpgen_1.dta", replace
 
 use "${soep_in}\health.dta", clear
 *
+
+*@remove hhnr
 keep	///
-hhnr pid syear 	///
+pid syear 	///
 mcs pcs 			/// PCA scales - chck descr
 gh_nbs mh_nbs bmi	//	Z-socre - chck descr
 *
+
+*@ pid already in file
 *rename persnr pid
-rename hhnr hid
+*rename hhnr hid
 *
 sort  pid syear
 *
@@ -120,7 +126,7 @@ keep	pid hid syear	///
 d11104 		d11109		/// 	 to chck
 x11103 x11105			///
 d11106 d11107			///
-e11101 e11102 e11103 e11104 e11105_v*	///
+e11101 e11102 e11103 e11104 e11105*	///
 e11106 e11107			///
 i11101 i11102 i11110	///
 w11101 w11102 w11103 w11105 w11107 w11108 w11109 w11110 w11111	/// weights
@@ -154,10 +160,10 @@ plb0018							/// worked last 7 days
 p_nace p_nace2 					/// nace
 plb0040							/// public
 plb0036_h 						/// org exper
-plb0057_h plb0586				/// self-empl 
-plb0058  plb0064_v1 plb0064_v2 	/// work type 
+plb0057_h*	plb0057_v9			/// self-empl (plb0586>plb0057_v9)
+plb0058  plb0064_v1 plb0064_v2 	plb0064_v4 /// work type inclv4
 plb0284_h						/// Type Of Job Change (harmonized)
-plb0570							/// no of employees (self-empl)
+plb0057_v9					/// no of employees (self-empl)	(was plb0570_v8	 )
 plh0353_v*   plh0354_h 			/// pay by hour (not precise) 
 plb0211							/// flexible arrangements
 plh0042							/// job security
@@ -168,11 +174,13 @@ plb0282_h    plc0236_h 	/// also plb0304_h(added above)
 /// HEALTH
 ple0040 ple0041  				/// disabilit
 /// OTHER
-plg0269_v1 plg0269_v2			/// training
+		/// trainingplg0269_v1 plg0269_v2	
 plg0072							/// comleted edu
-plg0012	plg0013_v1 plg0013_v3 plg0014_*  	/// in education now
+plg0012_v1	plg0013_v1 plg0013_v3 plg0014_*  	/// in education now addv1
+plg0269_v1 plg0269_v2 /// training
 pld0133							/// partner in HH 
-ple0036							// chronic
+ple0036							/// chronic
+plh0258_h pli0098_h		// Religion
 
 
 
@@ -219,14 +227,30 @@ save "${soep_out_work}\gpkal_1.dta", replace
 use "${soep_in}\biobirth.dta", clear
 
 keep 				///
-hhnr persnr 		///
+pid 	/// @changed
 sumkids		//
 
-rename persnr pid
 *
 sort  pid
 * 
 save "${soep_out_work}\gbiobirth_1.dta", replace  
+
+
+*############################
+*#							#
+*#		biol.dta	     	#
+*#		 					#
+*############################
+use "${soep_in}\biol.dta", clear
+
+keep 				///
+pid hid syear	/// 
+lb0084_h lb0085_h lr2076		/// parents info & mother tongue
+
+*
+sort  pid
+* 
+save "${soep_out_work}\gbiol_1.dta", replace  
 
 
 
@@ -253,14 +277,14 @@ use "${soep_in}\biocouply.dta", clear
 use "${soep_in}\bioparen.dta", clear
 
 keep 				///
-hhnr persnr 		///
+pid 		/// @changed
 fsedu msedu fprofedu mprofedu 		///
 fisco88 misco88 fisei* misei* fmps* mmps* fsiops* msiops* fegp* megp* 	///
-fprofstat mprofstat
+fprofstat mprofstat ///
+forigin morigin /// COB parents
 
 // fprofclas* mprofclas*
 
-rename persnr pid
 *
 sort  pid
 * 
@@ -292,6 +316,8 @@ merge 1:1 pid syear using "${soep_out_work}\gpl_1.dta" 	, keep(1 3) nogen
 merge 1:1 pid syear using "${soep_out_work}\gpkal_1.dta" 	, keep(1 3) nogen	
 	
 merge m:1 pid  		using "${soep_out_work}\gbiobirth_1.dta" , keep(1 3) nogen	
+
+merge m:1 pid syear		using "${soep_out_work}\gbiol_1.dta" , keep(1 3) nogen	
 
 merge m:1 pid  		using "${soep_out_work}\gbioparen_1.dta" , keep(1 3) nogen
 
