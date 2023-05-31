@@ -1,11 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
-**|		>>>	HILDA						 									|
-**|		>>	02_1 Harm - Combined											|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	v1.5		####		|
+**|		>>>	HILDA						 	|
+**|		>>	02_1 Harm - Combined			|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|
+**|=========================================|
 *
 
 **--------------------------------------
@@ -15,10 +15,8 @@
 
 use "${hilda_out}\au_01_combined_2001_20${hilda_w}.dta", clear
 
-
-
 *############################
-*#							#
+*#			-				#
 *#	Vars					#
 *#							#
 *############################
@@ -75,7 +73,7 @@ sort pid wave
 * to fill MV:
 	bysort pid: egen wave1st = min(cond(hgint == 1, wave, .))
 
-*** Repsondent status 
+*** Respondent status 
 recode hgint (0=3), gen(respstat)
 	lab def respstat 	1 "Interviewed" 					///
 						2 "Not interviewed (has values)" 	///
@@ -779,7 +777,7 @@ replace nempl=temp_nempl if wave<5
 	
 *################################
 *#								#
-*#	Reired						#
+*#	Retired						#
 *#								#
 *################################
 
@@ -1344,6 +1342,294 @@ replace medu4=4 if fmmhlq>0 & fmmhlq<5
 
 *** Mother  
 
+*################################
+*#								#
+*#	Migration					#
+*#								#
+*################################	
+
+**--------------------------------------
+**   Migration Background
+**--------------------------------------	
+
+*** migr - specifies if respondent foreign-born or not.
+lab def migr ///
+0 "Native-born" ///
+1 "Foreign-born" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+gen migr=. 
+replace migr=0 if ancob==1101 //native-born
+replace migr=1 if (ancob>0 & ancob!=1101) //foreign-born
+replace migr=1 if ancob<=0 & (ancitiz==2 | ancitiz==3) // foreign-born but country of birth missing, only small group
+
+*specify some missing values
+replace migr=-2 if migr==. & ancob==-1
+replace migr=-1 if migr==. & ancob==-4 //refusal/not stated
+
+*temp decode mv
+mvdecode migr, mv(-2=.b\-1=.a)
+
+*fill MV
+	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
+	replace migr=temp_migr if (migr==. | migr==.a | migr==.b) & temp_migr>=0 & temp_migr<.
+	replace migr=temp_migr if migr!=temp_migr // correct a few inconsistent cases
+	
+mvencode migr, mv(.b=-2\.a=-1)
+
+lab val migr migr
+
+
+**--------------------------------------
+**   COB respondent, father and mother
+**--------------------------------------	
+
+label define COB ///
+0 "Born in Survey-Country" ///
+1 "Oceania and Antarctica" ///
+2 "North-West Europe" ///
+3 "Southern and Eastern Europe" ///
+4 "North Africa and the Middle East" ///
+5 "South-East Asia" ///
+6 "North-East Asia" ///
+7 "Southern and Central Asia" ///
+8 "Americas" ///
+9 "Sub-Saharan Africa" ///
+10 "Other" ///
+-1 "MV general" ///
+-2 "DK/refusal" ///
+-3 "NA" ///
+-8 "not asked in survey"
+
+
+***note: because cob labels are based on australian classification scheme, coding is fairly straightforward and countries are grouped based on the larger global region (first-digit)
+
+foreach var in ancob fmfcobn fmmcobn {
+	gen cob_`var'=. // temp working var
+	replace cob_`var'=0 if `var'==1101
+	replace cob_`var'=1 if inrange(`var', 1102, 1999)
+	replace cob_`var'=2 if inrange(`var', 2000, 2999)
+	replace cob_`var'=3 if inrange(`var', 3000, 3999)
+	replace cob_`var'=4 if inrange(`var', 4000, 4999)
+	replace cob_`var'=5 if inrange(`var', 5000, 5999)
+	replace cob_`var'=6 if inrange(`var', 6000, 6999)
+	replace cob_`var'=7 if inrange(`var', 7000, 7999)
+	replace cob_`var'=8 if inrange(`var', 8000, 8999)
+	replace cob_`var'=9 if inrange(`var', 9000, 9999)
+	*other
+	replace cob_`var'=10 if `var'==912 // Former USSR (multiple regions)
+	replace cob_`var'=3 if `var'==913 // Former Yugoslavia (all countries in same region)
+	replace cob_`var'=-1 if `var'<=0
+}
+
+replace cob_ancob=10 if (ancob<=0 | ancob==.) & migr==1 // fill few missing cases where cob is missing but respondent is foreign-born
+
+rename cob_ancob cob_rt
+rename cob_fmfcobn cob_ft
+rename cob_fmmcobn cob_mt // temp working vars
+
+//MV
+*** Identify valid COB and fill across waves  
+sort pid wave 
+
+*** Generate valid stage 1 - mode across the waves (values 1-10)
+	// It takes the value of the most common valid answer between 1 and 10 
+	// If there is an equal number of 2 or more answers, it returns "." - filled in next steps
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	bysort pid: egen mode_`var'=mode(`var') if ///
+		inrange(`var', 0, 9)
+	}
+	
+*** Generate valid stage 2 - first valid answer provided (values 0-9)
+	// It takes the value of the first recorded answer between 1 and 9 (so ignores 10 "other")
+	// These are used to fill COB in cases: 
+	//	(a) equal number of 2 or more answers (remaining MV)
+	//	(b) there is a valid answer other than 10 but the mode (stage 1) returns 10
+	
+	foreach var in cob_rt cob_mt cob_ft {
+	by pid (wave), sort: gen temp_first_`var'=`var' if ///
+			sum(inrange(`var', 0,9)) == 1 &      ///
+			sum(inrange(`var'[_n - 1],0,9)) == 0 // identify 1st valid answer in range 0-9
+	bysort pid: egen first_`var'=max(temp_first_`var') // copy across waves within pid
+	drop  temp_first_`var'
+	}
+	
+*** Fill the valid COB across waves
+	foreach var in cob_r cob_m cob_f {
+	gen `var' = mode_`var't // stage 1 - based on mode
+	replace `var' = first_`var't if `var'==. & inrange(first_`var't, 0,9) // stage 2 - based on the first for MV
+	replace `var' = first_`var't if `var'==10 & inrange(first_`var't, 1,9) // stage 2 - based on the first for 10'other'
+	drop `var't
+	*
+	label values `var' COB
+	}
+	
+*Fill MV based on migr
+	replace cob_r=10 if (cob_r==. | cob_r<0) & migr==1
+	replace cob_r=-1 if cob_r==. & migr==-1
+	
+rename cob_r cob
+
+
+**--------------------------------------
+**   Migration Background (parents foreign-born)
+**--------------------------------------	
+
+gen migr_f=.
+replace migr_f=0 if fmfcob==1101 //Australian-born
+replace migr_f=1 if (fmfcob>0 & fmfcob!=1101) //foreign-born
+
+gen migr_m=.
+replace migr_m=0 if fmmcob==1101 //Australian-born
+replace migr_m=1 if (fmmcob>0 & fmmcob!=1101) //foreign-born
+
+*fill MV
+	bysort pid: egen temp_migr_f=mode(migr_f), maxmode // identify most common response
+	replace migr_f=temp_migr_f if migr_f==. & temp_migr_f>=0 & temp_migr_f<.
+	replace migr_f=temp_migr_f if migr_f!=temp_migr_f // correct a few inconsistent cases
+
+	bysort pid: egen temp_migr_m=mode(migr_m), maxmode // identify most common response
+	replace migr_m=temp_migr_m if migr_m==. & temp_migr_m>=0 & temp_migr_m<.
+	replace migr_m=temp_migr_m if migr_m!=temp_migr_m // correct a few inconsistent cases
+
+	drop temp*
+	
+*fill MV cob based on migr
+	foreach p in f m {
+		replace cob_`p'=10 if (cob_`p'==. | cob_`p'<0) & migr_`p'==1
+		replace cob_`p'=0 if (cob_`p'==. | cob_`p'<0) & migr_`p'==0
+	}
+
+	lab val migr_f migr_m migr
+
+**--------------------------------------
+**   Migrant Generation
+**--------------------------------------	
+//NOTE: migr_gen - migrant generation of the respondent - is a derived variable (from migr, migr_f and migr_m)
+
+lab def migr_gen ///
+0 "no migration background" ///
+1 "1st generation" ///
+2 "2st generation" ///
+3 "2.5th generation" ///
+4 "incomplete information parents"
+
+gen migr_gen=.
+
+* 0 "No migration background"
+replace migr_gen=0 if migr==0 & (migr_f==0 & migr_m==0) // respondent and both parents native-born
+replace migr_gen=0 if migr==0 & ///
+	 ((migr_f==0 & migr_m==.) | (migr_f==. & migr_m==0)) // respondent native-born, one parent native other unknown
+replace migr_gen=0 if migr==1 & (migr_f==0 & migr_m==0) // respondent foreign-born but both parents native
+
+* 1 "1st generation"
+replace migr_gen=1 if migr==1 & (migr_f==1 & migr_m==1) // respondent and both parents foreign-born
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==.) | (migr_m==1 & migr_f==.)) // respondent, one parent foreign-born other  unknown
+replace migr_gen=1 if migr==1 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // respondent and one parent foreign-born, other native born
+
+*2 "2st generation"
+replace migr_gen=2 if migr==0 & (migr_f==1 & migr_m==1) // native-born, both parents foreign born
+replace migr_gen=2 if migr==0 & ///
+	((migr_f==1 & migr_m==.) | (migr_m==1 & migr_f==.)) // native-born, one parent foreign-born other missing
+
+*3 "2.5th generation"
+replace migr_gen=3 if migr==0 & ///
+	((migr_f==1 & migr_m==0) | (migr_m==1 & migr_f==0)) // native-born, one parent foreign-born other native-born	
+	 
+* Incomplete information parents
+replace migr_gen=4 if migr==0 & migr_f==. & migr_m==. // respondent native-born, both parents unknown
+replace migr_gen=4 if migr==1 & (migr_f==. & migr_m==.) // respondent foreign-born, both parents unknown
+replace migr_gen=0 if migr==1 & ///
+	 ((migr_f==0 & migr_m==.) | (migr_f==. & migr_m==0)) // respondent native-born, one parent native other unknown
+
+  
+	label values migr_gen migr_gen
+	
+
+
+**--------------------------------------------
+**   Mother tongue / language spoken as child
+**--------------------------------------------	
+/* Not indluded in the current version due to too many MV
+lab def langchild ///
+0 "same as country of residence" ///
+1 "other" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey"
+
+gen langchild=.
+replace langchild=0 if anengf==1 //English first language
+replace langchild=1 if anengf==2 //English not first
+replace langchild=-2 if anengf==-10 // non-responding person
+replace langchild=-1 if anengf==-4 // refused
+replace langchild=-1 if anengf==-3 // DK
+replace langchild=-8 if anengf==-1 //Not asked
+
+lab val langchild langchild
+	
+*fill MV
+gen langchild_t=langchild
+	bysort pid: egen temp_lc=mode(langchild), maxmode // identify most common response
+	replace langchild=temp_lc if langchild==. & temp_lc>=0 & temp_lc<.
+	replace langchild=temp_lc if langchild!=temp_lc // correct a few inconsistent cases
+	
+	drop temp_lc langchild_t
+*/
+
+*################################
+*#								#
+*#	    Religion			 	#
+*#								#
+*################################
+
+**--------------------------------------  
+** Religiosity
+**--------------------------------------
+
+lab def relig ///
+0 "Not religious/Atheist/Agnostic" ///
+1 "Religious" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey" ///
+
+recode religb (7000/7999=0) (1000/6000=1) (8000/9000=1) (-1=-8) (-2=-3) (-10=-2) (-9/-3=-1) (0=-1) (else=.), gen(relig)
+
+*specify for years when not asked
+replace relig=-8 if ! inlist(wavey,2004, 2007, 2010, 2014, 2018)
+
+lab val relig relig
+
+**--------------------------------------  
+** Religion - Attendance
+**--------------------------------------
+lab def attendance ///
+1 "Never or practically never" ///
+2 "Less than once a month" ///
+3 "At least once a month" ///
+4 "Once a week or more" ///
+-1 "MV general" ///
+-2 "Item non-response" ///
+-3 "Does not apply" ///
+-8 "Question not asked in survey" ///
+
+
+recode relat (1=1) (2/4=2) (5/6=3) (7/9=4) (-1=-8) (-2=-3) (-10=-2) (-9/-3=-1) (0=-1) (else=.), gen(relig_att)
+
+*specify for years when not asked
+replace relig_att=-8 if !inlist(wavey, 2004, 2007, 2010, 2014, 2018)
+
+lab val relig_att attendance
+
 	 
 *################################
 *#								#
@@ -1363,8 +1649,6 @@ gen wtcs=hhwtrps
 
 gen wtcp=hhwtrp
  
-
-
 **--------------------------------------
 **   Longitudinal Weight
 **--------------------------------------		 
@@ -1388,7 +1672,8 @@ edhigh1	 ///
 hhda10 hhad10 hhec10 hhed10 hhsad10 hhsec10 hhsed10 /// indexes
 jbmo6s jbmoccs hgint hgivw ///
 isco* isei* osi_aus siops*  srh5 wtcs wtcp mps* nempl	///
-widow divor separ fedu* medu* neverw
+widow divor separ fedu* medu* neverw ///
+cob* migr*   relig relig_att
 
 sort pid wave 
 order pid wave intyear  age  wavey

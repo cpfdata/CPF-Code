@@ -1,12 +1,11 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										|
-**|		>>>	HILDA						 									|
-**|		>>	Prepare data + Combine (all files, all vars)					|
-**|-------------------------------------------------------------------------|
-**|		Stata 16		| 	2020											|	
-**|		Konrad Turek 	|	turek@nidi.nl									|
-**|=========================================================================|
+**|=========================================================|
+**|	    ####	CPF	v1.5		####						|
+**|		>>>	HILDA						 					|
+**|		>>	01 Prepare data + Combine (all files, all vars)	|
+**|---------------------------------------------------------|
+**|		Konrad Turek 	| 	2023		 					|			
+**|=========================================================|
 * 
 
 
@@ -29,7 +28,7 @@
 local waves = substr(c(alpha), 1, ( ${hilda_w} *2)-1)		// letters identify waves 
 local year=2001
 foreach w in `waves' {
-		use "${hilda_in}\STATA ${hilda_w}0c (1-Combined Data Files)\Combined_`w'${hilda_w}0c.dta", clear
+		use "${hilda_in}\STATA ${hilda_w}0c (Combined)\Combined_`w'${hilda_w}0c.dta", clear
 			gen wave=`year'
 			rename `w'* *
 			sort xwaveid
