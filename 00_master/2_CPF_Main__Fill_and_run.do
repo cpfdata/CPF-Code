@@ -1,10 +1,10 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.4 (2021) beta		####										|
-**|		>>>	Fill in and run							 						|
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2021	|	turek@nidi.nl						|			
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	ver 1.5		####		|
+**|		>>>	Fill in and run					|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|			
+**|=========================================|
 
 /* INSTRUCTIONS:
 Before running this code, extract the original survey data files into specific folders "Data"
@@ -18,15 +18,16 @@ Before running this code, extract the original survey data files into specific f
 */
 
 
-
+set maxvar 15000
 	
 *############################
 *#							#
 *#	(A) Setup data 		 	#
 *#							#
 *############################
+
 ** Define CPF version
-	global cpfv "1.4"
+	global cpfv "1.5"
 	
 **==============================================================================
 **============= FILL-IN THIS PART ==============================================
@@ -37,14 +38,14 @@ Before running this code, extract the original survey data files into specific f
 **------------------------------------------------------------------------------
 // Inster the main directory for storing original datasets and CPF working files 
 
-	global your_dir "C:\CPF\"  // <--insert your directory 
+	global your_dir "D:\__CPFv.1.5"  // <--insert your directory 
 
 **------------------------------------------------------------------------------
 ** 2. Define surveys to be included 
 **------------------------------------------------------------------------------
 // keep all or choose selected surveys from: hilda klips psid rlms shp soep ukhls 
 
-	global surveys "    hilda klips psid rlms shp soep ukhls   " 
+	global surveys "   hilda  klips psid rlms shp soep ukhls   " 
 
 **------------------------------------------------------------------------------
 ** 3. Insert number of waves for selected surveys
@@ -52,12 +53,12 @@ Before running this code, extract the original survey data files into specific f
 // This is required for some surveys due to names of files
 // Inster the version that you have and want to harmonize (not necessairly the latest release)
 
-	global hilda_w 	"19"		// version of HILDA, number of waves
-	global klips_w 	"22"		// number of waves  
+	global hilda_w 	"20"		// version of HILDA, number of waves
+	global klips_w 	"24"		// number of waves  
 	global psid_w	"2019"		// latest year of PSID
-	global shp_w 	"21"		// number of waves  
-	global soep_w 	"36"		// version and number of waves  
-	global ukhls_w	"10"			// version, number of UKHLS waves (without BHPS)
+	global shp_w 	"22"		// number of waves  
+	global soep_w 	"37"		// version and number of waves  
+	global ukhls_w	"12"			// version, number of UKHLS waves (without BHPS)
 
 **------------------------------------------------------------------------------
 ** 4. Insert names of files of directories for selected surveys
@@ -66,8 +67,8 @@ Before running this code, extract the original survey data files into specific f
 // Note, also other surveys not listed here might require updating with subsequent editions. 
 
 * RLMS
-	global rlms_dataIND 	"USER_RLMS-HSE_IND_1994_2019_v2_eng.dta"
-	global rlms_dataHH 		"USER_RLMS-HSE_HH_1994_2019_v3_eng.dta"
+	global rlms_dataIND 	"RLMS_IND_1994_2021_2022_08_21_1_v2_eng_DTA"
+	global rlms_dataHH 		"RLMS_HH_1994_2021_eng_DTA.dta"
 	
 * UKHLS
 	global ukhls_data 	"UKDA-6614-stata\stata\stata13_se" // folder that contains Stata raw data 
@@ -118,7 +119,7 @@ display "$S_TIME"
 **--------------------------------------
 ** 7. Combine country-specific CPF files 
 **--------------------------------------
-// Modify the do-files if new varaibles added - see Workflow D  
+// Modify the do-files if new variables added - see Workflow D  
 
 * Append country files into one CPF file
 do "${your_dir}\11_CPF_in_syntax\00_master\_12_Append.do" 		

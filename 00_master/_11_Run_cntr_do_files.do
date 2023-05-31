@@ -1,9 +1,10 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										
-**|		>>>	_11_ Run country-specific do-files 							 		**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl									
-**|=========================================================================|
+**|=============================================|
+**|	    ####	CPF	ver 1.5		####			|									
+**|		>>>	_11_ Run country-specific do-files 	|						 		
+**|---------------------------------------------|
+**|		Konrad Turek 	| 	2023				|									
+**|=============================================|
 * 
 
 ** II. Run Do-files 
@@ -33,7 +34,7 @@ cd "${your_dir}\11_CPF_in_syntax\\${`data'}\"
 	local do01_1: 	dir . files "${`data'2}_01_1*.do"				, respectcase
 	local do01_2: 	dir . files "${`data'2}_01_2*.do"				, respectcase
 	local do01_3: 	dir . files "${`data'2}_01_3*.do"				, respectcase
-	local do02: 	dir . files "${`data'2}_02_Harmonize.do"		, respectcase
+	local do02: 	dir . files "${`data'2}_02_Harmonize*.do"		, respectcase
 	local do02_1: 	dir . files "${`data'2}_02_1*.do"				, respectcase
 	local do02_2: 	dir . files "${`data'2}_02_2*.do"				, respectcase
 	local do02_3: 	dir . files "${`data'2}_02_3*.do"				, respectcase

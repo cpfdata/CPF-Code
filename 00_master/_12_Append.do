@@ -1,10 +1,10 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										
-**|		>>>	_12_ Append
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl						|			
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	ver 1.5		####		|							
+**|		>>>	_12_ Append						|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|			
+**|=========================================|
 
 
 **
@@ -59,6 +59,7 @@ entrep incjobs_mn incsubj9    isco88_3 haspart ///
 volunt exppt  ///
 isei* siops* mps* 	///
 widow divor separ fedu* medu* 	///
+ethn* migr* cob* grewup_US  relig* ///
 sampid*
 		
 keep `r(varlist)'		
@@ -119,16 +120,16 @@ respstat		 		///
 female	 		///	
 age		 		///
 yborn		 		///
-/// 3.	Place of living	 		///	
+/// .	Place of living	 		///	
 /// place		 		///
 /// place2		 		///
-/// 4.	Education level	 		///	
+/// 3.	Education level	 		///	
 edu3		 		///
 edu4		 		///
 edu5		 		///
 edu5v2		 		///
 eduy		 		///
-/// 5.	Marital and relationship status		 		///
+/// 4.	Marital and relationship status		 		///
 mlstat5		 		///
 parstat6		 		///
 marstat5		 		///
@@ -136,19 +137,26 @@ livpart		 		///
 /// haspart		 		///
 nvmarr		 		///
 widow divor separ	///
-/// 6.	Kids and household composition		 		///
+/// 5.	Children and household composition		 		///
 kidsn_hh17		 		///
 kidsn_hh15		 		///
 kidsn_all		 		///
 kids_any		 		///
 nphh		 		///
-/// 7.	Labour market situation		 		///
+/// 6.	Labour market situation		 		///
 emplst5		 		///
 emplst6		 		///
 work_d		 		///
 work_py		 		///
 mater		 		///
 neverw		 		///
+un_act				///
+retf				///
+oldpens				///
+///7. Self-Employment and Entrepreneurship ///
+selfemp	///
+entrep	///
+entrep2	///
 /// 8.	Employment: level		 		///
 fptime_h		 		///
 fptime_r		 		///
@@ -158,7 +166,7 @@ whweek		 		///
 whmonth		 		///
 /// whmonth_dv		 		///
 whweek_ctr		 		///
-/// 9.	Employment: Occupation (ISCO) and position		 		///
+///9.	Employment: Occupation (ISCO) and position		 		///
 isco_1		 		///
 isco_2		 		///
 isco08_4		 		///
@@ -190,41 +198,45 @@ incjob1_hg		 		///
 /// 13.	Household income		 		///
 hhinc_pre		 		///
 hhinc_post		 		///
-/// 14.	Unemployed		 		///
-un_act		 		///
-/// 15.	Self-employed		 		///
-selfemp		 		///
-/// 16.	Entrepreneurship		 		///
-entrep		 		///
-entrep2		 		///
-/// 17.	Retiremen	 		///
-retf		 		///
-oldpens		 		///
-/// 18.	Labor market experience		 		///
+/// 14.	Labor market experience		 		///
 exp		 		///
 exporg		 		///
 expft		 		///
 exppt		 		///
-/// 19. Health		 		///
+/// 15. Health		 		///
 srh5		 		///
 disabpens		 		///
 disab		 		///
 disab2c		 		///
 chron		 		///
-/// 20.	Satisfaction		 		///
+/// 16.	Satisfaction		 		///
 sat*	 		///
-/// 21.	Training and qualifications		 		///
+/// 17.	Training and qualifications		 		///
 train		 		///
 eduwork		 		///
 wqualif		 		///
-/// 22.	Job security		 		///
+/// 18.	Job security		 		///
 jsecu		 		///
 jsecu2		 	///
-/// 23. SES indices ///
+/// 19. SES indices ///
  isei* siops* mps*  ///
-/// 24. Parents
+/// 20. Parents ///
 fedu* medu* ///
-/// 25. Weights, sampid ///
+/// 21. Ethnicity ///
+ethn ///
+ethn_hisp ///
+/// 22. Migration ///
+migr ///
+cob ///
+grewup_US ///
+migr_f migr_m ///
+cob_f cob_m ///
+migr_gen ///
+/// 23.Religion
+relig ///
+relig_att ///
+relig_KOR ///
+/// 24. Weights, 25.sampid ///
 sampid*			///
 , first		
 		

@@ -1,10 +1,10 @@
 *
-**|=========================================================================|
-**|	    ####	CPF	ver 1.0		####										
-**|		>>>	_13_ labels unifies 
-**|-------------------------------------------------------------------------|
-**|		Konrad Turek 	| 	2020	|	turek@nidi.nl									
-**|=========================================================================|
+**|=========================================|
+**|	    ####	CPF	v1.5		####		|							
+**|		>>>	_13_ labels unifies 			|
+**|-----------------------------------------|
+**|		Konrad Turek 	| 	2023			|									
+**|=========================================|
 
 
 
@@ -160,6 +160,24 @@ lab var fedu4 "Father's education: 4 levels"
 lab var medu3 "Mother's education: 3 levels"
 lab var medu4 "Mother's education: 4 levels"
 
+lab var ethn "Ethnicity"
+lab var ethn_hisp "Hispanicity (US only)"
+lab var cob "Country of birth (global region)"
+lab var grewup_US "Grew up in US y/n (US only)"
+lab var cob_f "Father's country of birth (global region)"
+lab var cob_m "Mother's country of birth (global region)"
+
+lab var migr "Migration background: foreign-born yes/no"
+lab var migr_f "Father's migration background"
+lab var migr_m "Mother's migration background"
+lab var migr_gen "Migrant generation"
+//lab var langchild "Language spoken as a child"
+
+lab var relig "Religiosity"
+lab var relig_att "Attendence of religious services"
+lab var relig_KOR "Religious participation (KOR only)"
+
+
 // lab var wtcs "Cross-sectional sample weight"
 // lab var wtcp "Cross-sectional population weight"
 
@@ -167,7 +185,7 @@ lab var medu4 "Mother's education: 4 levels"
 
 *############################
 *#							#
-*#	Val Lables				#
+*#	Val Labels				#
 *#							#
 *############################
 /*
@@ -406,7 +424,56 @@ lab def jsecu 	 1 "Insecure" 0 "Secure"  ///
 lab def jsecu2 	 1 "Insecure" 0 "Secure" 2 "Hard to say" ///
 					-1 "[-1] MV gen" -2 "[-2] Item nresp" ///
 					-3 "[-3] Not apply" -8 "[-8] Not asked ", replace 
+					
+label define ethnicity ///
+				1 "Black" 	2 "White" ///
+				3 "Asian" 	4 "Mixed (UK only)" ///
+				5 "American Indian (US only)" 	6 "Other" ///
+				-1 "MV General" -2 "Item non-response" ///
+				-3 "Does not apply" -8 "Question not asked in survey", ///
+replace
 
+lab def migr ///
+				0 "Native-born" 	1 "Foreign-born" ///
+				-1 "MV General" -2 "Item non-response" ///
+				-3 "Does not apply" -8 "Question not asked in survey" .a "[.a] missing: grewup_US available", ///
+replace
+					
+label define COB ///
+				0 "Born in Survey-Country" 	1 "Oceania and Antarctica" ///
+				2 "North-West Europe" 	3 "Southern and Eastern Europe" ///
+				4 "North Africa and the Middle East" 	5 "South-East Asia" ///
+				6 "North-East Asia" 	7 "Southern and Central Asia" ///
+				8 "Americas" 	9 "Sub-Saharan Africa" ///
+				10 "Other" 	///
+				-1 "MV general" -2 "Item non-response" ///
+				-3 "Does not apply" -8 "Question not asked in survey" .a "[.a] missing: grewup_US available", ///
+replace
+
+lab def migr_gen ///
+				0 "No migration background" 	1 "1st generation" ///
+				2 "2st generation" 	3 "2.5th generation" ///
+				4 "Incomplete information parents", ///
+replace
+
+lab def langchild ///
+				0 "Same as country of residence" 	1 "Other language" ///
+				-1 "MV general" -2 "Item non-response" ///
+				-3 "Does not apply" -8 "Question not asked in survey", ///
+replace
+
+lab def relig ///
+				0 "Not religious/Atheist/Agnostic" 1 "Religious" ///
+				-1 "MV general" -2 "Item non-response" ///
+				-3 "Does not apply" -8 "Question not asked in survey", ///
+replace
+
+lab def attendance ///
+				1 "Never or practically never" 	2 "Less than once a month" ///
+				3 "At least once a month" 	4 "Once a week or more" ///
+				-1 "MV general" 	-2 "Item non-response" ///
+				-3 "Does not apply" 	-8 "Question not asked in survey", ///
+replace
 					
 **--------------------------------------
 ** Val Lables Apply
@@ -486,6 +553,12 @@ lab val respstat respstat
 lab val jsecu jsecu
 lab val jsecu2 jsecu2
 lab val wqualif wqualif
+lab val cob cob_f cob_m COB
+lab val migr migr_f migr_m migr
+//lab val langchild langchild
+lab val ethn ethnicity
+lab val relig relig
+lab val relig_att attendance
 // lab val volunt yesno
 
 
