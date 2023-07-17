@@ -1540,7 +1540,7 @@ marstat* parstat* mlstat* livpart nvmarr				///
 edu3 edu4 edu5 indust*  wavey	wave1st	respstat					///
 sat* size* inc* entrep*  train* exp* superv*				///
 kid* yborn female nphh work_d empls* public 			///
-whday whweek whmonth mater un_* oldpens retf* disabpens 	///
+whday whweek whmonth fptime* mater un_* oldpens retf* disabpens 	///
 neverw hhinc* srh* disab* eduwork*	jsecu*					///
 H7_1 H7_2 			/// day month interv 
 J1_1_2 J1_1_4 J1_1_6 J1_1_7 J1_1_8 J1_1_9 /// jo quality / sat
