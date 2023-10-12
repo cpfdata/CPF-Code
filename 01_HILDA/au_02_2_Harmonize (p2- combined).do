@@ -423,8 +423,8 @@ egen youngest_hh= rowmin(hgage1-hgage20)
 	
 *** New in CPF 1.52
 *
-egen oldern_hh70= anycount(hgage1-hgage20), values(70/max)
-egen oldern_hh80= anycount(hgage1-hgage20), values(80/max)
+egen oldern_hh70= anycount(hgage1-hgage20), values(70/120)
+egen oldern_hh80= anycount(hgage1-hgage20), values(80/120)
 		
 	lab var oldern_hh70   "Number of people in HH aged 70+"
 	lab var oldern_hh80   "Number of people in HH aged 80+"
