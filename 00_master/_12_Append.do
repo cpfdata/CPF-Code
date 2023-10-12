@@ -60,7 +60,9 @@ volunt exppt  ///
 isei* siops* mps* 	///
 widow divor separ fedu* medu* 	///
 ethn* migr* cob* grewup_US  relig* ///
-sampid*
+sampid* ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 ///
+kids_hh_04 youngest_hh oldern_hh70 oldern_hh80 
 		
 keep `r(varlist)'		
 
@@ -142,6 +144,14 @@ kidsn_hh17		 		///
 kidsn_hh15		 		///
 kidsn_all		 		///
 kids_any		 		///
+kidsn_hh_02 			///
+kidsn_hh_34 			/// 			
+kidsn_hh_04 			/// 
+kidsn_hh_59  			///
+kids_hh_04  			///
+youngest_hh  			///
+oldern_hh70  			///
+oldern_hh80  			///
 nphh		 		///
 /// 6.	Labour market situation		 		///
 emplst5		 		///
