@@ -1706,7 +1706,9 @@ hhda10 hhad10 hhec10 hhed10 hhsad10 hhsec10 hhsed10 /// indexes
 jbmo6s jbmoccs hgint hgivw ///
 isco* isei* osi_aus siops*  srh5 wtcs wtcp mps* nempl	///
 widow divor separ fedu* medu* neverw ///
-cob* migr*   relig relig_att
+cob* migr*   relig relig_att ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 ///
+kids_hh_04 youngest_hh oldern_hh70 oldern_hh80 
 
 sort pid wave 
 order pid wave intyear  age  wavey
