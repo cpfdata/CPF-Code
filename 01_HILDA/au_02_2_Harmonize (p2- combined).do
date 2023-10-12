@@ -410,7 +410,7 @@ recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
 recode hgage1-hgage20 (-1=.)
 egen youngest_hh= rowmin(hgage1-hgage20) 
 	
-	lab var kids_hh_04   "Age of the youngest HH member"
+	lab var youngest_hh   "Age of the youngest HH member"
 
 
 **--------------------------------------
