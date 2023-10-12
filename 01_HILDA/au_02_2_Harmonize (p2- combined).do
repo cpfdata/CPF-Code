@@ -389,12 +389,45 @@ egen kidsn_hh14b=rowtotal(hh0_4 hh5_9 hh10_14) //Number of persons aged
 	lab var kidsn_hh14   "Number Of Children in HH aged 0-14 (includes partner's children)" 
 	lab var kidsn_14   	 "Number Of Dependent Children aged 0-14 (includes partner's children)" 
 
+	
+*** New in CPF 1.52
+*
+egen kidsn_hh_02= anycount(hgage1-hgage20), values(0/2)
+egen kidsn_hh_34= anycount(hgage1-hgage20), values(3/4)
+egen kidsn_hh_04= anycount(hgage1-hgage20), values(0/4)
+egen kidsn_hh_59= anycount(hgage1-hgage20), values(5/9)
+	
+	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
+	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
+	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
+	lab var kidsn_hh_59   "Number of Children in HH aged 5-9"
+*
+recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
+	lab var kids_hh_04   "Any children in HH aged 0-4?"
+	lab val kids_hh_04   yesno
+
+	*	
+recode hgage1-hgage20 (-1=.)
+egen youngest_hh= rowmin(hgage1-hgage20) 
+	
+	lab var kids_hh_04   "Age of the youngest HH member"
+
+
 **--------------------------------------
 ** People in HH F14
 **--------------------------------------
 // clonevar nphh=d11106 
 //
 // 	lab var nphh   "Number of People in HH" 
+
+	
+*** New in CPF 1.52
+*
+egen oldern_hh70= anycount(hgage1-hgage20), values(70/max)
+egen oldern_hh80= anycount(hgage1-hgage20), values(80/max)
+		
+	lab var oldern_hh70   "Number of people in HH aged 70+"
+	lab var oldern_hh80   "Number of people in HH aged 80+"
 
 
 	
