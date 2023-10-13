@@ -608,7 +608,21 @@ recode nkids_dv (-9=-1), gen(kidsn_hh15) // the total number of children aged 15
 //  	lab var kidsn_hh18   "Number of Children in HH<18" 
  	lab var kidsn_hh15   "Number of Children in HH<15" 
 
-
+*** New in CPF 1.52
+*
+recode nch02_dv nch34_dv nch511_dv (-9=.)
+gen kidsn_hh_04  =   nch02_dv + nch34_dv
+gen kidsn_hh_511 = 	 nch511_dv
+	
+// 	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
+// 	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
+	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
+	lab var kidsn_hh_511  "Number of Children in HH aged 5-11"
+*
+recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
+	lab var kids_hh_04   "Any children in HH aged 0-4?"
+	lab val kids_hh_04   yesno	
+	
 	 
 **--------------------------------------
 ** People in HH  
@@ -2279,7 +2293,8 @@ intmonth   jsecu jsecu2	///
 wavey	///
 divor separ widow	///
 migr* ethn* cob*   relig* ///
-nempl isei* siops* mps* fedu* medu* sampid_*
+nempl isei* siops* mps* fedu* medu* sampid_* ///
+kidsn_hh_04 kidsn_hh_511 kids_hh_04
 
 
 order	///
