@@ -282,7 +282,23 @@ recode kidsn_all (1/50=1) (0=0), gen(kids_any)
 //  	lab var kidsn_18   "Number Of Children <18 y.o." 
 // 	lab var kidsn_15   "Number Of Children <15 y.o." 
  	lab var kidsn_hh17   "Number of Children in HH aged 0-17"
+
+
+*** New in CPF 1.52
+*
+gen kidsn_hh_04  =  h11103 + h11104
+gen kidsn_hh_510 = 	h11105 + h11106
 	
+// 	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
+// 	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
+	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
+	lab var kidsn_hh_510  "Number of Children in HH aged 5-10"
+*
+recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
+	lab var kids_hh_04   "Any children in HH aged 0-4?"
+	lab val kids_hh_04   yesno
+
+
 **--------------------------------------
 ** People in HH F14
 **--------------------------------------
@@ -1771,7 +1787,8 @@ respstat parstat*  jsecu chron	///
  isei* siops* mps*   wtcp	///nempl
 widow divor separ fedu* medu* oldpens	///
 cob* migr*   relig* /// migration and religion
-sampid*
+sampid* ///
+kidsn_hh_04 kidsn_hh_510 kids_hh_04
 	 
 	
 
