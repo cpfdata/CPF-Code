@@ -342,14 +342,14 @@ gen hhage`i' = intyear - B`i'_5
 gen tempa`i'=hhage`i' <=2
 gen tempb`i'=hhage`i' <=4  
 gen tempc`i'=hhage`i' >=3 & hhage`i'<=4  
-gen tempd`i'=hhage`i' >=5 & hhage`i'<=9  
+gen tempd`i'=hhage`i' >=5 & hhage`i'<=10  
 gen tempe`i'=hhage`i' <=17
 }
 
 egen kidsn_hh_02=rowtotal(tempa*)
 egen kidsn_hh_34=rowtotal(tempb*)
 egen kidsn_hh_04=rowtotal(tempc*)
-egen kidsn_hh_59=rowtotal(tempd*)
+egen kidsn_hh_510=rowtotal(tempd*)
 egen kidsn_hh17=rowtotal(tempe*)
 egen youngest_hh= rowmin(hhage*) 
 	recode youngest_hh(-1=0) // correcting a few cases
@@ -359,7 +359,7 @@ drop temp*
 	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
 	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
 	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
-	lab var kidsn_hh_59   "Number of Children in HH aged 5-9"
+	lab var kidsn_hh_510   "Number of Children in HH aged 5-10"
 	lab var kidsn_hh17    "Number of Children in HH aged 0-17"
 	lab var youngest_hh   "Age of the youngest HH member"
 
@@ -1595,7 +1595,7 @@ ID_H				/// hh num
 migr* cob*   relig* /// 
 wtcs isei* siops* mps* nempl selfemp*	///
 widow divor separ fedu* medu*   sampid* ///
-kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_510 ///
 kids_hh_04 youngest_hh oldern_hh70 oldern_hh80
 
 
