@@ -131,7 +131,8 @@ e11106 e11107			///
 i11101 i11102 i11110	///
 w11101 w11102 w11103 w11105 w11107 w11108 w11109 w11110 w11111	/// weights
 ijob1 ijob2 iself ioldy ieret iprvp igrv1	///
-m11124 m11125 m11126	 
+m11124 m11125 m11126	 ///
+h11103 h11104 h11105 h11106
 
 *p11101	 
 *d11108 				// edu & hi sch (maybe useful)
