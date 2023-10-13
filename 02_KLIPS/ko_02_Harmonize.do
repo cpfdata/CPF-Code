@@ -354,7 +354,45 @@ drop temp*
 // 	lab var kidsn_15   "Number Of Children <15 y.o." 
  	lab var kidsn_hh17   "Number of Children in HH aged 0-17"
 	
+*** New in CPF 1.52
+*
+forvalue i=1/15 {
+local a=`i'+60
+local b=`i'+20
+gen tempa`i'=(h_03`a'<=2 & (h_04`b'==1|h_04`b'==2))
+gen tempb`i'=(h_03`a'<=4 & (h_04`b'==1|h_04`b'==2))
+gen tempc`i'=(h_03`a'>=3 & h_03`a'<=4 & (h_04`b'==1|h_04`b'==2))
+gen tempd`i'=(h_03`a'>=5 & h_03`a'<=9 & (h_04`b'==1|h_04`b'==2))
+}
+egen kidsn_hh_02=rowtotal(tempa*)
+egen kidsn_hh_34=rowtotal(tempb*)
+egen kidsn_hh_04=rowtotal(tempc*)
+egen kidsn_hh_59=rowtotal(tempd*)
+
+drop temp*
 	
+	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
+	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
+	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
+	lab var kidsn_hh_59   "Number of Children in HH aged 5-9"
+*
+recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
+	lab var kids_hh_04   "Any children in HH aged 0-4?"
+	lab val kids_hh_04   yesno
+
+*	
+recode h_0361-h_0369 (min/-1=.)
+forvalue i=1/15 {
+local a=`i'+60
+local b=`i'+20
+gen tempy`i'= h_03`a' if (h_04`b'==1|h_04`b'==2) // to fing the youngest 
+}
+egen youngest_hh= rowmin(tempy*) 
+drop temp*
+	
+	lab var youngest_hh  "Age of the youngest HH member"
+	
+		
 **--------------------------------------
 ** People in HH  
 **--------------------------------------
@@ -363,7 +401,22 @@ clonevar nphh=h_0150
 
 	lab var nphh   "Number of People in HH" 
 
- 
+*** New in CPF 1.52
+*
+forvalue i=1/15 {
+local a=`i'+60
+local b=`i'+20
+gen tempf`i'=(h_03`a'>=70 & h_03`a'<. & (h_04`b'==1|h_04`b'==2))
+gen tempg`i'=(h_03`a'>=80 & h_03`a'<. & (h_04`b'==1|h_04`b'==2))
+}
+egen oldern_hh70=rowtotal(tempf*)
+egen oldern_hh80=rowtotal(tempg*)
+drop temp*
+	
+	lab var oldern_hh70   "Number of people in HH aged 70+"
+	lab var oldern_hh80   "Number of people in HH aged 80+"
+
+
 *################################	
 *#								#
 *#	Labour market situation		#
@@ -1747,7 +1800,9 @@ p_9509	/// interveiw results
 h_0261 h_0262 h_0263 h_0264 h_0265 h_0266 h_0267 h_0268 h_0269 h_0270 h_0271 h_0272 h_0273 h_0274 h_0275 /// relation to head 
 isei* siops* mps* wtcp*  nempl	///
 migr* cob* relig* /// migration & religion
-widow divor separ fedu* medu*   sampid*
+widow divor separ fedu* medu*   sampid* ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 ///
+kids_hh_04 youngest_hh oldern_hh70 oldern_hh80
 
 **|=========================================================================|
 **|  SAVE
