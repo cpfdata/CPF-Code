@@ -1,7 +1,7 @@
 # CPF-Code
 Stata code to harmonize data from seven household panel surveys.
 
-Current version: CPF ver. 1.5 (31.05.2023)
+Current version: CPF ver. 1.52 (13.10.2023)
 
 Info at www.cpfdata.com.
 
