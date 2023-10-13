@@ -61,7 +61,7 @@ isei* siops* mps* 	///
 widow divor separ fedu* medu* 	///
 ethn* migr* cob* grewup_US  relig* ///
 sampid* ///
-kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 kids_hh510 kids_hh511 ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04  kids_hh510 kids_hh511 ///
 kids_hh_04 youngest_hh oldern_hh70 oldern_hh80 
 		
 keep `r(varlist)'		
@@ -147,8 +147,8 @@ kids_any		 		///
 kidsn_hh_02 			///
 kidsn_hh_34 			/// 			
 kidsn_hh_04 			/// 
-kidsn_hh_59  			///
 kidsn_hh_510			///
+kidsn_hh_511			///
 kids_hh_04  			///
 youngest_hh  			///
 oldern_hh70  			///
