@@ -2521,7 +2521,8 @@ wavey country wave1st   marstat5 mlstat5 	///
 livpart parstat6 nvmarr kidsn_hh17 satlife5 satlife10	///
 divor separ widow	///
 isei* siops* wtcs* mps* nempl fedu3 fedu4 medu3 medu4 sampid* ///
-migr* ethn* cob grewup_US   relig*
+migr* ethn* cob grewup_US   relig* ///
+youngest_hh kids_hh_04
 
 order pid wave intyear   age female  , first
 order isresp href who_resp refer xsqnr w_ind*  sampid*, last
