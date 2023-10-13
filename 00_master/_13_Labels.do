@@ -187,6 +187,8 @@ lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
 lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
 lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
 lab var kidsn_hh_59   "Number of Children in HH aged 5-9"
+lab var kidsn_hh_510  "Number of Children in HH aged 5-10"
+
 lab var kids_hh_04    "Any children in HH aged 0-4?"
 lab var youngest_hh   "Age of the youngest HH member"
 
