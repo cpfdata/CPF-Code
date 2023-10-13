@@ -477,7 +477,21 @@ gen kidsn_hh17=kidshh // Number of Children Under 18 Living with Family
 //  	lab var kidsn_18   "Number Of Children <18 y.o." 
 // 	lab var kidsn_15   "Number Of Children <15 y.o." 
  	lab var kidsn_hh17   "Number of Children in HH aged 0-17"
+
+
+*** New in CPF 1.52
+* youngest
+ 
+recode youngest (999 0 = -1), gen(youngest_hh)
 	
+	lab var youngest_hh  "Age of the youngest HH member"
+	
+*
+recode youngest_hh (1/4=1)(-1 5/18=0), gen(kids_hh_04)
+	lab var kids_hh_04   "Any children in HH aged 0-4?"
+	lab val kids_hh_04   yesno
+
+
 **--------------------------------------  
 ** People in HH  
 **--------------------------------------
