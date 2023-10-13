@@ -395,12 +395,12 @@ egen kidsn_hh14b=rowtotal(hh0_4 hh5_9 hh10_14) //Number of persons aged
 egen kidsn_hh_02= anycount(hgage1-hgage20), values(0/2)
 egen kidsn_hh_34= anycount(hgage1-hgage20), values(3/4)
 egen kidsn_hh_04= anycount(hgage1-hgage20), values(0/4)
-egen kidsn_hh_59= anycount(hgage1-hgage20), values(5/9)
+egen kidsn_hh_510= anycount(hgage1-hgage20), values(5/10)
 	
 	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
 	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
 	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
-	lab var kidsn_hh_59   "Number of Children in HH aged 5-9"
+	lab var kidsn_hh_510   "Number of Children in HH aged 5-10"
 *
 recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
 	lab var kids_hh_04   "Any children in HH aged 0-4?"
@@ -1707,7 +1707,7 @@ jbmo6s jbmoccs hgint hgivw ///
 isco* isei* osi_aus siops*  srh5 wtcs wtcp mps* nempl	///
 widow divor separ fedu* medu* neverw ///
 cob* migr*   relig relig_att ///
-kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_510 ///
 kids_hh_04 youngest_hh oldern_hh70 oldern_hh80 
 
 sort pid wave 
