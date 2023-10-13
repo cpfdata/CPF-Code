@@ -322,8 +322,8 @@ recode J72_171 (2=0) (9999/max=-1), gen(kids_any)	// 2004+
 recode J72_172 (9999/max=-1), gen(kidsn_all)	// 2004+
 replace kidsn_all=0 if kids_any==0
 // recode J72_173 (9999/max=-1), gen(kidsn_17)	// 2004+
-recode J72_173 (9999/max=-1), gen(kidsn_hh17)	// 2004+
-replace kidsn_hh17=0 if kids_any==0
+// recode J72_173 (9999/max=-1), gen(kidsn_hh17)	// 2004+
+// replace kidsn_hh17=0 if kids_any==0
 
 // gen kidsn_hh=kidsn_18	// not precise 
 
@@ -334,6 +334,39 @@ replace kidsn_hh17=0 if kids_any==0
 // 	lab var kidsn_15   "Number Of Children <15 y.o." 
 	lab var kidsn_hh17   "Number of Children in HH"
 
+*** New in CPF 1.52
+
+forvalue i=1/24 {
+recode B`i'_5 (min/0=.)(2090/max=.)
+gen hhage`i' = intyear - B`i'_5
+gen tempa`i'=hhage`i' <=2
+gen tempb`i'=hhage`i' <=4  
+gen tempc`i'=hhage`i' >=3 & hhage`i'<=4  
+gen tempd`i'=hhage`i' >=5 & hhage`i'<=9  
+gen tempe`i'=hhage`i' <=17
+}
+
+egen kidsn_hh_02=rowtotal(tempa*)
+egen kidsn_hh_34=rowtotal(tempb*)
+egen kidsn_hh_04=rowtotal(tempc*)
+egen kidsn_hh_59=rowtotal(tempd*)
+egen kidsn_hh17=rowtotal(tempe*)
+egen youngest_hh= rowmin(hhage*) 
+	recode youngest_hh(-1=0) // correcting a few cases
+	
+drop temp*
+	
+	lab var kidsn_hh_02   "Number of Children in HH aged 0-2"
+	lab var kidsn_hh_34   "Number of Children in HH aged 3-4"
+	lab var kidsn_hh_04   "Number of Children in HH aged 0-4"
+	lab var kidsn_hh_59   "Number of Children in HH aged 5-9"
+	lab var kidsn_hh17    "Number of Children in HH aged 0-17"
+	lab var youngest_hh   "Age of the youngest HH member"
+
+*
+recode kidsn_hh_04 (0=0)(1/20=1), gen(kids_hh_04)
+	lab var kids_hh_04   "Any children in HH aged 0-4?"
+	lab val kids_hh_04   yesno
 	
 **--------------------------------------
 ** People in HH 
@@ -343,6 +376,20 @@ replace kidsn_hh17=0 if kids_any==0
 	lab var nphh   "Number of People in HH" 
 	
  
+*** New in CPF 1.52
+
+forvalue i=1/24 {
+gen tempf`i'=hhage`i' >=70 & hhage`i'<.
+gen tempg`i'=hhage`i' >=80 & hhage`i'<.
+}
+egen oldern_hh70=rowtotal(tempf*)
+egen oldern_hh80=rowtotal(tempg*)
+
+drop temp* 
+drop hhage*
+
+	lab var oldern_hh70   "Number of people in HH aged 70+"
+	lab var oldern_hh80   "Number of people in HH aged 80+"
 
 
 *################################
