@@ -1594,7 +1594,9 @@ J1_1_2 J1_1_4 J1_1_6 J1_1_7 J1_1_8 J1_1_9 /// jo quality / sat
 ID_H				/// hh num
 migr* cob*   relig* /// 
 wtcs isei* siops* mps* nempl selfemp*	///
-widow divor separ fedu* medu*   sampid*
+widow divor separ fedu* medu*   sampid* ///
+kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_59 ///
+kids_hh_04 youngest_hh oldern_hh70 oldern_hh80
 
 
 
