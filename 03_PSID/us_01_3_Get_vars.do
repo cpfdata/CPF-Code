@@ -196,7 +196,7 @@ combvars  nphh , list("[68]V115 [69]V549 [70]V1238 [71]V1941 [72]V2541 [73]V3094
 //  Number of people (children plus adults) in this FAMILY UNIT (living here) (from listing box)
 
 // Whether any FU members aged 60 or older in the FU in 2020
-combvars  hhmember60 , list("[99]ER16415 [01]ER20361 [03]ER24066 [05]ER25636 [07]ER36654 [09]ER42673 [11]ER47989 [13]ER53701 [15]ER60716 [17]ER66763 [19]ER72767 [21]ER78844")
+// combvars  hhmember60 , list("[99]ER16415 [01]ER20361 [03]ER24066 [05]ER25636 [07]ER36654 [09]ER42673 [11]ER47989 [13]ER53701 [15]ER60716 [17]ER66763 [19]ER72767 [21]ER78844")
 
 **--------------------------------------
 ** Living together with partner  
