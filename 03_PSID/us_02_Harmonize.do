@@ -492,6 +492,37 @@ recode youngest_hh (1/4=1)(5/18=0) (-1=.), gen(kids_hh_04)
 	lab val kids_hh_04   yesno
 
 
+*** Youngest child born 
+* ER32025 - month youngest child born 
+// here we assume/impose months for imprecise responses
+recode  ER32025 ///
+		(21=12) /// winter
+		(22=3)  /// spring
+		(23=7)  /// summer
+		(24=10) /// autumn
+		(98=6) /// DK month but birth year is known
+		(99=.) /// MV
+		, gen(ykid_m)
+
+* ER32026 - year youngest child born 
+recode  ER32026 (9999=.), gen(ykid_y)
+
+* Age of youngest child
+gen auxint=intyear + (intmonth/12) // add months to years
+gen auxkid=ykid_y + (ykid_m/12) 	 // add months to years
+
+gen auxkage = auxint - auxkid 	// age 
+gen auxkage_fy = trunc(auxkage) 	// get full years
+gen auxkage_m = round((auxkage - auxkage_fy) * 12) // get months
+
+replace auxkage_m = . if auxkage<0
+replace auxkage_fy = . if auxkage<0
+
+recode auxkage_fy (0/4=1)(5/max=0) (-1=.), gen(kidsown_04)
+	lab var kidsown_04   "Any own children aged 0-4?"
+	lab val kidsown_04   yesno
+
+
 **--------------------------------------  
 ** People in HH  
 **--------------------------------------
@@ -2522,7 +2553,7 @@ livpart parstat6 nvmarr kidsn_hh17 satlife5 satlife10	///
 divor separ widow	///
 isei* siops* wtcs* mps* nempl fedu3 fedu4 medu3 medu4 sampid* ///
 migr* ethn* cob grewup_US   relig* ///
-youngest_hh kids_hh_04
+youngest_hh kids_hh_04 kidsown_04
 
 order pid wave intyear   age female  , first
 order isresp href who_resp refer xsqnr w_ind*  sampid*, last
