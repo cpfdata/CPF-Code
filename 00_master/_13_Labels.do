@@ -192,6 +192,8 @@ lab var kidsn_hh_511  "Number of Children in HH aged 5-11"
 lab var kids_hh_04    "Any children in HH aged 0-4?"
 lab var youngest_hh   "Age of the youngest HH member"
 
+lab var kidsown_04   "Any own children aged 0-4?"
+
 
 *############################
 *#							#
@@ -571,7 +573,7 @@ lab val relig relig
 lab val relig_att attendance
 // lab val volunt yesno
 lab val kids_hh_04   yesno
-
+lab val kidsown_04   yesno
 
 
 *############################
