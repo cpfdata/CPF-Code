@@ -487,7 +487,7 @@ recode youngest (999 0 = -1), gen(youngest_hh)
 	lab var youngest_hh  "Age of the youngest HH member"
 	
 *
-recode youngest_hh (1/4=1)(-1 5/18=0), gen(kids_hh_04)
+recode youngest_hh (1/4=1)(5/18=0) (-1=.), gen(kids_hh_04)
 	lab var kids_hh_04   "Any children in HH aged 0-4?"
 	lab val kids_hh_04   yesno
 
