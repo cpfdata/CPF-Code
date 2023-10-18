@@ -241,7 +241,7 @@ replace edu4=edu4c if  (edu4<0 | edu4==.) & edu4c>0 & edu4c<.
 	
 *** edu5
 recode isced (1=1) (2=2) (3 4=3) (5 6=4) (7=5) (0 -7=-1), gen(edu5a) // for waves 1-18
-recode qfhigh_dv (15 96=1) (14=2) (7/13 16=3) (4/6=4) (1 2=5) (-9=-1) (-8=-3), gen(edu5b) // for waves 19+ 
+recode qfhigh_dv (15 96=1) (14=2) (7/13 16=3) (3/6=4) (1 2=5) (-9=-1) (-8=-3), gen(edu5b) // for waves 19+ 
 recode qfhighoth (10 96=1)   (5/9=3) (3 4=4) (1 2=5), gen(edu5c) // special sample w 24, 27
 
 gen edu5=edu5a
