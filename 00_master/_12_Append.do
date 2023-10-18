@@ -62,7 +62,7 @@ widow divor separ fedu* medu* 	///
 ethn* migr* cob* grewup_US  relig* ///
 sampid* ///
 kidsn_hh_02 kidsn_hh_34 kidsn_hh_04  kidsn_hh_510 kidsn_hh_511 ///
-kids_hh_04 youngest_hh oldern_hh70 oldern_hh80 
+kids_hh_04 youngest_hh oldern_hh70 oldern_hh80 kidsown_04
 		
 keep `r(varlist)'		
 
@@ -150,6 +150,7 @@ kidsn_hh_04 			///
 kidsn_hh_510			///
 kidsn_hh_511			///
 kids_hh_04  			///
+kidsown_04			///
 youngest_hh  			///
 oldern_hh70  			///
 oldern_hh80  			///
