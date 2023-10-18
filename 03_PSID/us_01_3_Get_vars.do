@@ -1800,6 +1800,8 @@ merge m:1 pid using "${psid_org}" ,	///
 		ER32033				///
 		ER31996 			/// 	SAMPLING ERROR STRATUM
 		ER31997				///		SAMPLING ERROR CLUSTER
+		ER32026				/// YEAR YOUNGEST CHILD BORN
+		ER32025				/// MONTH YOUNGEST CHILD BORN
 		) keep(1 2 3) nogen
 rename ER32000 gender 
 rename ER32022 kids_birth
