@@ -23,7 +23,7 @@ use "${soep_out}\ge_02_CPF.dta", clear
 *#							#
 *############################
 **--------------------------------------
-** Intreview status
+** Interview status
 **--------------------------------------
 * Sample similar to pequiv (2016-17 differs slightly)
 * Only Befragungsperson (Interviewed) 
