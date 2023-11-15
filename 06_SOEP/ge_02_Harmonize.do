@@ -13,7 +13,7 @@
 ** Open merged dataset
 **-------------------------------------- 
 * 
-use "${soep_out}\ge_01.dta", clear  	
+use "${soep_out}/ge_01.dta", clear  	
 
 
 **--------------------------------------
@@ -1475,7 +1475,7 @@ drop temp_medu*
 **--------------------------------------	
 // NOTE:because of the extensive list of countries, a separate do-file generates the variables for the country of birth of the respondent and their parents categories by region. (see additional do-file for details)
 
-do "${Grd_syntax}\06_SOEP\ge_02add_labels_COB.do" 
+do "${Grd_syntax}/06_SOEP/ge_02add_labels_COB.do" 
 
 *** Identify valid COB and fill across waves  
 sort pid wave 
@@ -1797,7 +1797,7 @@ kidsn_hh_04 kidsn_hh_510 kids_hh_04
 **|=========================================================================|
  
 label data "CPF_Germany v1.5"	 
-save "${soep_out}\ge_02_CPF.dta", replace  	
+save "${soep_out}/ge_02_CPF.dta", replace  	
 
 	 
 *____________________________________________________________________________

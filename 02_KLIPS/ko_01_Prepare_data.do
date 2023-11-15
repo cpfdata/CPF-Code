@@ -53,7 +53,7 @@ global waves= `"`waves'"'
 
 local year=1998
 foreach w in $waves {
-		use "${klips_in}\eklips`w'p.dta", clear
+		use "${klips_in}/eklips`w'p.dta", clear
 			gen wave=`year'
 			gen hid=hhid`w'
 			foreach x in p pa w sw	{
@@ -67,7 +67,7 @@ foreach w in $waves {
 			}
 			sort pid
 			order pid wave, first
-		save "${klips_out_work}\p_klips`w'.dta", replace
+		save "${klips_out_work}/p_klips`w'.dta", replace
 		local ++year
 }  
 *
@@ -76,7 +76,7 @@ foreach w in $waves {
 ** p-files Check
 **--------------------------------------
 foreach w in $waves {
-	  qui use "${klips_out_work}\p_klips`w'.dta", clear
+	  qui use "${klips_out_work}/p_klips`w'.dta", clear
 	  display "Wave `w'  Vars: " c(k) " N: " _N
 }
 *
@@ -86,7 +86,7 @@ foreach w in $waves {
 
 *** Delete unuseful vars or correct vars with errors in coding before appending
 foreach w in $waves {
-		use "${klips_out_work}\p_klips`w'.dta", clear
+		use "${klips_out_work}/p_klips`w'.dta", clear
 			foreach var in p_4712 p_4722 p_4732 p_4742 p_4752 p_4762 p_4772 ///
 			p_4782 p_4792 	///
 			p_5241 p_5261 p_5281 p_5301 p_5132 p_5321 p_5111 p_5116 p_5201	///
@@ -102,7 +102,7 @@ foreach w in $waves {
 				}
 			}
 			}
-		save "${klips_out_work}\p_klips`w'.dta", replace
+		save "${klips_out_work}/p_klips`w'.dta", replace
 }  
 
 **--------------------------------------
@@ -110,18 +110,18 @@ foreach w in $waves {
 **--------------------------------------
 
 *** Append
-// use "${klips_out_work}\p_klips01.dta", clear
+// use "${klips_out_work}/p_klips01.dta", clear
 clear
 foreach w in $waves {
 	  display "Appending wave: "`w'
-			qui append using "${klips_out_work}\p_klips`w'.dta"
+			qui append using "${klips_out_work}/p_klips`w'.dta"
 	  display "After appned of wave `w' - Vars:" c(k) " N: " _N
 	  display ""
 	}
 *	
 sort pid wave
 *
-save "${klips_out}\ko_all_p.dta", replace
+save "${klips_out}/ko_all_p.dta", replace
 
 
 
@@ -146,7 +146,7 @@ save "${klips_out}\ko_all_p.dta", replace
  
 local year=1998
 foreach w in $waves {
-		use "${klips_in}\eklips`w'h.dta", clear
+		use "${klips_in}/eklips`w'h.dta", clear
 			gen wave=`year'
 			foreach x in h w sw	{
 				renvars , subs(`x'`w' `x'_)
@@ -160,7 +160,7 @@ foreach w in $waves {
 			drop if hhid`w' == .
 			sort hhid`w'
 			order hhid`w' wave, first
-		save "${klips_out_work}\h_klips`w'.dta", replace
+		save "${klips_out_work}/h_klips`w'.dta", replace
 		local ++year
 }  
 *
@@ -169,7 +169,7 @@ foreach w in $waves {
 ** h-files Check
 **--------------------------------------
 foreach w in $waves {
-	  qui use "${klips_out_work}\h_klips`w'.dta", clear
+	  qui use "${klips_out_work}/h_klips`w'.dta", clear
 	  display "Wave `w'  Vars: " c(k) " N: " _N
 }
 *
@@ -179,7 +179,7 @@ foreach w in $waves {
 
 *** Delete unuseful vars with errors in coding before appending
 foreach w in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 {
-		use "${klips_out_work}\h_klips`w'.dta", clear
+		use "${klips_out_work}/h_klips`w'.dta", clear
 			foreach var in ... {
 			capture confirm variable `var'
 				if (_rc == 0) {
@@ -192,7 +192,7 @@ foreach w in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 {
 				}
 			}
 			}
-		save "${klips_out_work}\h_klips`w'.dta", replace
+		save "${klips_out_work}/h_klips`w'.dta", replace
 } 
 */
 
@@ -201,17 +201,17 @@ foreach w in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 16 17 18 19 20 {
 **--------------------------------------
 
 *** Append
-// use "${klips_out_work}\h_klips01.dta", clear
+// use "${klips_out_work}/h_klips01.dta", clear
 clear
 foreach w in $waves {
 	  display "Appending wave: "`w'
-			qui append using "${klips_out_work}\h_klips`w'.dta"
+			qui append using "${klips_out_work}/h_klips`w'.dta"
 	  display "After appned of wave `w' - Vars:" c(k) " N: " _N
 	  display ""
 	}
 *	
 *
-save "${klips_out}\ko_all_h.dta", replace
+save "${klips_out}/ko_all_h.dta", replace
 
 
 
@@ -231,10 +231,10 @@ save "${klips_out}\ko_all_h.dta", replace
 **--------------------------------------
 clear
 foreach w in $waves {
-		use "${klips_out_work}\p_klips`w'.dta", clear
-		merge m:1 hhid`w' using "${klips_out_work}\h_klips`w'.dta", nogen 
+		use "${klips_out_work}/p_klips`w'.dta", clear
+		merge m:1 hhid`w' using "${klips_out_work}/h_klips`w'.dta", nogen 
 		sort pid wave
-		save "${klips_out_work}\ph_klips`w'.dta", replace
+		save "${klips_out_work}/ph_klips`w'.dta", replace
 }
 *
 		
@@ -243,11 +243,11 @@ foreach w in $waves {
 **--------------------------------------
 
 *** Append
-// use "${klips_out_work}\ph_klips01.dta", clear
+// use "${klips_out_work}/ph_klips01.dta", clear
 clear
 foreach w in $waves {
 	  display "Appending wave: "`w'
-			qui append using "${klips_out_work}\ph_klips`w'.dta"
+			qui append using "${klips_out_work}/ph_klips`w'.dta"
 	  display "After append of wave `w' - Vars:" c(k) " N: " _N
 	  display ""
 	}
@@ -264,15 +264,15 @@ order hhid*, after(wave)
 **--------------------------------------
 ** ph-files done: ko_all_ph.dta
 **--------------------------------------
-save "${klips_out}\ko_01.dta", replace
+save "${klips_out}/ko_01.dta", replace
 
 **--------------------------------------
 ** Delete unnecessary files 
 **--------------------------------------
-erase  "${klips_out}\ko_all_p.dta"
-erase  "${klips_out}\ko_all_h.dta" 
+erase  "${klips_out}/ko_all_p.dta"
+erase  "${klips_out}/ko_all_h.dta" 
 
-!del "${klips_out}\temp\*.dta"
+!del "${klips_out}/temp/*.dta"
 
 
 

@@ -15,12 +15,12 @@
 *#							#
 *############################
 *** equiv:
-use "${hilda_out}\au_02a_cnef.dta", clear 
+use "${hilda_out}/au_02a_cnef.dta", clear 
 *
 disp "vars: " c(k) "   N: " _N
 
 *** add waves:
-merge 1:1 pid wave using "${hilda_out}\au_02b_waves.dta" , ///
+merge 1:1 pid wave using "${hilda_out}/au_02b_waves.dta" , ///
 	keep(1 2 3) nogen 
 *
 disp "vars: " c(k) "   N: " _N
@@ -56,7 +56,7 @@ replace whweek=whyear/(12*4.3) if (whweek==.|whweek<0) & whyear>0 & whyear<.
 ****
 label data "CPF_Australia v1.5"
 
-save "${hilda_out}\au_02_CPF.dta" , replace
+save "${hilda_out}/au_02_CPF.dta" , replace
 
 
 

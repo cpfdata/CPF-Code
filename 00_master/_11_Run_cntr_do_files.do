@@ -29,7 +29,7 @@ foreach data in  `data' {
 clear
 di  _newline "### CPF: ${`data'} ###########################################"
 di  "Preparing CPF datafile for ${`data'} based on do-files in:"
-cd "${your_dir}\11_CPF_in_syntax\\${`data'}\"
+cd "${your_dir}/11_CPF_in_syntax//${`data'}/"
 	local do01: 	dir . files "${`data'2}_01_Prepare_data.do"		, respectcase  
 	local do01_1: 	dir . files "${`data'2}_01_1*.do"				, respectcase
 	local do01_2: 	dir . files "${`data'2}_01_2*.do"				, respectcase

@@ -12,7 +12,7 @@
 ** Open merged dataset
 **-------------------------------------- 
 * 
-use "${rlms_out}\ru_01.dta", clear  	
+use "${rlms_out}/ru_01.dta", clear  	
 
 
 **--------------------------------------
@@ -1605,7 +1605,7 @@ kids_hh_04 youngest_hh oldern_hh70 oldern_hh80
 **|=========================================================================|
  
 label data "CPF_RUS v1.5"
-save "${rlms_out}\ru_02_CPF.dta", replace  	
+save "${rlms_out}/ru_02_CPF.dta", replace  	
 
 	 
 *____________________________________________________________________________

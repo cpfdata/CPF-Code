@@ -13,7 +13,7 @@
 ** Open merged dataset
 **-------------------------------------- 
 *** CNEF
-use "${shp_out}\ch_01_shpequivL.dta", clear
+use "${shp_out}/ch_01_shpequivL.dta", clear
 
 
 
@@ -607,7 +607,7 @@ order x11* w11* sampid*, last
 **|=========================================================================|
  
 	 
-save "${shp_out}\ch_02a_cnef.dta", replace  	
+save "${shp_out}/ch_02a_cnef.dta", replace  	
 
 	 
 *____________________________________________________________________________

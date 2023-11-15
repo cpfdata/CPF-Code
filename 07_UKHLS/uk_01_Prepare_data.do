@@ -39,9 +39,9 @@ global UKHLSwaves_bh = substr(c(alpha), 1,  (${ukhls_w}*2) )		// letters identif
 
 **selection of stable characteristics using xwavedat --> these are merged with the files for each wave
 *
-use "$ukhls_in\ukhls\xwavedat", clear
+use "$ukhls_in/ukhls/xwavedat", clear
 		keep pid pidp lprnt_bh bornuk_dv ukborn plbornc macob pacob race*
-	save "${ukhls_out_work}\tmp_xwavedat", replace
+	save "${ukhls_out_work}/tmp_xwavedat", replace
 
 *** The list of all variables used for harmonization (selection required due to file size)
 *** HERE: Add all new variables to the local if you want to add them to harmonization
@@ -54,24 +54,24 @@ age age_dv benpen1 birthy bornuk_dv chron country disab disab2c disdif* dissev* 
 *** BHPS
 foreach w of global BHPSwaves {
 	local waveno=strpos("abcdefghijklmnopqrstuvwxyz","`w'")
-	use "$ukhls_in\bhps\b`w'_indresp", clear
+	use "$ukhls_in/bhps/b`w'_indresp", clear
 		rename b`w'_* *
 		gen wave=`waveno'
 			gen uk_ver = "bhps"
 		sort pidp
 		order pidp wave, first
 		compress
-	save "${ukhls_out_work}\tmp_b`waveno'_indresp", replace
+	save "${ukhls_out_work}/tmp_b`waveno'_indresp", replace
 }
 
 foreach w of global BHPSwaves {
 	local waveno=strpos("abcdefghijklmnopqrstuvwxyz","`w'")
-	use "${ukhls_out_work}\tmp_b`waveno'_indresp", clear
+	use "${ukhls_out_work}/tmp_b`waveno'_indresp", clear
 	isvar `all_vars'
 	
 	keep `r(varlist)'
-	merge 1:1 pidp using "${ukhls_out_work}\tmp_xwavedat", nogen keep(1 3)
-		save "${ukhls_out_work}\tmp_b`waveno'_indresp", replace
+	merge 1:1 pidp using "${ukhls_out_work}/tmp_xwavedat", nogen keep(1 3)
+		save "${ukhls_out_work}/tmp_b`waveno'_indresp", replace
 }
 	
 *** UKHLS
@@ -89,7 +89,7 @@ foreach w of global UKHLSwaves_bh {
 		isvar `all_vars'
 
 	keep `r(varlist)'
-	save "${ukhls_out_work}\tmp_`x'_indresp", replace
+	save "${ukhls_out_work}/tmp_`x'_indresp", replace
 }
 
 
@@ -100,16 +100,16 @@ foreach w of global UKHLSwaves_bh {
 
 *** BHPS
 
-use "${ukhls_out_work}\tmp_b1_indresp", clear
+use "${ukhls_out_work}/tmp_b1_indresp", clear
 foreach w of numlist 2/18 {	
 		display "Appending wave: "`w'
-			qui append using "${ukhls_out_work}\tmp_b`w'_indresp"
+			qui append using "${ukhls_out_work}/tmp_b`w'_indresp"
 		display "After append of wave `w' - Vars:" c(k) " N: " _N
 		display ""
 	}
 	
 sort pidp wave
-save "${ukhls_out}\uk_01_bhps.dta", replace
+save "${ukhls_out}/uk_01_bhps.dta", replace
 
 
 *** UKHLS
@@ -117,7 +117,7 @@ save "${ukhls_out}\uk_01_bhps.dta", replace
 local last = ${uk_n}
 foreach w of numlist 19/`last' {
 		display "Appending wave: "`w'
-			qui append using "${ukhls_out_work}\tmp_`w'_indresp"
+			qui append using "${ukhls_out_work}/tmp_`w'_indresp"
 		display "After append of wave `w' - Vars:" c(k) " N: " _N
 		display ""
 }
@@ -126,7 +126,7 @@ sort pidp wave
 rename pid pid_bhps
 rename pidp pid
 
-save "${ukhls_out}\uk_01_bhps_hls.dta", replace
+save "${ukhls_out}/uk_01_bhps_hls.dta", replace
 
 
 
@@ -136,11 +136,11 @@ save "${ukhls_out}\uk_01_bhps_hls.dta", replace
  
 // erase each temporary file using loops
 foreach w of numlist 1/18 {
-	erase "${ukhls_out_work}\tmp_b`w'_indresp.dta"
+	erase "${ukhls_out_work}/tmp_b`w'_indresp.dta"
 }
 local last = ${uk_n}
 foreach w of numlist 19/`last'  {
-	erase "${ukhls_out_work}\tmp_`w'_indresp.dta"
+	erase "${ukhls_out_work}/tmp_`w'_indresp.dta"
 }
 
 *
@@ -171,7 +171,7 @@ foreach w of global BHPSwaves {
 		gen uk_ver = "bhps"
 		sort hidp
 		order hidp wave, first
-	save "${ukhls_out_work}\tmp_b`waveno'_hhresp", replace
+	save "${ukhls_out_work}/tmp_b`waveno'_hhresp", replace
 }
 *** UKHLS
 foreach w of global UKHLSwaves_bh {
@@ -184,7 +184,7 @@ foreach w of global UKHLSwaves_bh {
 		local x=`waveno'+18
 		sort hidp
 		order hidp wave, first
-	save "${ukhls_out_work}\tmp_`x'_hhresp", replace
+	save "${ukhls_out_work}/tmp_`x'_hhresp", replace
 }
 *
 
@@ -193,27 +193,27 @@ foreach w of global UKHLSwaves_bh {
 **--------------------------------------
 
 *** BHPS
-use "${ukhls_out_work}\tmp_b1_hhresp", clear
+use "${ukhls_out_work}/tmp_b1_hhresp", clear
 foreach w of numlist 2/18 {
 		display "Appending wave: "`w'
-			qui append using "${ukhls_out_work}\tmp_b`w'_hhresp"
+			qui append using "${ukhls_out_work}/tmp_b`w'_hhresp"
 		display "After appned of wave `w' - Vars:" c(k) " N: " _N
 		display ""
 	}
 sort hidp wave
-save "${ukhls_out}\uk_01hh_bhps.dta", replace
+save "${ukhls_out}/uk_01hh_bhps.dta", replace
 
 *** UKHLS
 local last = ${uk_n}
 foreach w of numlist 19/`last' {
 		display "Appending wave: "`w'
-			qui append using "${ukhls_out_work}\tmp_`w'_hhresp"
+			qui append using "${ukhls_out_work}/tmp_`w'_hhresp"
 		display "After appned of wave `w' - Vars:" c(k) " N: " _N
 		display ""
 }
 *
 sort hidp wave
-save "${ukhls_out}\uk_01hh_bhps_hls.dta", replace
+save "${ukhls_out}/uk_01hh_bhps_hls.dta", replace
 
 
 **--------------------------------------
@@ -222,11 +222,11 @@ save "${ukhls_out}\uk_01hh_bhps_hls.dta", replace
  
 // erase each temporary file using loops
 foreach w of numlist 1/18 {
-	erase "${ukhls_out_work}\tmp_b`w'_hhresp.dta"
+	erase "${ukhls_out_work}/tmp_b`w'_hhresp.dta"
 }
 local last = ${uk_n}
 foreach w of numlist 19/`last'  {
-	erase "${ukhls_out_work}\tmp_`w'_hhresp.dta"
+	erase "${ukhls_out_work}/tmp_`w'_hhresp.dta"
 }
 
 
@@ -239,12 +239,12 @@ foreach w of numlist 19/`last'  {
 -  only selected var
 - update if needed 
 */
-use "${ukhls_out}\uk_01_bhps_hls.dta", clear
+use "${ukhls_out}/uk_01_bhps_hls.dta", clear
 
 **--------------------------------------
 **  
 **--------------------------------------
-merge m:1 hidp wave using "${ukhls_out}\uk_01hh_bhps_hls.dta" , ///
+merge m:1 hidp wave using "${ukhls_out}/uk_01hh_bhps_hls.dta" , ///
 		keep(1 3) nogen ///
 		keepusing(nkids015   hhsize nkids_dv nch02_dv nch34_dv nch511_dv nch1215_dv ///
 		ieqmoecd_dv fihhmnnet1_dv fihhmngrs_dv fihhmngrs1_dv)  
@@ -254,12 +254,12 @@ merge m:1 hidp wave using "${ukhls_out}\uk_01hh_bhps_hls.dta" , ///
 **  Save
 **--------------------------------------
 
-save "${ukhls_out}\uk_01.dta", replace
+save "${ukhls_out}/uk_01.dta", replace
 
 */
 
 * You can remove the large file if not needed
-erase "${ukhls_out}\uk_01_bhps_hls.dta"
+erase "${ukhls_out}/uk_01_bhps_hls.dta"
 
 *
 qui tab wave

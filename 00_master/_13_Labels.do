@@ -12,7 +12,7 @@
 **--------------------------------------
 ** Data
 **--------------------------------------  
-// use "${CPF_out}\CPFv${cpfv}.dta", clear  	
+// use "${CPF_out}/CPFv${cpfv}.dta", clear  	
 
 **--------------------------------------
 ** Remove Val Lables
@@ -581,4 +581,4 @@ lab val kidsown_04   yesno
 *#	Save					#
 *#							#
 *############################
-save "${CPF_out}\CPFv${cpfv}.dta", replace  		
+save "${CPF_out}/CPFv${cpfv}.dta", replace  		

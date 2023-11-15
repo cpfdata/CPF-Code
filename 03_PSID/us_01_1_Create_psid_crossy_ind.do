@@ -11,7 +11,7 @@
 * 
 // Download “Cross-year Individual: 1968-XXXX” zipped file from:
 // https://simba.isr.umich.edu/Zips/ZipMain.aspx 
-// and unzip it to …data/Cross-year Individual 1968-XXXX\pack\ 
+// and unzip it to …data/Cross-year Individual 1968-XXXX/pack/ 
 
 
 *############################
@@ -3309,10 +3309,10 @@ gen pid=(ER30001*1000)+ER30002
 *#	Save					#
 *#							#
 *############################
-save "${psid_in}\psid_crossy_ind.dta", replace 
+save "${psid_in}/psid_crossy_ind.dta", replace 
 
 *
-// !del "${dr_in}\pack\*" /q	// can remove files in the pack folder 
+// !del "${dr_in}/pack/*" /q	// can remove files in the pack folder 
  
 
 *____________________________________________________________________________

@@ -17,12 +17,12 @@
 *#							#
 *############################
 *** equiv:
-use "${shp_out}\ch_02a_cnef.dta", clear 
+use "${shp_out}/ch_02a_cnef.dta", clear 
 *
 disp "vars: " c(k) "   N: " _N
 
 *** add waves:
-merge 1:1 pid wave using "${shp_out}\ch_02b_wave.dta" , ///
+merge 1:1 pid wave using "${shp_out}/ch_02b_wave.dta" , ///
 	keep(1 2 3) nogen 
 *
 disp "vars: " c(k) "   N: " _N
@@ -44,7 +44,7 @@ replace whweek=whyear/(12*4.3) if (whweek==.|whweek<0) & whyear>0 & whyear<.
 
 ****
 label data "CPF_SWITZ v1.5"
-save "${shp_out}\ch_02_CPF.dta" , replace
+save "${shp_out}/ch_02_CPF.dta" , replace
 
 
 

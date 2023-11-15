@@ -16,7 +16,7 @@ https://simba.isr.umich.edu/default.aspx
 ** Open merged dataset
 **-------------------------------------- 
 *** Combined 
-use "${psid_out}\us_01.dta", clear
+use "${psid_out}/us_01.dta", clear
 
 
 **--------------------------------------
@@ -139,7 +139,7 @@ replace	intmonth = intyB2 if intmonth==.
 // rename  age age_c
 // rename  eduy eduy_c
 // rename intyear intyear_c
-// merge 1:1 pid wave using "${psid_out}\us_Merg_03cnef.dta", keep(1 2 3)   
+// merge 1:1 pid wave using "${psid_out}/us_Merg_03cnef.dta", keep(1 2 3)   
 *******
 
 
@@ -689,16 +689,16 @@ Census 1970 --ACS 2010'KT_ver1.xlsx'-->
 **** They can be called by the functions below 
 	*** Census 1970 --> isco-08 
 		*step 1: census 70--> ASC 2010
-			do "${psid_syntax}\us_02add_isco_A_step1.do"
+			do "${psid_syntax}/us_02add_isco_A_step1.do"
 		*step 2: ASC 2010 --> SOC 2010
-			do "${psid_syntax}\us_02add_isco_A_step2.do"
+			do "${psid_syntax}/us_02add_isco_A_step2.do"
 		*step 3: SOC 2010 --> isco-08
-			do "${psid_syntax}\us_02add_isco_A_step3.do"
+			do "${psid_syntax}/us_02add_isco_A_step3.do"
 	*** Census 2010 --> isco-08  										 
 		*step 1: census 2010 --> SOC 2010
-			do "${psid_syntax}\us_02add_isco_B_step1.do"
+			do "${psid_syntax}/us_02add_isco_B_step1.do"
 		*step 2: SOC 2010 --> isco-08
-			do "${psid_syntax}\us_02add_isco_B_step2.do"
+			do "${psid_syntax}/us_02add_isco_B_step2.do"
 
 
 
@@ -2102,13 +2102,13 @@ gen temp_migr=.
 
 	
 //because state born only asked consistently since 2013, first fill MV by pid
-	mvdecode temp_migr, mv(-8=.a \ 99=.b)
+	mvdecode temp_migr, mv(-8=.a / 99=.b)
 	
 	bysort pid: egen temp_state_MV=mode(temp_migr), maxmode // identify most common response
 	replace temp_migr=temp_state_MV if temp_migr==. & temp_state_MV>=0 & temp_state_MV<.
 	replace temp_migr=temp_state_MV if temp_migr!=temp_state_MV // correct inconsistent cases	
 	
-	mvencode temp_migr, mv(.a=-8 \ .b=99)
+	mvencode temp_migr, mv(.a=-8 / .b=99)
 
 
 gen migr=.
@@ -2129,13 +2129,13 @@ replace migr=1 if (migr==. | migr<0) & inrange(ER30001, 7001, 9308) // Latino su
 
 
 *fill MV 
-	mvdecode migr, mv(-8=.a \ -1=.b)
+	mvdecode migr, mv(-8=.a / -1=.b)
 
 	bysort pid: egen temp_migr_MV=mode(migr), maxmode // identify most common response
 	replace migr=temp_migr_MV if migr==. & temp_migr_MV>=0 & temp_migr_MV<.
 	replace migr=temp_migr_MV if migr!=temp_migr_MV & temp_migr_MV>=0 // correct a few inconsistent cases	
 	
-	mvencode migr, mv(.a=-8 \ .b=-1)
+	mvencode migr, mv(.a=-8 / .b=-1)
 	
 	replace migr=-8 if migr==. & wavey<1997 //Question not asked before 1997
 
@@ -2161,7 +2161,7 @@ gen temp_cob=.
 	replace temp_cob=mode_temp_cob if temp_cob!=mode_temp_cob // correct inconsistent cases
 
 // COB labels in separate file	
-do "${your_dir}\11_CPF_in_syntax\03_PSID\us_02add_labels_COB.do"
+do "${your_dir}/11_CPF_in_syntax/03_PSID/us_02add_labels_COB.do"
 
 *** Identify valid COB and fill across waves  
 sort pid wave 
@@ -2564,7 +2564,7 @@ order isresp href who_resp refer xsqnr w_ind*  sampid*, last
 **|=========================================================================|
 label data "CPF_USA v1.5"
 
-save "${psid_out}\us_02_CPF.dta", replace  	
+save "${psid_out}/us_02_CPF.dta", replace  	
 
 	 
 *____________________________________________________________________________

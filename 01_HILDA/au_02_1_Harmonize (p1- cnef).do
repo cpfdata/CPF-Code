@@ -14,7 +14,7 @@
 **-------------------------------------- 
 *** CNEF
 local w=word("`c(alpha)'", ${hilda_w})	// convert wave's number to letter 
-use "${hilda_in}\STATA ${hilda_w}0c (Other)\CNEF_Long_`w'${hilda_w}0c.dta", clear
+use "${hilda_in}/STATA ${hilda_w}0c (Other)/CNEF_Long_`w'${hilda_w}0c.dta", clear
 
 
 *############################
@@ -579,7 +579,7 @@ order x11* w11*, last
 **|=========================================================================|
  
 	 
-save "${hilda_out}\au_02a_cnef.dta", replace  	
+save "${hilda_out}/au_02a_cnef.dta", replace  	
 
 	 
 *____________________________________________________________________________

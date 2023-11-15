@@ -12,7 +12,7 @@
 **--------------------------------------
 ** Open merged dataset
 **-------------------------------------- 
-use "${ukhls_out}\uk_02_CPF.dta" , clear
+use "${ukhls_out}/uk_02_CPF.dta" , clear
 
 
 *############################
@@ -51,7 +51,7 @@ drop if female==-1
 *#	Save					#
 *#							#
 *############################
-save "${ukhls_out}\uk_03_CPF.dta" , replace
+save "${ukhls_out}/uk_03_CPF.dta" , replace
 
 
 *---

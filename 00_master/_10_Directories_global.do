@@ -21,7 +21,7 @@
 /* Inster the main directory for storing original datasets and all the CPF files. 
    It's not necessary if you run it from the higher-level code
 */
-// global your_dir "C:\CPF"  // <--insert your directory 
+// global your_dir "/User/..."  // <--insert your directory 
 
 
 
@@ -43,10 +43,10 @@
 	
 *** Macros
 	* Main folders 
-	global Gdr_docs		"${your_dir}\\${g_docs}" 			 
-	global Gdr_in 		"${your_dir}\\${g_in}"  	
-	global Grd_syntax 	"${your_dir}\\${g_syntax}" 		
-	global Gdr_out 		"${your_dir}\\${g_out}" 		
+	global Gdr_docs		"${your_dir}//${g_docs}" 			 
+	global Gdr_in 		"${your_dir}//${g_in}"  	
+	global Grd_syntax 	"${your_dir}//${g_syntax}" 		
+	global Gdr_out 		"${your_dir}//${g_out}" 		
 	
 	* Survey-specific folder names
 	global hilda 	"01_HILDA"
@@ -73,44 +73,44 @@
 **--------------------------------------
 *** Macros: Input folders  
 * HILDA
-global hilda_in "${Gdr_in}\\${hilda}\Data" 			
+global hilda_in "${Gdr_in}//${hilda}/Data" 			
 
 * KLPIS
-global klips_in "${Gdr_in}\\${klips}\Data" 	
+global klips_in "${Gdr_in}//${klips}/Data" 	
 
 * PSID
-global psid_in 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-${psid_w}" 	// update with new waves  	 
-global psid_downl   "${Gdr_in}\\${psid}\data\Family and Ind Files (zip)"
-global psidtools_in	"${Gdr_in}\\${psid}\data\PSIDtools_files"
-global psid_org "${psid_in}\psid_crossy_ind.dta"
-global psid_syntax "${Grd_syntax}\\${psid}\"				//PSID syntax
+global psid_in 	"${Gdr_in}//${psid}/data/Cross-year Individual 1968-${psid_w}" 	// update with new waves  	 
+global psid_downl   "${Gdr_in}//${psid}/data/Family and Ind Files (zip)"
+global psidtools_in	"${Gdr_in}//${psid}/data/PSIDtools_files"
+global psid_org "${psid_in}/psid_crossy_ind.dta"
+global psid_syntax "${Grd_syntax}//${psid}/"				//PSID syntax
 global psid_ind_er_name	"IND${psid_w}ER.txt" 	// PSID "Cross-year Individual 1968-XXXX" file
-global psid_ind_er "${psid_in}\pack\\${psid_ind_er_name}" 	// PSID "Cross-year Individual 1968-XXXX" file
+global psid_ind_er "${psid_in}/pack//${psid_ind_er_name}" 	// PSID "Cross-year Individual 1968-XXXX" file
 	
 * RLMS
-global rlms_in "${Gdr_in}\\${rlms}\data" 		 
+global rlms_in "${Gdr_in}//${rlms}/data" 		 
 
 * SHP
-global shp_in "${Gdr_in}\\${shp}\Data" 		 
-global shp_in_cnef "${shp_in}\SHP-Data-CNEF-STATA" 		
+global shp_in "${Gdr_in}//${shp}/Data" 		 
+global shp_in_cnef "${shp_in}/SHP-Data-CNEF-STATA" 		
 
 * SOEP
-global soep_in "${Gdr_in}\\${soep}\Data\soep.v${soep_w}" 	 
+global soep_in "${Gdr_in}//${soep}/Data/soep.v${soep_w}" 	 
 
 * UKHLS
-global ukhls_in "${Gdr_in}\\${ukhls}\Data\\${ukhls_data}"
+global ukhls_in "${Gdr_in}//${ukhls}/Data//${ukhls_data}"
 		 
 
 *** Macros: Output folders 
 * for CPF-country data 
 foreach surv in hilda klips psid rlms shp soep ukhls {
-global `surv'_out "${Gdr_out}\\${`surv'}_cpf"		 
-global `surv'_out_work "${`surv'_out}\temp"
+global `surv'_out "${Gdr_out}//${`surv'}_cpf"		 
+global `surv'_out_work "${`surv'_out}/temp"
 }
 * Aditional for SHP-CNEF
-global shp_out_work_cnef "${shp_out_work}\CNEF"
+global shp_out_work_cnef "${shp_out_work}/CNEF"
 * Output folders for CPF main data 
-global CPF_out "${Gdr_out}\\10_CPF" 	
+global CPF_out "${Gdr_out}//10_CPF" 	
 
 
 **--------------------------------------
@@ -118,6 +118,6 @@ global CPF_out "${Gdr_out}\\10_CPF"
 **--------------------------------------
 
 *** HILDA
-capture mkdir "${Gdr_in}\\${hilda}\data\STATA ${hilda_w}0c (Combined)"
-capture mkdir "${Gdr_in}\\${hilda}\data\STATA ${hilda_w}0c (Other)"
+capture mkdir "${Gdr_in}//${hilda}/data/STATA ${hilda_w}0c (Combined)"
+capture mkdir "${Gdr_in}//${hilda}/data/STATA ${hilda_w}0c (Other)"
 
