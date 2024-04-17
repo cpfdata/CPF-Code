@@ -61,10 +61,11 @@ set maxvar 15000
 	global ukhls_w	"12"			// version, number of UKHLS waves (without BHPS)
 
 **------------------------------------------------------------------------------
-** 4. Insert names of files of directories for selected surveys
+** 4. Insert names of files of directories for some of the selected surveys
 **------------------------------------------------------------------------------
 // For surveys below, the file names or directories may change in subsequent editions. 
 // Note, also other surveys not listed here might require updating with subsequent editions. 
+// If surveys are not listed below, you don't have to do anything with them. 
 
 * RLMS
 	global rlms_dataIND 	"RLMS_IND_1994_2021_2022_08_21_1_v2_eng_DTA"
