@@ -17,7 +17,7 @@
  
 
 *** Work on waves:
-use "${shp_out}\ch_01_selected_long.dta", clear 
+use "${shp_out}/ch_01_selected_long.dta", clear 
 
 
 
@@ -1216,7 +1216,7 @@ replace migr=-3 if migr==. & p_d160==-3 //NA
 **--------------------------------------	
 // NOTE:because of the extensive list of countries, a separate do-file generates the variables for the country of birth of the respondent and their parents categories by region. (see additional do-file for details)
 
-do "${Grd_syntax}\05_SHP\ch_02add_labels_COB.do" 
+do "${Grd_syntax}/05_SHP/ch_02add_labels_COB.do" 
 //generates temporary workingvariables (*t) for cob respondent and both parents	
 
 *** Identify valid COB and fill across waves  
@@ -1490,7 +1490,7 @@ migr* cob*   relig*
 **|=========================================================================|
  
 	 
-save "${shp_out}\ch_02b_wave.dta", replace  	
+save "${shp_out}/ch_02b_wave.dta", replace  	
 
 	 
 *____________________________________________________________________________

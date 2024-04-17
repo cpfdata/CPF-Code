@@ -23,7 +23,7 @@ E. Remember to copy all CPF-do-files to "11_CPF_in_syntax". Or simply rename dow
 **------------------------------------------------------------------------------
 // Inster the main directory for storing original datasets and all the CPF files 
 	
-global your_dir "D:\__CPFv.1.5"  // <--inster your directory 
+global your_dir "/Users/..."  // <--inster your directory 
 
 
 
@@ -45,10 +45,10 @@ global your_dir "D:\__CPFv.1.5"  // <--inster your directory
 	
 *** Macros
 	* Main folders 
-	global Gdr_docs		"${your_dir}\\${Fdocs}" 			 
-	global Gdr_in 		"${your_dir}\\${Fin}"  	
-	global Grd_syntax 	"${your_dir}\\${Fsyntax}" 		
-	global Gdr_out 		"${your_dir}\\${Fout}" 		
+	global Gdr_docs		"${your_dir}//${Fdocs}" 			 
+	global Gdr_in 		"${your_dir}//${Fin}"  	
+	global Grd_syntax 	"${your_dir}//${Fsyntax}" 		
+	global Gdr_out 		"${your_dir}//${Fout}" 		
 	
 	* Survey-specific folder names
 	global hilda 	"01_HILDA"
@@ -74,25 +74,25 @@ capture mkdir   "${Grd_syntax}"
 capture mkdir   "${Gdr_out}"	
 
 *** Output folder for the CPF main data 
-capture mkdir "${Gdr_out}\\10_CPF" 	
+capture mkdir "${Gdr_out}//10_CPF" 	
 	
 *** Create survey specific sub-folders  
 foreach surv of global surv_fold  {
-// capture mkdir	"${Grd_syntax}\\`surv'"
-capture mkdir	"${Gdr_in}\\`surv'"
-capture mkdir 	"${Gdr_in}\\`surv'\Data"
-capture mkdir 	"${Gdr_out}\\`surv'_cpf"  		//CPF main data folder
-capture mkdir 	"${Gdr_out}\\`surv'_cpf\temp"  	//working files
+// capture mkdir	"${Grd_syntax}//`surv'"
+capture mkdir	"${Gdr_in}//`surv'"
+capture mkdir 	"${Gdr_in}//`surv'/Data"
+capture mkdir 	"${Gdr_out}//`surv'_cpf"  		//CPF main data folder
+capture mkdir 	"${Gdr_out}//`surv'_cpf/temp"  	//working files
 }
 *
 *** Additional survey-specific folders 
 * PSID
-capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2019" 	// update name (year) with new waves		
-capture mkdir 	"${Gdr_in}\\${psid}\data\Cross-year Individual 1968-2019\pack" 	// update name (year) with new waves
-capture mkdir  	"${Gdr_in}\\${psid}\data\Family and Ind Files (zip)"
-capture mkdir  	"${Gdr_in}\\${psid}\data\PSIDtools_files"	
+capture mkdir 	"${Gdr_in}//${psid}/data/Cross-year Individual 1968-2019" 	// update name (year) with new waves		
+capture mkdir 	"${Gdr_in}//${psid}/data/Cross-year Individual 1968-2019/pack" 	// update name (year) with new waves
+capture mkdir  	"${Gdr_in}//${psid}/data/Family and Ind Files (zip)"
+capture mkdir  	"${Gdr_in}//${psid}/data/PSIDtools_files"	
 * SHP
-capture mkdir "${Gdr_out}\05_SHP_cpf\temp\CNEF"
+capture mkdir "${Gdr_out}/05_SHP_cpf/temp/CNEF"
 
 
 
@@ -133,8 +133,8 @@ set more off
 
 // Copy the latest files from the CPF online platform 
 
-copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_manual%20v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_manual_v1.5.pdf"
-copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook_v1.5.pdf" "${your_dir}\\${Fdocs}\CPF_Codebook_v1.5.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_manual%20v1.5.pdf" "${your_dir}//${Fdocs}/CPF_manual_v1.5.pdf"
+copy "https://github.com/cpfdata/CPF-Documentation/raw/main/CPF_Codebook_v1.5.pdf" "${your_dir}//${Fdocs}/CPF_Codebook_v1.5.pdf"
 
 
 **------------------------------------------------------------------------------

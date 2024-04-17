@@ -12,7 +12,7 @@
 **--------------------------------------
 ** Open merged dataset
 **-------------------------------------- 
-use "${klips_out}\ko_02_CPF.dta", clear
+use "${klips_out}/ko_02_CPF.dta", clear
 
 
 *############################
@@ -58,7 +58,7 @@ keep if age~=.
 *#	Save					#
 *#							#
 *############################
-save "${klips_out}\ko_03_CPF.dta" , replace
+save "${klips_out}/ko_03_CPF.dta" , replace
 
 
 

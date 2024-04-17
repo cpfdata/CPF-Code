@@ -20,7 +20,7 @@
 clear
 local data= "$surveys"	// hilda klips psid rlms shp soep ukhls
 foreach data in  `data' {
-	append 	using "${`data'_out}\\${`data'2}_03_CPF.dta"	 
+	append 	using "${`data'_out}//${`data'2}_03_CPF.dta"	 
 }
 
 
@@ -258,5 +258,5 @@ sampid*			///
 ** SAVE 
 **-------------------------------------- 	
 label data "CPF v${cpfv}"	 	
-save "${CPF_out}\CPFv${cpfv}.dta", replace  		
+save "${CPF_out}/CPFv${cpfv}.dta", replace  		
 

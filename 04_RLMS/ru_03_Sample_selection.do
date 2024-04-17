@@ -14,7 +14,7 @@
 ** Open merged dataset
 **-------------------------------------- 
 * 
-use "${rlms_out}\ru_02_CPF.dta", clear  	
+use "${rlms_out}/ru_02_CPF.dta", clear  	
 
 *############################
 *#							#
@@ -50,4 +50,4 @@ keep if age~=.
 *#	Save					#
 *#							#
 *############################
-save "${rlms_out}\ru_03_CPF.dta" , replace
+save "${rlms_out}/ru_03_CPF.dta" , replace

@@ -12,7 +12,7 @@
 **--------------------------------------
 ** Data
 **--------------------------------------
-use "${psid_out}\us_02_CPF.dta" , clear
+use "${psid_out}/us_02_CPF.dta" , clear
 
 
 *############################
@@ -70,4 +70,4 @@ keep if age~=.
 *#	Save					#
 *#							#
 *############################
-save "${psid_out}\us_03_CPF.dta" , replace
+save "${psid_out}/us_03_CPF.dta" , replace

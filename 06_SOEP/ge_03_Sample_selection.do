@@ -15,7 +15,7 @@
 ** Open merged dataset
 **-------------------------------------- 
 * 
-use "${soep_out}\ge_02_CPF.dta", clear  	
+use "${soep_out}/ge_02_CPF.dta", clear  	
 
 *############################
 *#							#
@@ -69,7 +69,7 @@ keep if age~=.
 *#	Save					#
 *#							#
 *############################
-save "${soep_out}\ge_03_CPF.dta" , replace
+save "${soep_out}/ge_03_CPF.dta" , replace
 
 
 	

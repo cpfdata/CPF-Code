@@ -89,16 +89,16 @@ di $wavesn
 ** Get a wide file with all variables 
 **--------------------------------------
 
-use "${shp_in}\SHP-Data-WA-STATA\shp_mp.dta", clear
-merge 1:1 idpers using "${shp_in}\SHP-Data-W1-W${shp_w}-STATA\W1_1999\shp99_p_user", nogen keep(1 3) 
+use "${shp_in}/SHP-Data-WA-STATA/shp_mp.dta", clear
+merge 1:1 idpers using "${shp_in}/SHP-Data-W1-W${shp_w}-STATA/W1_1999/shp99_p_user", nogen keep(1 3) 
 gen wave99=1999
 local m=2  // local macro for a loop
 foreach y in $waves2 {
-	merge 1:1 idpers using "${shp_in}\SHP-Data-W1-W${shp_w}-STATA\W`m'_20`y'\shp`y'_p_user", nogen keep(1 3) 
+	merge 1:1 idpers using "${shp_in}/SHP-Data-W1-W${shp_w}-STATA/W`m'_20`y'/shp`y'_p_user", nogen keep(1 3) 
 	gen wave`y'=20`y'
 	local m = `m' + 1
 }
-save "${shp_out_work}\shp_allw_wide.dta", replace
+save "${shp_out_work}/shp_allw_wide.dta", replace
 
 
 
@@ -106,21 +106,21 @@ save "${shp_out_work}\shp_allw_wide.dta", replace
 ** Option: Rename single vars to get a long file 
 **--------------------------------------
 **** to adjust 2
-global data "E:\2019_20 CRITEVENTS\02_Cntry_Data_Orgin\05_SHP\Data STATA\SHP-Data-W1-W19-STATA\_w1-w19 p" 
+global data "E:/2019_20 CRITEVENTS/02_Cntry_Data_Orgin/05_SHP/Data STATA/SHP-Data-W1-W19-STATA/_w1-w19 p" 
 
 foreach year in 00 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 {
- use idpers p`year'c44 p`year'd29 sex`year' using "$data\shp`year'_p_user", clear
+ use idpers p`year'c44 p`year'd29 sex`year' using "$data/shp`year'_p_user", clear
  gen lifesat=p`year'c44 if p`year'c44>-1
  gen partner=p`year'd29==1 | p`year'd29==2 if p`year'd29>0
  drop p`year'c44 p`year'd29
  keep if lifesat<. & partner<.
- save "E:\2019_20 CRITEVENTS\temp\temp`year'", replace
+ save "E:/2019_20 CRITEVENTS/temp/temp`year'", replace
 }
  
 * Create a long file
-use "E:\2019_20 CRITEVENTS\temp\temp00", clear
+use "E:/2019_20 CRITEVENTS/temp/temp00", clear
 foreach year in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 {
- append using "E:\2019_20 CRITEVENTS\temp\temp`year'"
+ append using "E:/2019_20 CRITEVENTS/temp/temp`year'"
 }
 */
  
@@ -130,7 +130,7 @@ foreach year in 01 02 03 04 05 06 07 08 09 10 11 12 13 14 15 {
 **-------------------------------------- 
 
 *** Work on waves:
-use "${shp_out_work}\shp_allw_wide.dta", clear
+use "${shp_out_work}/shp_allw_wide.dta", clear
 
 
 disp "vars: " c(k) "   N: " _N
@@ -172,7 +172,7 @@ p*e16 nat_1_* reg_1_* p*d160 /// migration set indiv
 p*r01 p*r04 //religion
 
 *
-save "${shp_out_work}\01_selected_w.dta", replace
+save "${shp_out_work}/01_selected_w.dta", replace
 
 
 /*
@@ -210,7 +210,7 @@ p17w541 p17w542 p17w543 p17w544 p17w545 p17w546 p17w547 p17w548 p17w549
 *#							#
 *############################
 
-use "${shp_out_work}\01_selected_w.dta", clear
+use "${shp_out_work}/01_selected_w.dta", clear
 
 ***
 disp "vars: " c(k) "   N: " _N
@@ -290,7 +290,7 @@ rename (`i'99*  `i'00*  `i'01*  `i'02*  `i'03*  `i'04*  `i'05*  `i'06*  `i'07* `
 		di  "`i': " `count`i''	// check no of variables renamed 
 		local count=`count'+`count`i''
 		*bro old new
-		export excel old new using "${shp_out_work}\rename_report_`i'.xls" if old !="", firstrow(variables) replace
+		export excel old new using "${shp_out_work}/rename_report_`i'.xls" if old !="", firstrow(variables) replace
 		drop old new
 }
 disp "Variables renamed >> p: " `countp' ";   i: " `counti' ";   x: " `countx' ";   ALL: "`count'
@@ -344,7 +344,7 @@ di "Renamed variables: " `x' "+ birthy & idpers"
 
  
 ***
-save "${shp_out_work}\01_selected_w_v2.dta", replace
+save "${shp_out_work}/01_selected_w_v2.dta", replace
 
 
 *############################
@@ -353,7 +353,7 @@ save "${shp_out_work}\01_selected_w_v2.dta", replace
 *#							#
 *############################
 
-use "${shp_out_work}\01_selected_w_v2.dta", clear 
+use "${shp_out_work}/01_selected_w_v2.dta", clear 
 
 disp "vars: " c(k) "   N: " _N
 
@@ -456,7 +456,7 @@ order idpers wave idhous pdate  birthy  age, first
 disp "vars: " c(k) "   N: " _N
 
 ***
-save "${shp_out_work}\01_selected_long.dta", replace
+save "${shp_out_work}/01_selected_long.dta", replace
 
 
 
@@ -467,7 +467,7 @@ save "${shp_out_work}\01_selected_long.dta", replace
 *#							
 *############################
 
-use "${shp_out_work}\01_selected_long.dta", clear 
+use "${shp_out_work}/01_selected_long.dta", clear 
 disp "vars: " c(k) "   N: " _N
 
 **--------------------------------------
@@ -475,7 +475,7 @@ disp "vars: " c(k) "   N: " _N
 **--------------------------------------
 * parents education (p__o17) and other 
 // rename pid idpers		  
-merge m:1 idpers  using "${shp_in}\SHP-Data-WA-STATA\shp_so.dta" , ///
+merge m:1 idpers  using "${shp_in}/SHP-Data-WA-STATA/shp_so.dta" , ///
 	keep(1 2 3) nogen  keepusing(	///
 	p__o07 is1faj__ is4faj__ cspfaj__ gldfaj__ esecfa__ tr1faj__ caifaj__ wr3faj__ p__o17	p__o20 /// father
 	p__o24 is1moj__ is4moj__ cspmoj__ gldmoj__ esecmo__ tr1moj__ caimoj__ wr3moj__ p__o34	p__o37 /// mother
@@ -488,7 +488,7 @@ disp "vars: " c(k) "   N: " _N
 
 
 ***
-save "${shp_out}\ch_01_selected_long.dta", replace
+save "${shp_out}/ch_01_selected_long.dta", replace
 	 
 *____________________________________________________________________________
 *--->	END	 <---

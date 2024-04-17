@@ -38,7 +38,7 @@ set maxvar 15000
 **------------------------------------------------------------------------------
 // Inster the main directory for storing original datasets and CPF working files 
 
-	global your_dir "D:\__CPFv.1.5"  // <--insert your directory 
+	global your_dir "/Users/..."  // <--insert your directory 
 
 **------------------------------------------------------------------------------
 ** 2. Define surveys to be included 
@@ -71,7 +71,7 @@ set maxvar 15000
 	global rlms_dataHH 		"RLMS_HH_1994_2021_eng_DTA.dta"
 	
 * UKHLS
-	global ukhls_data 	"UKDA-6614-stata\stata\stata13_se" // folder that contains Stata raw data 
+	global ukhls_data 	"UKDA-6614-stata/stata/stata13_se" // folder that contains Stata raw data 
 
 
 
@@ -93,9 +93,9 @@ set maxvar 15000
 **--------------------------------------
 ** 5. Create directories and define global macros  
 **--------------------------------------
-// Directory "11_CPF_in_syntax\00_master\" was created in syntax 1_Folder_setup.do. Copy there the "_10_Directories_global.do". 
+// Directory "11_CPF_in_syntax/00_master/" was created in syntax 1_Folder_setup.do. Copy there the "_10_Directories_global.do". 
 // Additionally, the code downloads the CPF documentation and sytaxes 
-do "${your_dir}\11_CPF_in_syntax\00_master\_10_Directories_global.do" 		
+do "${your_dir}/11_CPF_in_syntax/00_master/_10_Directories_global.do" 		
 
 
 
@@ -112,7 +112,7 @@ do "${your_dir}\11_CPF_in_syntax\00_master\_10_Directories_global.do"
   or additionally run step-by-step do-files 01, 02 and 03 by country. 
 */
 display "$S_TIME"
-do "${your_dir}\11_CPF_in_syntax\00_master\_11_Run_cntr_do_files.do" 		
+do "${your_dir}/11_CPF_in_syntax/00_master/_11_Run_cntr_do_files.do" 		
 
 display "$S_TIME"
 
@@ -122,10 +122,10 @@ display "$S_TIME"
 // Modify the do-files if new variables added - see Workflow D  
 
 * Append country files into one CPF file
-do "${your_dir}\11_CPF_in_syntax\00_master\_12_Append.do" 		
+do "${your_dir}/11_CPF_in_syntax/00_master/_12_Append.do" 		
 
 * Apply unified labels
-do "${your_dir}\11_CPF_in_syntax\00_master\_13_Labels.do" 	
+do "${your_dir}/11_CPF_in_syntax/00_master/_13_Labels.do" 	
 
 display "$S_TIME"
 

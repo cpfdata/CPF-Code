@@ -13,7 +13,7 @@
 **-------------------------------------- 
 *** Combined all waves (large file) 
 
-use "${hilda_out}\au_01_combined_2001_20${hilda_w}.dta", clear
+use "${hilda_out}/au_01_combined_2001_20${hilda_w}.dta", clear
 
 *############################
 *#			-				#
@@ -1404,14 +1404,14 @@ replace migr=-2 if migr==. & ancob==-1
 replace migr=-1 if migr==. & ancob==-4 //refusal/not stated
 
 *temp decode mv
-mvdecode migr, mv(-2=.b\-1=.a)
+mvdecode migr, mv(-2=.b/-1=.a)
 
 *fill MV
 	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
 	replace migr=temp_migr if (migr==. | migr==.a | migr==.b) & temp_migr>=0 & temp_migr<.
 	replace migr=temp_migr if migr!=temp_migr // correct a few inconsistent cases
 	
-mvencode migr, mv(.b=-2\.a=-1)
+mvencode migr, mv(.b=-2/.a=-1)
 
 lab val migr migr
 
@@ -1720,7 +1720,7 @@ order hhw* lnw*, last
 **|=========================================================================|
  
 	 
-save "${hilda_out}\au_02b_waves.dta", replace  	
+save "${hilda_out}/au_02b_waves.dta", replace  	
 
 	 
 *____________________________________________________________________________

@@ -11,7 +11,7 @@
 **--------------------------------------
 ** Open merged dataset
 **-------------------------------------- 
-use "${klips_out}\ko_01.dta", clear
+use "${klips_out}/ko_01.dta", clear
 *
 qui tab wave
 display _newline(1) "   Total ->> Vars: " c(k) "; N: " _N "; Waves: " r(r)  
@@ -1810,7 +1810,7 @@ kids_hh_04 youngest_hh oldern_hh70 oldern_hh80
  
 label data "CPF_Korea v1.5"
 
-save "${klips_out}\ko_02_CPF.dta", replace  	
+save "${klips_out}/ko_02_CPF.dta", replace  	
 
 	 
 *____________________________________________________________________________

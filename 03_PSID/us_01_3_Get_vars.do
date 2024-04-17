@@ -40,7 +40,7 @@ program define combvars
 		sort x11101ll
 		psid long
 // 		reshape long  x11102_ xsqnr_ `namelist'  , i(x11101ll) j(year)
-		save "${psid_out_work}\temp_`namelist'.dta", replace 
+		save "${psid_out_work}/temp_`namelist'.dta", replace 
 end
 	
 	
@@ -1769,10 +1769,10 @@ combvars  isresp , list("[69]ER30031 [70]ER30055 [71]ER30079 [72]ER30104 [73]ER3
 tokenize "${vars}"
 local n : word count ${vars}
 // di `n'
-use "${psid_out_work}\temp_`1'.dta", clear 
+use "${psid_out_work}/temp_`1'.dta", clear 
 local i 2
 while (`i'<=`n') {
-	merge 1:1 x11101ll wave using "${psid_out_work}\temp_`2'.dta" , ///
+	merge 1:1 x11101ll wave using "${psid_out_work}/temp_`2'.dta" , ///
 		keep(1 2 3) nogen 
 		macro shift 1  
 		local ++i
@@ -1781,14 +1781,14 @@ while (`i'<=`n') {
 rename x11101ll pid
 disp "vars: " c(k) "   N: " _N
 *
-save "${psid_out}\us_01.dta", replace 
+save "${psid_out}/us_01.dta", replace 
 
 
 **|=========================================================================|
 **|  Step 4: Add vars constant across all waves (get from long psid_crossy_ind.dta)
 **|=========================================================================|
 
-use "${psid_out}\us_01.dta", clear
+use "${psid_out}/us_01.dta", clear
 *
 merge m:1 pid using "${psid_org}" ,	///
 	keepusing(				///
@@ -1809,21 +1809,21 @@ rename ER30003 head68
 *
 disp "vars: " c(k) "   N: " _N
 *
-save "${psid_out}\us_01.dta", replace 
+save "${psid_out}/us_01.dta", replace 
 
 
 **|=========================================================================|
 **|  Add new time-constant vars - only if necessary 
 **|=========================================================================|
 /*
-use "${psid_out}\us_01.dta", clear
+use "${psid_out}/us_01.dta", clear
 *
 merge m:1 pid using "${psid_org}" ,	///
 	keepusing(						///
 	/**/  	/**/					/// Add itme-block name between /**/ _name_ /**/ 
 		) keep(1 2 3) nogen
 *
-save "${psid_out}\us_01.dta", replace 
+save "${psid_out}/us_01.dta", replace 
 */
 
    
@@ -1838,17 +1838,17 @@ save "${psid_out}\us_01.dta", replace
 /*
 local item_block /**/ 	  	/**/ 		// Add itme-block name between /**/ _name_ /**/ 
 foreach file in `item_block' {
-	use "${psid_out_work}\temp_`file'.dta", clear
+	use "${psid_out_work}/temp_`file'.dta", clear
 	rename x11101ll pid 
-	save "${psid_out_work}\temp_`file'.dta", replace
+	save "${psid_out_work}/temp_`file'.dta", replace
 	}
 	
-use "${psid_out}\us_01.dta", clear
+use "${psid_out}/us_01.dta", clear
 	foreach file in `item_block'  {
-		merge 1:1 pid wave using "${psid_out_work}\temp_`file'.dta" , ///
+		merge 1:1 pid wave using "${psid_out_work}/temp_`file'.dta" , ///
 				keep(1 2 3) nogen 
 }
-save "${psid_out}\us_01.dta", replace 
+save "${psid_out}/us_01.dta", replace 
 */
 
 
@@ -1857,9 +1857,9 @@ save "${psid_out}\us_01.dta", replace
 **|  SAVE
 **|=========================================================================|
 
-save "${psid_out}\us_01.dta", replace 
+save "${psid_out}/us_01.dta", replace 
 
-!del "${psid_out_work}\*.dta"  	// remove files in the temp folder 
+!del "${psid_out_work}/*.dta"  	// remove files in the temp folder 
 	
 	
 

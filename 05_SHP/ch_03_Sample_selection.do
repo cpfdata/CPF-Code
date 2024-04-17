@@ -15,7 +15,7 @@
 ** Open merged dataset
 **-------------------------------------- 
 * 
-use "${shp_out}\ch_02_CPF.dta", clear 
+use "${shp_out}/ch_02_CPF.dta", clear 
 
 *############################
 *#							#
@@ -52,7 +52,7 @@ keep if age~=.
 *#	Save					#
 *#							#
 *############################
-save "${shp_out}\ch_03_CPF.dta" , replace
+save "${shp_out}/ch_03_CPF.dta" , replace
 
 
 	
