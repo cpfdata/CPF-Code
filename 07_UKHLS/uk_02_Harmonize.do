@@ -1,10 +1,10 @@
 *
 **|=============================================|
-**|	    ####	CPF v1.5	####				|
+**|	    ####	CPF v1.6	####				|
 **|		>>>	UK							 		|
 **|		>>	Select vars , create new vars 		|
 **|---------------------------------------------|
-**|		Konrad Turek 	| 	2023				|
+**|		Konrad Turek 	| 	2024				|
 **|=============================================|
 * https://www.understandingsociety.ac.uk/documentation/mainstage/dataset-documentation
 
@@ -1495,12 +1495,13 @@ gen incjob1_yn=incjob1_mn*12
 *   HH wealth
 **--------------------------------------
 * hhinc_pre
-* hhinc_post - //better indicator
+* hhinc_post 
 
-recode fihhmngrs_dv (-9=.), gen(hhinc_post)
+recode fihhmngrs_dv   (-9=.), gen(hhinc_pre)
+recode fihhmnnet1_dv  (-9=.), gen(hhinc_post)
 
-//  	lab var hhinc_pre "HH income(month, pre)"	
-	 	lab var hhinc_post "HH income(month, post)"	
+  	lab var hhinc_pre "HH income(month, pre)"	
+ 	lab var hhinc_post "HH income(month, post)"	
 	
 **--------------------------------------
 **   Income - subjective 
