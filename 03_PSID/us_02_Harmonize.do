@@ -1,10 +1,10 @@
 *
 **|=========================================|
-**|	    ####	CPF	v1.5 ####				|
+**|	    ####	CPF	v1.6 ####				|
 **|		>>>	PSID						 	|
 **|		>>	02 Harmonize variables 			|
 **|-----------------------------------------|
-**|		Konrad Turek 	| 	2023		    |			
+**|		Konrad Turek 	| 	2024		    |			
 **|=========================================|
 /* NOTE:
 - for this do-file, use item-blocks created in us_01_3_Get_vars.do
