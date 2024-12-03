@@ -1,10 +1,10 @@
 *
 **|=================================================|
-**|	    ####	CPF	v1.5		####				|
+**|	    ####	CPF	v1.6		####				|
 **|		>>>	KLIPS						 			|
 **|		>>	Harmonize variables 		 			|
 **|-------------------------------------------------|
-**|		Konrad Turek 		| 	2023				|	
+**|		Konrad Turek 		| 	2024				|	
 **|=================================================|
 * 
 
@@ -229,20 +229,20 @@ replace livpart=0 if h_0150==1
 		lab val livpart    yesno
 		
 		
-
+/*
 **--------------------------------------
 ** Partnership living-status 	 
 **--------------------------------------
 * Includes inforamtion on marital status and whether living with partner in HH 
 * KLIPS recognises only spouses (not partners)
-
+* So the variables equal mlstat5 
 	recode  mlstat5 (1/5=0), gen(parstat6)
 	replace parstat6=3 if mlstat5!=1 & livpart==0
 	replace parstat6=5 if mlstat5==4 & livpart==0
 	replace parstat6=4 if mlstat5==3 & livpart==0
 	replace parstat6=6 if mlstat5==5 & livpart==0
 	replace parstat6=6 if mlstat5==1 & livpart==0
-	replace parstat6=2 if mlstat5!=1 & livpart==1
+	// replace parstat6=2 if mlstat5!=1 & livpart==1 // not avaliable 
 	replace parstat6=1 if mlstat5==1 & livpart==1
 
 	lab var parstat6 "Partnership living-status [6]"
@@ -256,7 +256,7 @@ replace livpart=0 if h_0150==1
 	-1 "-1 MV general" -2 "-2 Item non-response" ///
 	-3 "-3 Does not apply" -8 "-8 Question not asked in survey"
 	lab val parstat6 parstat6
-	
+	*/
 	
  	
 **--------------------------------------
@@ -365,8 +365,8 @@ gen tempc`i'=(h_03`a'>=3 & h_03`a'<=4 & (h_04`b'==1|h_04`b'==2))
 gen tempd`i'=(h_03`a'>=5 & h_03`a'<=10 & (h_04`b'==1|h_04`b'==2))
 }
 egen kidsn_hh_02=rowtotal(tempa*)
-egen kidsn_hh_34=rowtotal(tempb*)
-egen kidsn_hh_04=rowtotal(tempc*)
+egen kidsn_hh_04=rowtotal(tempb*)
+egen kidsn_hh_34=rowtotal(tempc*)
 egen kidsn_hh_510=rowtotal(tempd*)
 
 drop temp*
@@ -1786,7 +1786,7 @@ lab val sampid_klips2 sampid_klips2
 keep    														///
 wave pid intyear intmonth country respstat                                      ///
 age place*    edu* female                                ///
-marstat* parstat* mlstat* livpart nvmarr				///
+marstat* mlstat* livpart nvmarr				///
 sat* size* inc* hhinc* selfemp* entrep*  train*                ///
 kids* yborn  nphh work_d empls* public                           ///
 whweek*  whmonth mater un_* oldpens retf* disabpens   				///
