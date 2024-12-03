@@ -1,10 +1,10 @@
 *
 **|=========================================|
-**|	    ####	CPF	v1.5	####			|
-**|		>>>	RLMS							|
-**|		>>	Harmonize variables 			|
+**|	    ####	CPF	v1.6	####			
+**|		>>>	RLMS							
+**|		>>	Harmonize variables 			
 **|-----------------------------------------|
-**|		Konrad Turek 	| 	2023			|
+**|		Konrad Turek 	| 	2024			
 **|=========================================|
 * 
 
@@ -347,8 +347,8 @@ gen tempe`i'=hhage`i' <=17
 }
 
 egen kidsn_hh_02=rowtotal(tempa*)
-egen kidsn_hh_34=rowtotal(tempb*)
-egen kidsn_hh_04=rowtotal(tempc*)
+egen kidsn_hh_04=rowtotal(tempb*)
+egen kidsn_hh_34=rowtotal(tempc*)
 egen kidsn_hh_510=rowtotal(tempd*)
 egen kidsn_hh17=rowtotal(tempe*)
 egen youngest_hh= rowmin(hhage*) 
