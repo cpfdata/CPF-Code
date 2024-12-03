@@ -361,8 +361,6 @@ recode marstat (1 8=1) (2=2) (3=3) (4=4) (5=5) (9=-1) ///
 	
 
 	
-	
-	
 **--------------------------------------
 ** Partner 
 **--------------------------------------	
@@ -379,7 +377,9 @@ recode marstat5 (1=1) (2/8=0) (9=-1) ///
 ** Partnership living-status 	 
 **--------------------------------------
 * Includes information on marital status and whether living with partner in HH 
-
+* Cohabitation is not available in the current version. It cannot be well assessed for 
+* spouses (href) in the HH based on the current code's logic.
+/*
 	recode  mlstat5 (1/5=0), gen(parstat6)
 	replace parstat6=3 if mlstat5!=1 & livpart==0
 	replace parstat6=5 if mlstat5==4 & livpart==0
@@ -400,6 +400,7 @@ recode marstat5 (1=1) (2/8=0) (9=-1) ///
 	-1 "-1 MV general" -2 "-2 Item non-response" ///
 	-3 "-3 Does not apply" -8 "-8 Question not asked in survey"
 	lab val parstat6 parstat6
+*/
 			
 **--------------------------------------
 ** Binary specific current partnership status (yes/no)
@@ -484,10 +485,11 @@ gen kidsn_hh17=kidshh // Number of Children Under 18 Living with Family
  
 recode youngest (999 0 = -1), gen(youngest_hh)
 	
-	lab var youngest_hh  "Age of the youngest HH member"
+	lab var youngest_hh  "Age of the youngest HH member (younger than 18 only)"
 	
 *
 recode youngest_hh (1/4=1)(5/18=0) (-1=.), gen(kids_hh_04)
+replace kids_hh_04=0 if youngest==0	 // 0 is no persons aged 17 or younger in FU
 	lab var kids_hh_04   "Any children in HH aged 0-4?"
 	lab val kids_hh_04   yesno
 
@@ -2549,7 +2551,7 @@ incjobs_yg incjob1_mg incjob1_hg hhinc_post	///
 srh5 disab disab2c 	///
 w_ind*   xsqnr	///
 wavey country wave1st   marstat5 mlstat5 	///
-livpart parstat6 nvmarr kidsn_hh17 satlife5 satlife10	///
+livpart nvmarr kidsn_hh17 satlife5 satlife10	///
 divor separ widow	///
 isei* siops* wtcs* mps* nempl fedu3 fedu4 medu3 medu4 sampid* ///
 migr* ethn* cob grewup_US   relig* ///
