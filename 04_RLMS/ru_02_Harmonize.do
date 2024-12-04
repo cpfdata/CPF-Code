@@ -330,9 +330,7 @@ replace kidsn_all=0 if kids_any==0
 	lab var kids_any  "Has children"
 	lab val kids_any   yesno
 	lab var kidsn_all  "Number Of Children Ever Had" 
-//  	lab var kidsn_17   "Number Of Own Children 0-17 (any children)" 
-// 	lab var kidsn_15   "Number Of Children <15 y.o." 
-	lab var kidsn_hh17   "Number of Children in HH"
+
 
 *** New in CPF 1.52
 
