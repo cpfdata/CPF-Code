@@ -2104,13 +2104,13 @@ gen temp_migr=.
 
 	
 //because state born only asked consistently since 2013, first fill MV by pid
-	mvdecode temp_migr, mv(-8=.a / 99=.b)
+	mvdecode temp_migr, mv(-8=.a \ 99=.b)
 	
 	bysort pid: egen temp_state_MV=mode(temp_migr), maxmode // identify most common response
 	replace temp_migr=temp_state_MV if temp_migr==. & temp_state_MV>=0 & temp_state_MV<.
 	replace temp_migr=temp_state_MV if temp_migr!=temp_state_MV // correct inconsistent cases	
 	
-	mvencode temp_migr, mv(.a=-8 / .b=99)
+	mvencode temp_migr, mv(.a=-8 \ .b=99)
 
 
 gen migr=.
@@ -2131,13 +2131,13 @@ replace migr=1 if (migr==. | migr<0) & inrange(ER30001, 7001, 9308) // Latino su
 
 
 *fill MV 
-	mvdecode migr, mv(-8=.a / -1=.b)
+	mvdecode migr, mv(-8=.a \ -1=.b)
 
 	bysort pid: egen temp_migr_MV=mode(migr), maxmode // identify most common response
 	replace migr=temp_migr_MV if migr==. & temp_migr_MV>=0 & temp_migr_MV<.
 	replace migr=temp_migr_MV if migr!=temp_migr_MV & temp_migr_MV>=0 // correct a few inconsistent cases	
 	
-	mvencode migr, mv(.a=-8 / .b=-1)
+	mvencode migr, mv(.a=-8 \ .b=-1)
 	
 	replace migr=-8 if migr==. & wavey<1997 //Question not asked before 1997
 
