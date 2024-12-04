@@ -1951,13 +1951,13 @@ replace migr=-3 if migr==. & ukborn==-8 //inapplicable
 replace migr=1 if inrange(plbornc, 5, 97) & (migr==. | migr<0)
 
 *fill MV
-mvdecode migr, mv(-9=.a / -8=.b / -3=.c / -1=.d) //temporarily decode missing value specifications
+mvdecode migr, mv(-9=.a \ -8=.b \ -3=.c \ -1=.d) //temporarily decode missing value specifications
 
 	bysort pid: egen temp_migr=mode(migr), maxmode // identify most common response
 	replace migr=temp_migr if (migr==. | migr==.a/.d) & temp_migr>=0 & temp_migr<.
 	replace migr=temp_migr if migr!=temp_migr  // correct inconsistent cases
 	
-mvencode migr, mv(.a=-9 /.b=-8 /.c=-3 /.d=-1) //restore mv
+mvencode migr, mv(.a=-9 \.b=-8 \.c=-3 \.d=-1) //restore mv
 
 lab val migr migr
 
