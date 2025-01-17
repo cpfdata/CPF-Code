@@ -1232,7 +1232,7 @@ replace train=temp_train2 if wavey>=2016
 lab val train yesno
 
 	lab var train "Training (previous year)"
-*/
+
 **--------------------------------------
 **   work-edu link
 **--------------------------------------
