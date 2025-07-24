@@ -52,9 +52,6 @@ set maxvar 15000
 
 	global your_dir "/Users/..."  // <--insert your directory 
 	
-* temp:
-global disk "C:/Users/klturek/OneDrive - Tilburg University"
-global your_dir "${disk}/_KT_work/_CPF/__CPF_2.0draft"  
 
 * 
 **------------------------------------------------------------------------------
