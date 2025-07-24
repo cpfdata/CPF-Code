@@ -34,9 +34,6 @@ E. Remember to copy all CPF-do-files to folder "11_CPF_in_syntax"
 	
 global your_dir "/Users/..."  // <--inster your directory 
 
-* temp:
-global disk "C:/Users/klturek/OneDrive - Tilburg University"
-global your_dir "${disk}/_KT_work/_CPF/__CPF_2.0draft"  
 
 
 
