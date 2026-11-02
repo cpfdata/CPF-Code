@@ -1632,26 +1632,19 @@ drop temp_*
 **  Self-rated health: 3 levels (srh3)
 **--------------------------------------
 /* New in CPF 2.0.1: version of srh5 for cross-country comparisons
-The original scale differs between BHPS and UKHLS:
-- BHPS waves 1-18 (hlstat) - balanced scale:
- Excellent, Good --> 1 Good or better
- Fair --> 2 Fair/average
- Poor, Very poor --> 3 Poor or worse
-- UKHLS waves 19+ (sf1, scsf1) - unbalanced scale:
- Excellent, Very good, Good --> 1 Good or better
- Fair --> 2 Fair/average
- Poor --> 3 Poor or worse
+The original 5-point scales differ between surveys (balanced or unbalanced). 
+srh3 is based on the position on the scale, the same in all surveys:
+ top 2 categories --> 1 Good; middle category --> 2 Average; bottom 2 categories --> 3 Poor
+BHPS waves 1-18 (hlstat) - balanced scale:
+ Excellent, Good --> 1; Fair --> 2; Poor, Very poor --> 3
+UKHLS waves 19+ (sf1, scsf1) - unbalanced scale:
+ Excellent, Very good --> 1; Good --> 2; Fair, Poor --> 3
+NOTE: the bottom category (3 Poor) is the most comparable across surveys. 
 */
-* BHPS
-recode srh5 (1 2=1) (3=2) (4 5=3) if wave<=18, gen(srh3)
-* UKHLS
-replace srh3=1 if (srh5==1 | srh5==2 | srh5==3) & wave>=19
-replace srh3=2 if srh5==4 & wave>=19
-replace srh3=3 if srh5==5 & wave>=19
-replace srh3=srh5 if srh5<0 & wave>=19 // missing values
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
 
 	lab var srh3 "Self-rated health [3]"
-	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab def srh3 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
 	lab val srh3 srh3
 	
 **-------------------------------------- 

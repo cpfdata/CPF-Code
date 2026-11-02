@@ -1310,8 +1310,9 @@ pr1 `var', cat
 putdocx textblock begin, paramode
 It indicates person's self-rated health status in 3 categories (new in CPF 2.0.1). 
 It is the recommended version for cross-country comparisons. 
-The original 5-point scales differ between surveys. HILDA, PSID, LISS and UKHLS (waves 19+) use an unbalanced scale (Excellent, Very good, Good, Fair, Poor): Excellent, Very good and Good are coded as 1, Fair as 2, and Poor as 3. 
-KLIPS, SOEP, SHP and BHPS (UKHLS waves 1-18) use a balanced scale with a neutral middle category (e.g. Very good, Good, Satisfactory, Poor, Bad): the two top categories are coded as 1, the middle category as 2, and the two bottom categories as 3. 
+The original 5-point scales differ between surveys. HILDA, PSID, LISS and UKHLS (waves 19+) use an unbalanced scale (Excellent, Very good, Good, Fair, Poor). KLIPS, SOEP, SHP and BHPS (UKHLS waves 1-18) use a balanced scale with a neutral middle category (e.g. Very good, Good, Satisfactory, Poor, Bad). 
+srh3 is based on the position on the scale, the same in all surveys: the two top categories are coded as 1 (Good), the middle category as 2 (Average), and the two bottom categories as 3 (Poor). 
+The bottom category (Poor) is the most comparable across surveys. The top category is less comparable, and Switzerland (SHP) differs from other countries in all categories. 
 
 putdocx textblock end
 *

@@ -427,7 +427,7 @@ lab def size5b 1 "<10" 2 "10-49" 3 "50-99" 4 "100-499" 5 "500+"  	///
 
 lab def fptime 1 "Full-time" 2 "Part-time/irregular" 3 "Not empl/0 hours/other", replace
 lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent", replace
-lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse", replace
+lab def srh3 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)", replace
 
 lab def sat5 1 "1 Completely dissat" 2 "2 Mostly dissat" 3 "3 Neutral" 	///
 				 4  "4 Mostly sat" 5 "5 Completely sat"						///

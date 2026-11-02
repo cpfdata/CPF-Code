@@ -1604,15 +1604,17 @@ recode ch004 (1=5)(2=4)(3=3)(4=2)(5=1), gen(srh5)
 **  Self-rated health: 3 levels (srh3)
 **--------------------------------------
 /* New in CPF 2.0.1: version of srh5 for cross-country comparisons
-LISS scale (ch004) is unbalanced:
- Excellent, Very good, Good --> 1 Good or better
- Fair (moderate) --> 2 Fair/average
- Poor --> 3 Poor or worse
+The original 5-point scales differ between surveys (balanced or unbalanced). 
+srh3 is based on the position on the scale, the same in all surveys:
+ top 2 categories --> 1 Good; middle category --> 2 Average; bottom 2 categories --> 3 Poor
+LISS (ch004) - unbalanced scale:
+ Excellent, Very good --> 1; Good --> 2; Fair (moderate), Poor --> 3
+NOTE: the bottom category (3 Poor) is the most comparable across surveys. 
 */
-recode srh5 (1 2 3=1) (4=2) (5=3), gen(srh3)
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
 
 	lab var srh3 "Self-rated health [3]"
-	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab def srh3 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
 	lab val srh3 srh3
 
 **--------------------------------------
