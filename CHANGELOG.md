@@ -27,7 +27,19 @@ Notes:
 
 ## Changes
 
-*No changes since the release of CPF 2.0.*
+## 2026-11-02 — CPF 2.0.1
+- **All surveys** (`xx_02_Harmonize` files of each survey, `_11_Append.do`, `_12_Labels.do`,
+  `automatic_codebook.do`): new variable `srh3`, self-rated health in 3 categories
+  (1 Good or better, 2 Fair/average, 3 Poor or worse), recommended for cross-country
+  comparisons. The original 5-point scales differ between surveys, so the cut depends
+  on the scale:
+  - HILDA, PSID, LISS, UKHLS (waves 19+), scale Excellent / Very good / Good / Fair / Poor:
+    Excellent, Very good, Good = 1; Fair = 2; Poor = 3.
+  - KLIPS, SOEP, SHP, BHPS (UKHLS waves 1–18), balanced scale with a neutral middle:
+    the two top categories = 1; the middle = 2; the two bottom categories = 3.
+  - Affects data: yes, new variable `srh3` added; `srh5` is unchanged
+  - Action for users: to get `srh3`, re-run the country do-files and the Append and Labels steps
+  - Code: https://github.com/cpfdata/CPF-Code/commit/541582d43293ca307b2e17057ad5a64a2a702b1f
 
 ---
 
