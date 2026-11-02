@@ -30,16 +30,18 @@ Notes:
 ## 2026-11-02 — CPF 2.0.1
 - **All surveys** (`xx_02_Harmonize` files of each survey, `_11_Append.do`, `_12_Labels.do`,
   `automatic_codebook.do`): new variable `srh3`, self-rated health in 3 categories
-  (1 Good or better, 2 Fair/average, 3 Poor or worse), recommended for cross-country
-  comparisons. The original 5-point scales differ between surveys, so the cut depends
-  on the scale:
-  - HILDA, PSID, LISS, UKHLS (waves 19+), scale Excellent / Very good / Good / Fair / Poor:
-    Excellent, Very good, Good = 1; Fair = 2; Poor = 3.
-  - KLIPS, SOEP, SHP, BHPS (UKHLS waves 1–18), balanced scale with a neutral middle:
-    the two top categories = 1; the middle = 2; the two bottom categories = 3.
+  (1 Good, 2 Average, 3 Poor), recommended for cross-country comparisons.
+  The original 5-point scales differ between surveys (balanced or unbalanced), so `srh3`
+  is based on the position on the scale, the same in all surveys: the two top categories = 1,
+  the middle category = 2, the two bottom categories = 3. The bottom category (Poor) is the
+  most comparable across surveys.
   - Affects data: yes, new variable `srh3` added; `srh5` is unchanged
   - Action for users: to get `srh3`, re-run the country do-files and the Append and Labels steps
   - Code: https://github.com/cpfdata/CPF-Code/commit/541582d43293ca307b2e17057ad5a64a2a702b1f
+    and https://github.com/cpfdata/CPF-Code/commit/95b4f409d2f736a927fbe1df1965b6205fc45fd5
+- **KLIPS** `ko_02_Harmonize.do`: corrected the description of the original self-rated health
+  scale in the code comments (translated Korean answer categories).
+  - Affects data: no
 
 ---
 
