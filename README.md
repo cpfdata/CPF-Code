@@ -3,6 +3,8 @@ Stata code to harmonize data from seven household panel surveys.
 
 Current version: CPF ver. 2.0 (July 2025)
 
+Changes to the code since the release: see [CHANGELOG.md](CHANGELOG.md).
+
 Info at www.cpfdata.com.
 
 Unpack the entire folder structure to “11_CPF_in_syntax”.
