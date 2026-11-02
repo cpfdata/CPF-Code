@@ -1479,12 +1479,15 @@ lab var hhinc_pypost_eq "HH income(prev. year, post, equivalized)"
 **--------------------------------------
 * srh
 /** New CPF 2.0 scale labels 
-KLIPS original scale labels --> New CPF 2.0 scale labels:
- (1) Excellent --> Excellent
- (2) Good --> Very good
- (3) Fair --> Good
- (4) Poor --> Fair
- (5) Very poor --> Poor
+KLIPS original scale labels (translated from Korean) --> New CPF 2.0 scale labels:
+ (1) Very healthy (아주 건강하다) --> Excellent
+ (2) Fairly healthy (건강한 편이다) --> Very good
+ (3) Average (보통이다) --> Good
+ (4) Fairly unhealthy (건강하지 않은 편이다) --> Fair
+ (5) Very unhealthy (건강이 아주 안 좋다) --> Poor
+NOTE: The KLIPS scale is balanced (2 positive, neutral middle, 2 negative), while
+      the CPF labels follow the unbalanced Excellent-Poor scale. Use srh3 for 
+      cross-country comparisons.
 */
 
 gen srh5 = p_6101  
@@ -1498,9 +1501,9 @@ gen srh5 = p_6101
 **--------------------------------------
 /* New in CPF 2.0.1: version of srh5 for cross-country comparisons
 KLIPS scale (p_6101) is balanced, with a neutral middle category:
- (1) Excellent, (2) Good --> 1 Good or better
- (3) Fair --> 2 Fair/average
- (4) Poor, (5) Very poor --> 3 Poor or worse
+ (1) Very healthy, (2) Fairly healthy --> 1 Good or better
+ (3) Average --> 2 Fair/average
+ (4) Fairly unhealthy, (5) Very unhealthy --> 3 Poor or worse
 */
 recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
 
