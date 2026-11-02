@@ -1208,6 +1208,29 @@ recode m11126  (-2=-3) (-1=-2) , gen(srh5)
 	lab val srh5 srh5
 
 **--------------------------------------
+**  Self-rated health: 3 levels (srh3a, srh3b) 
+**--------------------------------------
+/* New in CPF 2.0.1: two 3-level versions of srh5 for cross-country comparisons.
+The original 5-point scales differ between surveys (balanced or unbalanced), 
+and neither version is fully comparable across surveys (see the codebook):
+- srh3a: by answer meaning: 1 Good or better; 2 Fair; 3 Poor or worse
+- srh3b: by position on the scale, the same in all surveys: 
+         top 2 categories --> 1; middle category --> 2; bottom 2 categories --> 3
+SOEP - balanced scale (srh3a = srh3b):
+ Very good, Good --> 1; Satisfactory --> 2; Poor, Bad --> 3
+*/
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3a)
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3b)
+
+	lab var srh3a "Self-rated health [3a: by meaning]"
+	lab def srh3a 1 "Good or better" 2 "Fair" 3 "Poor or worse"
+	lab val srh3a srh3a
+
+	lab var srh3b "Self-rated health [3b: by position]"
+	lab def srh3b 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
+	lab val srh3b srh3b
+
+**--------------------------------------
 **  Disability 
 **--------------------------------------
 *   ple0040 ple0041 m11124

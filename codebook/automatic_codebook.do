@@ -1304,6 +1304,38 @@ putdocx paragraph
 putdocx text (""), linebreak
 
 **------------------------------------------------------------------------------
+local var srh3a       
+pr1 `var', cat
+* Description
+putdocx textblock begin, paramode
+It indicates person's self-rated health status in 3 categories, based on the meaning of the answer categories (new in CPF 2.0.1). 
+The original 5-point scales differ between surveys. HILDA, PSID, LISS and UKHLS (waves 19+) use an unbalanced scale (Excellent, Very good, Good, Fair, Poor). KLIPS, SOEP, SHP and BHPS (UKHLS waves 1-18) use a balanced scale with a neutral middle category (e.g. Very good, Good, Satisfactory, Poor, Bad). CPF provides two 3-level versions (srh3a and srh3b); neither is fully comparable across surveys. For balanced scales both versions are identical. 
+In srh3a, for unbalanced scales Excellent, Very good and Good are coded as 1 (Good or better), Fair as 2, and Poor as 3; for balanced scales the two top categories are coded as 1, the middle category as 2, and the two bottom categories as 3. 
+Because the middle category of balanced scales (e.g. Satisfactory) is coded as 2, countries with balanced scales show much lower shares in category 1 and much higher shares in category 3 than countries with unbalanced scales. 
+
+putdocx textblock end
+*
+cpfbookA `var'
+putdocx paragraph
+putdocx text (""), linebreak
+
+**------------------------------------------------------------------------------
+local var srh3b       
+pr1 `var', cat
+* Description
+putdocx textblock begin, paramode
+It indicates person's self-rated health status in 3 categories, based on the position on the scale (new in CPF 2.0.1). 
+The original 5-point scales differ between surveys. HILDA, PSID, LISS and UKHLS (waves 19+) use an unbalanced scale (Excellent, Very good, Good, Fair, Poor). KLIPS, SOEP, SHP and BHPS (UKHLS waves 1-18) use a balanced scale with a neutral middle category (e.g. Very good, Good, Satisfactory, Poor, Bad). CPF provides two 3-level versions (srh3a and srh3b); neither is fully comparable across surveys. For balanced scales both versions are identical. 
+In srh3b, the two top categories are coded as 1 (Good), the middle category as 2 (Average), and the two bottom categories as 3 (Poor), in all surveys. 
+The bottom category (Poor) gives more similar shares across surveys than in srh3a, but it combines Fair and Poor for unbalanced scales. Switzerland (SHP) differs from other countries in all categories. 
+
+putdocx textblock end
+*
+cpfbookA `var'
+putdocx paragraph
+putdocx text (""), linebreak
+
+**------------------------------------------------------------------------------
 local var disabpens        
 pr1 `var', cat
 * Description

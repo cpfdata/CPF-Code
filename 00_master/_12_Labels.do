@@ -140,6 +140,8 @@ lab var exporg "Experience in organisation"
 lab var expft "Labor market experience: full time"
 lab var exppt "Labor market experience: part time"
 lab var srh5 "Self-rated health"
+lab var srh3a "Self-rated health [3a: by meaning]"
+lab var srh3b "Self-rated health [3b: by position]"
 lab var disabpens "Receiving disability pension"
 lab var disab "Disability (any)"
 lab var disab2c "Disability (min. category 2 or >30%)"
@@ -426,6 +428,8 @@ lab def size5b 1 "<10" 2 "10-49" 3 "50-99" 4 "100-499" 5 "500+"  	///
 
 lab def fptime 1 "Full-time" 2 "Part-time/irregular" 3 "Not empl/0 hours/other", replace
 lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent", replace
+lab def srh3a 1 "Good or better" 2 "Fair" 3 "Poor or worse", replace
+lab def srh3b 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)", replace
 
 lab def sat5 1 "1 Completely dissat" 2 "2 Mostly dissat" 3 "3 Neutral" 	///
 				 4  "4 Mostly sat" 5 "5 Completely sat"						///
@@ -559,6 +563,8 @@ lab val retf yesno
 // lab val retf_AUS yesno
 lab val oldpens yesno
 lab val srh5 srh5
+lab val srh3a srh3a
+lab val srh3b srh3b
 lab val disabpens yesno
 lab val disab yesno
 lab val disab2c yesno

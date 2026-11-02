@@ -1627,6 +1627,41 @@ drop temp_*
 	lab var srh5 "Self-rated health"
 	lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent"
 	lab val srh5 srh5
+
+**--------------------------------------
+**  Self-rated health: 3 levels (srh3a, srh3b) 
+**--------------------------------------
+/* New in CPF 2.0.1: two 3-level versions of srh5 for cross-country comparisons.
+The original 5-point scales differ between surveys (balanced or unbalanced), 
+and neither version is fully comparable across surveys (see the codebook):
+- srh3a: by answer meaning: 1 Good or better; 2 Fair; 3 Poor or worse
+- srh3b: by position on the scale, the same in all surveys: 
+         top 2 categories --> 1; middle category --> 2; bottom 2 categories --> 3
+BHPS waves 1-18 (hlstat) - balanced scale (srh3a = srh3b):
+ Excellent, Good --> 1; Fair --> 2; Poor, Very poor --> 3
+UKHLS waves 19+ (sf1, scsf1) - unbalanced scale:
+ srh3a: Excellent, Very good, Good --> 1; Fair --> 2; Poor --> 3
+ srh3b: Excellent, Very good --> 1; Good --> 2; Fair, Poor --> 3
+*/
+* srh3a - BHPS 
+recode srh5 (1 2=1) (3=2) (4 5=3) if wave<=18, gen(srh3a)
+* srh3a - UKHLS 
+replace srh3a=1 if (srh5==1 | srh5==2 | srh5==3) & wave>=19
+replace srh3a=2 if srh5==4 & wave>=19
+replace srh3a=3 if srh5==5 & wave>=19
+replace srh3a=srh5 if srh5<0 & wave>=19 // missing values
+
+* srh3b - all waves 
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3b)
+
+	lab var srh3a "Self-rated health [3a: by meaning]"
+	lab def srh3a 1 "Good or better" 2 "Fair" 3 "Poor or worse"
+	lab val srh3a srh3a
+
+	lab var srh3b "Self-rated health [3b: by position]"
+	lab def srh3b 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
+	lab val srh3b srh3b
+
 	
 **-------------------------------------- 
 **  Disability 
@@ -2371,7 +2406,7 @@ kidsn_hh15 kids_any nphh livpart 					///
 work_d emplst5 emplst6	isco* indust*				///
 public size5 size5b whweek* whmonth  fptime*					///
 supervis mater	un_act	selfemp* entrep2	retf oldpens					///	 
-incjobs* incjob1* hhinc_* srh5 disab disab2c chron 				///
+incjobs* incjob1* hhinc_* srh5 srh3a srh3b disab disab2c chron 				///
 satlife5 satwork5 satfinhh5 sathlth5 	///
 satlife10 satwork10 satfinhh10 sathlth10 	///
 train					///

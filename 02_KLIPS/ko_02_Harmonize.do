@@ -1479,12 +1479,15 @@ lab var hhinc_pypost_eq "HH income(prev. year, post, equivalized)"
 **--------------------------------------
 * srh
 /** New CPF 2.0 scale labels 
-KLIPS original scale labels --> New CPF 2.0 scale labels:
- (1) Excellent --> Excellent
- (2) Good --> Very good
- (3) Fair --> Good
- (4) Poor --> Fair
- (5) Very poor --> Poor
+KLIPS original scale labels (translated from Korean) --> New CPF 2.0 scale labels:
+ (1) Very healthy (아주 건강하다) --> Excellent
+ (2) Fairly healthy (건강한 편이다) --> Very good
+ (3) Average (보통이다) --> Good
+ (4) Fairly unhealthy (건강하지 않은 편이다) --> Fair
+ (5) Very unhealthy (건강이 아주 안 좋다) --> Poor
+NOTE: The KLIPS scale is balanced (2 positive, neutral middle, 2 negative), while
+      the CPF labels follow the unbalanced Excellent-Poor scale. Use srh3a or srh3b for
+      cross-country comparisons.
 */
 
 gen srh5 = p_6101  
@@ -1492,6 +1495,29 @@ gen srh5 = p_6101
 	lab var srh5 "Self-rated health"
 	lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent"
 	lab val srh5 srh5
+
+**--------------------------------------
+**  Self-rated health: 3 levels (srh3a, srh3b) 
+**--------------------------------------
+/* New in CPF 2.0.1: two 3-level versions of srh5 for cross-country comparisons.
+The original 5-point scales differ between surveys (balanced or unbalanced), 
+and neither version is fully comparable across surveys (see the codebook):
+- srh3a: by answer meaning: 1 Good or better; 2 Fair; 3 Poor or worse
+- srh3b: by position on the scale, the same in all surveys: 
+         top 2 categories --> 1; middle category --> 2; bottom 2 categories --> 3
+KLIPS (p_6101) - balanced scale (srh3a = srh3b):
+ Very healthy, Fairly healthy --> 1; Average --> 2; Fairly unhealthy, Very unhealthy --> 3
+*/
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3a)
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3b)
+
+	lab var srh3a "Self-rated health [3a: by meaning]"
+	lab def srh3a 1 "Good or better" 2 "Fair" 3 "Poor or worse"
+	lab val srh3a srh3a
+
+	lab var srh3b "Self-rated health [3b: by position]"
+	lab def srh3b 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
+	lab val srh3b srh3b
 
 **--------------------------------------
 **  Disability NA, asked only in one wave
