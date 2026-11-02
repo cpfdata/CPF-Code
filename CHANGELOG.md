@@ -27,6 +27,15 @@ Notes:
 
 ## Changes
 
+## 2026-11-02 — CPF 2.0.2
+- **LISS** `nl_02_Harmonize.do`, `_12_Labels.do`: corrected missing-value codes for occupation
+  (`isco08_4`, `isco_1`, `isco_2`). ISCO is available in LISS only from 2020: earlier waves were
+  coded -2 (item non-response) and are now -8 (not asked in survey). From 2020, people who are
+  not working are now -3 (does not apply); other missing values are -1.
+  - Affects data: yes, missing-value codes of `isco08_4`, `isco_1`, `isco_2` for LISS; valid codes are unchanged
+  - Action for users: re-run LISS and the Append and Labels steps
+  - Code: https://github.com/cpfdata/CPF-Code/commit/2b472aaf033732ba2f6a7dd214fb786d741d927b
+
 ## 2026-11-02 — CPF 2.0.1
 - **All surveys** (`xx_02_Harmonize` files of each survey, `_11_Append.do`, `_12_Labels.do`,
   `automatic_codebook.do`): two new variables with self-rated health in 3 categories, for

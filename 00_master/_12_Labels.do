@@ -308,7 +308,8 @@ lab def isco_1															///
            9 "[9] Elementary occupations"   							///
 		  -1 "[-1] MV general"				 							///
 		  -2 "[-2] Item nresp"				 							///	
-		  -3 "[-3] Does not apply", replace
+		  -3 "[-3] Does not apply"									///
+		  -8 "[-8] Not asked ", replace
 		  
 lab def isco_2															///
 		0 "[0] Armed forces occupations"     ///
@@ -366,7 +367,8 @@ lab def isco_2															///
 		96 "[96] Refuse workers and other elementary workers"     ///
 		-1 "[-1] MV general"				 							///
 		-2 "[-2] Item nresp"				 							///	
-		-3 "[-3] Does not apply", replace	  
+		-3 "[-3] Does not apply"									///
+		-8 "[-8] Not asked ", replace	  
 		
 lab def indust1											///
            1 "[1] Production, Construction, Heavy Ind"	///

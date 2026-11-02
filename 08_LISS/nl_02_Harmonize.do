@@ -729,16 +729,24 @@ replace working=0 if belbezig>=4 & belbezig<=14 & working==.  // all non working
 
 /* 
 Var cw611 available only from wave 13 (2020)!
+- Before 2020: -8 (not asked in survey)
+- 2020+: not working --> -3 (does not apply); other missing --> -1
 */
 
 *** isco88_4
 clonevar isco08_4 = cw611  
 recode isco08_4 (-9=-1) 
-replace  isco08_4 =-2 if wavey<2020
+* 2020+: not working 
+replace isco08_4 =-3 if (isco08_4==. | isco08_4==-1) & working==0 & wavey>=2020
+* 2020+: other missing 
+replace isco08_4 =-1 if isco08_4==. & wavey>=2020
+* Before 2020: not asked 
+replace isco08_4 =-8 if wavey<2020
 
 capture lab copy cw20m611 isco08_4
 capture lab def isco08_4 -1 "[-1] MV general"					///
-				-2 "[-2] Not asked"	 , modify
+				-3 "[-3] Does not apply"					///
+				-8 "[-8] Not asked in survey"	 , modify
 capture lab val isco08_4 isco08_4
 
 
@@ -758,7 +766,8 @@ lab def isco_1															///
            8 "[8] Plant and machine operators and assemblers" 			///
            9 "[9] Elementary occupations"   							///
 		  -1 "[-1] MV general"				 							///
-		  -3 "[-3] Does not apply"
+		  -3 "[-3] Does not apply"									///
+		  -8 "[-8] Not asked in survey"
 		  
 lab def isco_2															///
 		0 "[0] Armed forces occupations"     ///
@@ -815,7 +824,8 @@ lab def isco_2															///
 		95 "[95] Street and related sales and services workers"     ///
 		96 "[96] Refuse workers and other elementary workers"     ///
 		-1 "[-1] MV general"				 							///
-		-3 "[-3] Does not apply"	  
+		-3 "[-3] Does not apply"									///
+		-8 "[-8] Not asked in survey"	  
 		  
 *		  
 generate isco_1 = cond(isco08_4 > 100, int(isco08_4/1000), isco08_4)
