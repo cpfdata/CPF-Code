@@ -1486,7 +1486,7 @@ KLIPS original scale labels (translated from Korean) --> New CPF 2.0 scale label
  (4) Fairly unhealthy (건강하지 않은 편이다) --> Fair
  (5) Very unhealthy (건강이 아주 안 좋다) --> Poor
 NOTE: The KLIPS scale is balanced (2 positive, neutral middle, 2 negative), while
-      the CPF labels follow the unbalanced Excellent-Poor scale. Use srh3 for 
+      the CPF labels follow the unbalanced Excellent-Poor scale. Use srh3a or srh3b for
       cross-country comparisons.
 */
 
@@ -1497,21 +1497,27 @@ gen srh5 = p_6101
 	lab val srh5 srh5
 
 **--------------------------------------
-**  Self-rated health: 3 levels (srh3)
+**  Self-rated health: 3 levels (srh3a, srh3b) 
 **--------------------------------------
-/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
-The original 5-point scales differ between surveys (balanced or unbalanced). 
-srh3 is based on the position on the scale, the same in all surveys:
- top 2 categories --> 1 Good; middle category --> 2 Average; bottom 2 categories --> 3 Poor
-KLIPS (p_6101) - balanced scale:
+/* New in CPF 2.0.1: two 3-level versions of srh5 for cross-country comparisons.
+The original 5-point scales differ between surveys (balanced or unbalanced), 
+and neither version is fully comparable across surveys (see the codebook):
+- srh3a: by answer meaning: 1 Good or better; 2 Fair; 3 Poor or worse
+- srh3b: by position on the scale, the same in all surveys: 
+         top 2 categories --> 1; middle category --> 2; bottom 2 categories --> 3
+KLIPS (p_6101) - balanced scale (srh3a = srh3b):
  Very healthy, Fairly healthy --> 1; Average --> 2; Fairly unhealthy, Very unhealthy --> 3
-NOTE: the bottom category (3 Poor) is the most comparable across surveys. 
 */
-recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3a)
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3b)
 
-	lab var srh3 "Self-rated health [3]"
-	lab def srh3 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
-	lab val srh3 srh3
+	lab var srh3a "Self-rated health [3a: by meaning]"
+	lab def srh3a 1 "Good or better" 2 "Fair" 3 "Poor or worse"
+	lab val srh3a srh3a
+
+	lab var srh3b "Self-rated health [3b: by position]"
+	lab def srh3b 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
+	lab val srh3b srh3b
 
 **--------------------------------------
 **  Disability NA, asked only in one wave

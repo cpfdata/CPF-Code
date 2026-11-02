@@ -1089,21 +1089,28 @@ recode gh1  (-1=-3) (-3 -8 -5 -4=-1) , gen(srh5)
 	lab val srh5 srh5
 
 **--------------------------------------
-**  Self-rated health: 3 levels (srh3)
+**  Self-rated health: 3 levels (srh3a, srh3b) 
 **--------------------------------------
-/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
-The original 5-point scales differ between surveys (balanced or unbalanced). 
-srh3 is based on the position on the scale, the same in all surveys:
- top 2 categories --> 1 Good; middle category --> 2 Average; bottom 2 categories --> 3 Poor
+/* New in CPF 2.0.1: two 3-level versions of srh5 for cross-country comparisons.
+The original 5-point scales differ between surveys (balanced or unbalanced), 
+and neither version is fully comparable across surveys (see the codebook):
+- srh3a: by answer meaning: 1 Good or better; 2 Fair; 3 Poor or worse
+- srh3b: by position on the scale, the same in all surveys: 
+         top 2 categories --> 1; middle category --> 2; bottom 2 categories --> 3
 HILDA (gh1, SF-36) - unbalanced scale:
- Excellent, Very good --> 1; Good --> 2; Fair, Poor --> 3
-NOTE: the bottom category (3 Poor) is the most comparable across surveys. 
+ srh3a: Excellent, Very good, Good --> 1; Fair --> 2; Poor --> 3
+ srh3b: Excellent, Very good --> 1; Good --> 2; Fair, Poor --> 3
 */
-recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
+recode srh5 (1 2 3=1) (4=2) (5=3), gen(srh3a)
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3b)
 
-	lab var srh3 "Self-rated health [3]"
-	lab def srh3 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
-	lab val srh3 srh3
+	lab var srh3a "Self-rated health [3a: by meaning]"
+	lab def srh3a 1 "Good or better" 2 "Fair" 3 "Poor or worse"
+	lab val srh3a srh3a
+
+	lab var srh3b "Self-rated health [3b: by position]"
+	lab def srh3b 1 "Good (top 2)" 2 "Average (middle)" 3 "Poor (bottom 2)"
+	lab val srh3b srh3b
 
  
 
@@ -1753,7 +1760,7 @@ train jsecu*			///
 edhigh1	 ///
 hhda10 hhad10 hhec10 hhed10 hhsad10 hhsec10 hhsed10 /// indexes
 jbmo6s jbmoccs hgint hgivw ///
-isco* isei* osi_aus siops*  srh5 srh3 wtcs wtcp mps* nempl	///
+isco* isei* osi_aus siops*  srh5 srh3a srh3b wtcs wtcp mps* nempl	///
 widow divor separ fedu* medu* neverw ///
 cob* migr*   relig relig_att ///
 kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_510 ///
