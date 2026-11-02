@@ -1698,6 +1698,21 @@ gen srh5=.
 	lab var srh5 "Self-rated health"
 	lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent"
 	lab val srh5 srh5
+
+**--------------------------------------
+**  Self-rated health: 3 levels (srh3)
+**--------------------------------------
+/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
+PSID scale is unbalanced:
+ Excellent, Very good, Good --> 1 Good or better
+ Fair --> 2 Fair/average
+ Poor --> 3 Poor or worse
+*/
+recode srh5 (1 2 3=1) (4=2) (5=3), gen(srh3)
+
+	lab var srh3 "Self-rated health [3]"
+	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab val srh3 srh3
 	
 **--------------------------------------
 **  Disability 
@@ -2659,7 +2674,7 @@ public size size4 size5 size5b	///
 whyear whweek whmonth fptime_h un_act selfemp entrep2	///
 retf*  expft exp exporg neverw	///
 incjobs_pyg incjob1_mg incjob1_hg hhinc_pypost*	///
-srh5 disab disab2c 	///
+srh5 srh3 disab disab2c 	///
 w_ind*   xsqnr	///
 wavey country wave1st   marstat5 mlstat5 	///
 nvmarr kidsn_hh17 satlife5 satlife10	///

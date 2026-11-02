@@ -1627,6 +1627,32 @@ drop temp_*
 	lab var srh5 "Self-rated health"
 	lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent"
 	lab val srh5 srh5
+
+**--------------------------------------
+**  Self-rated health: 3 levels (srh3)
+**--------------------------------------
+/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
+The original scale differs between BHPS and UKHLS:
+- BHPS waves 1-18 (hlstat) - balanced scale:
+ Excellent, Good --> 1 Good or better
+ Fair --> 2 Fair/average
+ Poor, Very poor --> 3 Poor or worse
+- UKHLS waves 19+ (sf1, scsf1) - unbalanced scale:
+ Excellent, Very good, Good --> 1 Good or better
+ Fair --> 2 Fair/average
+ Poor --> 3 Poor or worse
+*/
+* BHPS
+recode srh5 (1 2=1) (3=2) (4 5=3) if wave<=18, gen(srh3)
+* UKHLS
+replace srh3=1 if (srh5==1 | srh5==2 | srh5==3) & wave>=19
+replace srh3=2 if srh5==4 & wave>=19
+replace srh3=3 if srh5==5 & wave>=19
+replace srh3=srh5 if srh5<0 & wave>=19 // missing values
+
+	lab var srh3 "Self-rated health [3]"
+	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab val srh3 srh3
 	
 **-------------------------------------- 
 **  Disability 
@@ -2371,7 +2397,7 @@ kidsn_hh15 kids_any nphh livpart 					///
 work_d emplst5 emplst6	isco* indust*				///
 public size5 size5b whweek* whmonth  fptime*					///
 supervis mater	un_act	selfemp* entrep2	retf oldpens					///	 
-incjobs* incjob1* hhinc_* srh5 disab disab2c chron 				///
+incjobs* incjob1* hhinc_* srh5 srh3 disab disab2c chron 				///
 satlife5 satwork5 satfinhh5 sathlth5 	///
 satlife10 satwork10 satfinhh10 sathlth10 	///
 train					///

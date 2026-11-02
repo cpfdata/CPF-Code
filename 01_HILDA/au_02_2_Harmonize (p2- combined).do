@@ -1088,6 +1088,21 @@ recode gh1  (-1=-3) (-3 -8 -5 -4=-1) , gen(srh5)
 	lab def srh5 5 "Very bad" 4 "Bad" 3 "Satisfactory" 2 "Good" 1 "Very good"
 	lab val srh5 srh5
 
+**--------------------------------------
+**  Self-rated health: 3 levels (srh3)
+**--------------------------------------
+/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
+HILDA scale (gh1, SF-36) is unbalanced:
+ Excellent, Very good, Good --> 1 Good or better
+ Fair --> 2 Fair/average
+ Poor --> 3 Poor or worse
+*/
+recode srh5 (1 2 3=1) (4=2) (5=3), gen(srh3)
+
+	lab var srh3 "Self-rated health [3]"
+	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab val srh3 srh3
+
  
 
 **--------------------------------------
@@ -1736,7 +1751,7 @@ train jsecu*			///
 edhigh1	 ///
 hhda10 hhad10 hhec10 hhed10 hhsad10 hhsec10 hhsed10 /// indexes
 jbmo6s jbmoccs hgint hgivw ///
-isco* isei* osi_aus siops*  srh5 wtcs wtcp mps* nempl	///
+isco* isei* osi_aus siops*  srh5 srh3 wtcs wtcp mps* nempl	///
 widow divor separ fedu* medu* neverw ///
 cob* migr*   relig relig_att ///
 kidsn_hh_02 kidsn_hh_34 kidsn_hh_04 kidsn_hh_510 ///

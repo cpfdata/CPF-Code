@@ -1208,6 +1208,21 @@ recode m11126  (-2=-3) (-1=-2) , gen(srh5)
 	lab val srh5 srh5
 
 **--------------------------------------
+**  Self-rated health: 3 levels (srh3)
+**--------------------------------------
+/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
+SOEP scale is balanced, with a neutral middle category:
+ (1) Very good, (2) Good --> 1 Good or better
+ (3) Satisfactory --> 2 Fair/average
+ (4) Poor, (5) Bad --> 3 Poor or worse
+*/
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
+
+	lab var srh3 "Self-rated health [3]"
+	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab val srh3 srh3
+
+**--------------------------------------
 **  Disability 
 **--------------------------------------
 *   ple0040 ple0041 m11124

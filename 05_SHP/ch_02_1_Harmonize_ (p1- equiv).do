@@ -574,6 +574,21 @@ recode m11126  (-2=-3) (-1=-2) , gen(srh5)
 	lab var srh5 "Self-rated health"
 	lab def srh5 5 "Poor" 4 "Fair" 3 "Good" 2 "Very good" 1 "Excellent"
 	lab val srh5 srh5
+
+**--------------------------------------
+**  Self-rated health: 3 levels (srh3)
+**--------------------------------------
+/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
+SHP scale is balanced, with a neutral middle category:
+ (1) Very well, (2) Well --> 1 Good or better
+ (3) So, so (Average) --> 2 Fair/average
+ (4) Not very well, (5) Not well at all --> 3 Poor or worse
+*/
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
+
+	lab var srh3 "Self-rated health [3]"
+	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab val srh3 srh3
 	
 
 *################################################################################	

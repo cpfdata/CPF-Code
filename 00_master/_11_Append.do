@@ -51,7 +51,7 @@ isvar  	///
     isco_1 isco_2 								///
     indust1 indust2 indust3 whyear fptime_h 	///
     hhinc_pypre hhinc_pypost hhinc_pypost_eq*	///
-    srh5 sathlth5 sathlth10 					///
+    srh5 srh3 sathlth5 sathlth10 					///
     satlife5 satlife10 						///
     wavey intmonth respstat yborn 				///
     marstat5 mlstat5 parstat6 nvmarr 			///
@@ -245,6 +245,7 @@ expft		 		///
 exppt		 		///
 /// 15. Health		 		///
 srh5		 		///
+srh3		 		///
 disabpens		 		///
 disab		 		///
 disab2c		 		///

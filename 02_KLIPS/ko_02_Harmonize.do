@@ -1494,6 +1494,21 @@ gen srh5 = p_6101
 	lab val srh5 srh5
 
 **--------------------------------------
+**  Self-rated health: 3 levels (srh3)
+**--------------------------------------
+/* New in CPF 2.0.1: version of srh5 for cross-country comparisons
+KLIPS scale (p_6101) is balanced, with a neutral middle category:
+ (1) Excellent, (2) Good --> 1 Good or better
+ (3) Fair --> 2 Fair/average
+ (4) Poor, (5) Very poor --> 3 Poor or worse
+*/
+recode srh5 (1 2=1) (3=2) (4 5=3), gen(srh3)
+
+	lab var srh3 "Self-rated health [3]"
+	lab def srh3 1 "Good or better" 2 "Fair/average" 3 "Poor or worse"
+	lab val srh3 srh3
+
+**--------------------------------------
 **  Disability NA, asked only in one wave
 **--------------------------------------
 * disab
